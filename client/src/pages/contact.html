@@ -1,150 +1,181 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Contact Us - Shoe Store</title>
-    <link rel="stylesheet" href="contact-styles.css">
-</head>
-<body>
+    <link rel="stylesheet" href="../styles/root.css" />
+    <link rel="stylesheet" href="../styles/pages/contact.css" />
+  </head>
+  <body>
     <!-- Navigation -->
     <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">SHOE STORE</div>
-            <div class="nav-menu" id="navMenu">
-                <a href="index.html" class="nav-link">Home</a>
-                <a href="product.html" class="nav-link">Products</a>
-                <a href="about.html" class="nav-link">About</a>
-                <a href="contact.html" class="nav-link active">Contact</a>
-                <a href="admin.html" class="nav-link">Admin</a>
-            </div>
-            <div class="nav-actions">
-                <button class="cart-btn">
-                    🛒
-                    <span class="cart-badge" id="cartBadge">0</span>
-                </button>
-                <button class="mobile-menu-btn" id="mobileMenuBtn">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
+      <div class="nav-container">
+        <div class="nav-logo">SHOE STORE</div>
+        <div class="nav-menu" id="navMenu">
+          <a href="index.html" class="nav-link">Home</a>
+          <a href="product.html" class="nav-link">Products</a>
+          <a href="about.html" class="nav-link">About</a>
+          <a href="contact.html" class="nav-link active">Contact</a>
+          <a href="admin.html" class="nav-link">Admin</a>
         </div>
+        <div class="nav-actions">
+          <button class="cart-btn">
+            🛒
+            <span class="cart-badge" id="cartBadge">0</span>
+          </button>
+          <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </div>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero-section">
-        <div class="hero-container">
-            <h1 class="hero-title">Get In Touch</h1>
-            <p class="hero-subtitle">Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
-        </div>
+      <div class="hero-container">
+        <h1 class="hero-title">Get In Touch</h1>
+        <p class="hero-subtitle">
+          Have questions? We'd love to hear from you. Send us a message and
+          we'll respond as soon as possible.
+        </p>
+      </div>
     </section>
 
     <!-- Contact Content -->
     <section class="contact-section">
-        <div class="contact-container">
-            <!-- Contact Form -->
-            <div class="contact-form-wrapper">
-                <h2 class="section-title">Send us a Message</h2>
-                <form id="contactForm" class="contact-form">
-                    <div class="form-group">
-                        <input type="text" id="name" name="name" placeholder="Your Name" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" id="email" name="email" placeholder="Your Email" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" id="subject" name="subject" placeholder="Subject" required>
-                    </div>
-                    <div class="form-group">
-                        <textarea id="message" name="message" placeholder="Your Message" rows="6" required></textarea>
-                    </div>
-                    <button type="submit" class="submit-btn">
-                        <span>📤</span> Send Message
-                    </button>
-                </form>
+      <div class="contact-container">
+        <!-- Contact Form -->
+        <div class="contact-form-wrapper">
+          <h2 class="section-title">Send us a Message</h2>
+          <form id="contactForm" class="contact-form">
+            <div class="form-group">
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Your Name"
+                required
+              />
             </div>
-
-            <!-- Contact Information -->
-            <div class="contact-info-wrapper">
-                <div>
-                    <h2 class="section-title">Contact Information</h2>
-                    <p class="info-description">Feel free to reach out through any of these channels. We're here to help!</p>
-                </div>
-
-                <div class="contact-info-list">
-                    <div class="info-item">
-                        <div class="info-icon">📧</div>
-                        <div class="info-content">
-                            <h3>Email</h3>
-                            <p>support@shoestore.com</p>
-                            <p>sales@shoestore.com</p>
-                        </div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-icon">📞</div>
-                        <div class="info-content">
-                            <h3>Phone</h3>
-                            <p>+1 (555) 123-4567</p>
-                            <p>Mon-Fri: 9AM - 6PM EST</p>
-                        </div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-icon">📍</div>
-                        <div class="info-content">
-                            <h3>Address</h3>
-                            <p>123 Shoe Street</p>
-                            <p>New York, NY 10001</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Map Placeholder -->
-                <div class="map-container">
-                    <div class="map-placeholder">📍</div>
-                </div>
+            <div class="form-group">
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Your Email"
+                required
+              />
             </div>
+            <div class="form-group">
+              <input
+                type="text"
+                id="subject"
+                name="subject"
+                placeholder="Subject"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <textarea
+                id="message"
+                name="message"
+                placeholder="Your Message"
+                rows="6"
+                required
+              ></textarea>
+            </div>
+            <button type="submit" class="submit-btn">
+              <span>📤</span> Send Message
+            </button>
+          </form>
         </div>
+
+        <!-- Contact Information -->
+        <div class="contact-info-wrapper">
+          <div>
+            <h2 class="section-title">Contact Information</h2>
+            <p class="info-description">
+              Feel free to reach out through any of these channels. We're here
+              to help!
+            </p>
+          </div>
+
+          <div class="contact-info-list">
+            <div class="info-item">
+              <div class="info-icon">📧</div>
+              <div class="info-content">
+                <h3>Email</h3>
+                <p>support@shoestore.com</p>
+                <p>sales@shoestore.com</p>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-icon">📞</div>
+              <div class="info-content">
+                <h3>Phone</h3>
+                <p>+1 (555) 123-4567</p>
+                <p>Mon-Fri: 9AM - 6PM EST</p>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-icon">📍</div>
+              <div class="info-content">
+                <h3>Address</h3>
+                <p>123 Shoe Street</p>
+                <p>New York, NY 10001</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Map Placeholder -->
+          <div class="map-container">
+            <div class="map-placeholder">📍</div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-section">
-                <h3>SHOE STORE</h3>
-                <p>Your destination for premium footwear.</p>
-            </div>
-            <div class="footer-section">
-                <h4>Quick Links</h4>
-                <a href="index.html">Home</a>
-                <a href="product.html">Products</a>
-                <a href="about.html">About</a>
-                <a href="contact.html">Contact</a>
-            </div>
-            <div class="footer-section">
-                <h4>Support</h4>
-                <a href="#">FAQ</a>
-                <a href="#">Shipping</a>
-                <a href="#">Returns</a>
-                <a href="#">Size Guide</a>
-            </div>
-            <div class="footer-section">
-                <h4>Follow Us</h4>
-                <a href="#">Instagram</a>
-                <a href="#">Facebook</a>
-                <a href="#">Twitter</a>
-            </div>
+      <div class="footer-container">
+        <div class="footer-section">
+          <h3>SHOE STORE</h3>
+          <p>Your destination for premium footwear.</p>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 Shoe Store. All rights reserved.</p>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <a href="index.html">Home</a>
+          <a href="product.html">Products</a>
+          <a href="about.html">About</a>
+          <a href="contact.html">Contact</a>
         </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <a href="#">FAQ</a>
+          <a href="#">Shipping</a>
+          <a href="#">Returns</a>
+          <a href="#">Size Guide</a>
+        </div>
+        <div class="footer-section">
+          <h4>Follow Us</h4>
+          <a href="#">Instagram</a>
+          <a href="#">Facebook</a>
+          <a href="#">Twitter</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Shoe Store. All rights reserved.</p>
+      </div>
     </footer>
 
     <!-- Toast Notification -->
     <div class="toast" id="toast"></div>
 
-    <script src="contact-script.js"></script>
-</body>
+    <script src="../scripts/contact-script.js"></script>
+  </body>
 </html>

@@ -1,50 +1,51 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login - KICKZ</title>
-    <link rel="stylesheet" href="login-styles.css">
-</head>
-<body>
+    <link rel="stylesheet" href="../styles/root.css" />
+    <link rel="stylesheet" href="../styles/pages/login.css" />
+  </head>
+  <body>
     <div class="container">
-        <a href="index.html" class="logo">KICKZ</a>
+      <a href="index.html" class="logo">KICKZ</a>
 
-        <div class="login-container">
-            <div class="login-card">
-                <h2 class="title">Welcome Back</h2>
-                <p class="subtitle">Log in to your account</p>
+      <div class="login-container">
+        <div class="login-card">
+          <h2 class="title">Welcome Back</h2>
+          <p class="subtitle">Log in to your account</p>
 
-                <form id="loginForm" class="login-form">
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" required>
-                    </div>
-
-                    <div class="form-options">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="remember">
-                            <label for="remember">Remember me</label>
-                        </div>
-                        <a href="#" class="forgot-link">Forgot password?</a>
-                    </div>
-
-                    <button type="submit" class="submit-btn">Log In</button>
-
-                    <p class="signup-link">
-                        Don't have an account? <a href="signup.html">Sign up</a>
-                    </p>
-                </form>
+          <form id="loginForm" class="login-form">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" required />
             </div>
+
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" id="password" required />
+            </div>
+
+            <div class="form-options">
+              <div class="checkbox-group">
+                <input type="checkbox" id="remember" />
+                <label for="remember">Remember me</label>
+              </div>
+              <a href="#" class="forgot-link">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="submit-btn">Log In</button>
+
+            <p class="signup-link">
+              Don't have an account? <a href="signup.html">Sign up</a>
+            </p>
+          </form>
         </div>
+      </div>
     </div>
 
     <div id="toast" class="toast"></div>
     <script src="login-script.js"></script>
-</body>
+  </body>
 </html>
