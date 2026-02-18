@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - KICKZ</title>
+    <link rel="stylesheet" href="signup-styles.css">
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="logo">KICKZ</a>
+
+        <div class="signup-container">
+            <div class="signup-card">
+                <h2 class="title">Create Account</h2>
+                <p class="subtitle">Join KICKZ and start shopping</p>
+
+                <form id="signupForm" class="signup-form">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" required>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="terms" required>
+                        <label for="terms">I agree to the terms and conditions</label>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Sign Up</button>
+
+                    <p class="login-link">
+                        Already have an account? <a href="login.html">Log in</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+    <script src="signup-script.js"></script>
+</body>
+</html>

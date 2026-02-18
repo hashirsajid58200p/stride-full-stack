@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Dashboard - KICKZ</title>
+    <link rel="stylesheet" href="client-dashboard-styles.css">
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="logo">KICKZ</a>
+
+        <div class="dashboard-header">
+            <h2 class="title">My Dashboard</h2>
+            <p class="subtitle">Manage your orders and account</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="orders">
+                <span class="icon">📦</span> Orders
+            </button>
+            <button class="tab-btn" data-tab="wishlist">
+                <span class="icon">❤️</span> Wishlist
+            </button>
+            <button class="tab-btn" data-tab="profile">
+                <span class="icon">👤</span> Profile
+            </button>
+        </div>
+
+        <div class="tab-content active" id="orders">
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <h3>Order #12345</h3>
+                        <p class="date">Placed on 2024-01-15</p>
+                    </div>
+                    <div class="order-info">
+                        <p class="price">$299.99</p>
+                        <span class="status delivered">Delivered</span>
+                    </div>
+                </div>
+                <button class="view-btn">View Details</button>
+            </div>
+
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <h3>Order #12344</h3>
+                        <p class="date">Placed on 2024-01-10</p>
+                    </div>
+                    <div class="order-info">
+                        <p class="price">$159.99</p>
+                        <span class="status transit">In Transit</span>
+                    </div>
+                </div>
+                <button class="view-btn">View Details</button>
+            </div>
+
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <h3>Order #12343</h3>
+                        <p class="date">Placed on 2024-01-05</p>
+                    </div>
+                    <div class="order-info">
+                        <p class="price">$249.99</p>
+                        <span class="status processing">Processing</span>
+                    </div>
+                </div>
+                <button class="view-btn">View Details</button>
+            </div>
+        </div>
+
+        <div class="tab-content" id="wishlist">
+            <div class="wishlist-grid">
+                <div class="wishlist-card">
+                    <div class="product-image">🛍️</div>
+                    <h3>Nike Air Max 270</h3>
+                    <p class="price">$150.00</p>
+                    <button class="add-cart-btn">Add to Cart</button>
+                </div>
+
+                <div class="wishlist-card">
+                    <div class="product-image">🛍️</div>
+                    <h3>Adidas Ultraboost</h3>
+                    <p class="price">$180.00</p>
+                    <button class="add-cart-btn">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="profile">
+            <div class="profile-card">
+                <h3>Profile Information</h3>
+                <p class="card-subtitle">Update your account details</p>
+                
+                <form class="profile-form">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" value="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" value="john@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" value="+1 234 567 8900">
+                    </div>
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="client-dashboard-script.js"></script>
+</body>
+</html>

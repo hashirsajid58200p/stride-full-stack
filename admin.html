@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - KICKZ</title>
+    <link rel="stylesheet" href="admin-styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">Admin Dashboard</h1>
+            <p class="subtitle">Manage your store and monitor performance</p>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                    <span class="stat-change">+12%</span>
+                </div>
+                <p class="stat-label">Total Orders</p>
+                <p class="stat-value">1,234</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                    <span class="stat-change">+8%</span>
+                </div>
+                <p class="stat-label">Revenue</p>
+                <p class="stat-value">$45,678</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                    <span class="stat-change">+3%</span>
+                </div>
+                <p class="stat-label">Products</p>
+                <p class="stat-value">156</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span class="stat-change">+15%</span>
+                </div>
+                <p class="stat-label">Customers</p>
+                <p class="stat-value">892</p>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="orders">Orders</button>
+            <button class="tab-btn" data-tab="products">Products</button>
+        </div>
+
+        <div class="tab-content active" id="orders">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title">Recent Orders</h2>
+                        <p class="card-subtitle">Monitor and manage customer purchases</p>
+                    </div>
+                    <div class="search-box">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <input type="text" placeholder="Search orders..." id="orderSearch">
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Product</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTable">
+                            <tr>
+                                <td class="font-medium">#ORD-001</td>
+                                <td>John Doe</td>
+                                <td>Air Max 270</td>
+                                <td class="font-semibold">$150</td>
+                                <td><span class="badge badge-delivered">Delivered</span></td>
+                                <td class="text-muted">2024-01-15</td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">#ORD-002</td>
+                                <td>Jane Smith</td>
+                                <td>Ultraboost 22</td>
+                                <td class="font-semibold">$180</td>
+                                <td><span class="badge badge-shipped">Shipped</span></td>
+                                <td class="text-muted">2024-01-14</td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">#ORD-003</td>
+                                <td>Mike Johnson</td>
+                                <td>Chuck Taylor</td>
+                                <td class="font-semibold">$65</td>
+                                <td><span class="badge badge-processing">Processing</span></td>
+                                <td class="text-muted">2024-01-14</td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">#ORD-004</td>
+                                <td>Sarah Williams</td>
+                                <td>Air Jordan 1</td>
+                                <td class="font-semibold">$170</td>
+                                <td><span class="badge badge-delivered">Delivered</span></td>
+                                <td class="text-muted">2024-01-13</td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">#ORD-005</td>
+                                <td>Tom Brown</td>
+                                <td>Yeezy Boost</td>
+                                <td class="font-semibold">$220</td>
+                                <td><span class="badge badge-shipped">Shipped</span></td>
+                                <td class="text-muted">2024-01-13</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="products">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title">Product Inventory</h2>
+                        <p class="card-subtitle">Manage your product catalog</p>
+                    </div>
+                    <button class="btn-primary">Add New Product</button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Brand</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-medium">Air Max 270</td>
+                                <td>Nike</td>
+                                <td class="font-semibold">$150</td>
+                                <td>45 units</td>
+                                <td>
+                                    <button class="btn-secondary">Edit</button>
+                                    <button class="btn-secondary">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">Ultraboost 22</td>
+                                <td>Adidas</td>
+                                <td class="font-semibold">$180</td>
+                                <td>32 units</td>
+                                <td>
+                                    <button class="btn-secondary">Edit</button>
+                                    <button class="btn-secondary">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">Chuck Taylor</td>
+                                <td>Converse</td>
+                                <td class="font-semibold">$65</td>
+                                <td>78 units</td>
+                                <td>
+                                    <button class="btn-secondary">Edit</button>
+                                    <button class="btn-secondary">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium">Air Jordan 1</td>
+                                <td>Nike</td>
+                                <td class="font-semibold">$170</td>
+                                <td class="stock-low">23 units</td>
+                                <td>
+                                    <button class="btn-secondary">Edit</button>
+                                    <button class="btn-secondary">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-script.js"></script>
+</body>
+</html>
