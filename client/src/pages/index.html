@@ -3,14 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KICKZ - Premium Footwear Collection</title>
+    <title>Stride - Premium Footwear Collection</title>
     <meta
       name="description"
       content="Discover authentic sneakers from Nike, Adidas, Jordan and more. Shop the latest collection of premium athletic footwear."
     />
 
-    <!-- Open Graph -->
-    <meta property="og:title" content="KICKZ - Premium Footwear Collection" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../public/images/logos/stride_logo_dark.png"
+    />
+
+    <meta property="og:title" content="Stride - Premium Footwear Collection" />
     <meta
       property="og:description"
       content="Discover authentic sneakers from Nike, Adidas, Jordan and more. Shop the latest collection of premium athletic footwear."
@@ -21,12 +26,15 @@
     <link rel="stylesheet" href="../styles/pages/index.css" />
   </head>
   <body>
-    <!-- Header will be injected here -->
     <div id="header-placeholder"></div>
 
-    <!-- Hero Section -->
     <section class="hero">
-      <div class="hero-bg"></div>
+      <video class="hero-video" autoplay muted loop playsinline>
+        <source
+          src="../../public/videos/hero_background.mp4"
+          type="video/mp4"
+        />
+      </video>
       <div class="container">
         <div class="hero-content">
           <h1 class="hero-title">
@@ -48,10 +56,8 @@
       <div class="hero-gradient"></div>
     </section>
 
-    <!-- Featured Products -->
     <section class="featured-products">
       <div class="container">
-        <!-- Section Header -->
         <div class="section-header">
           <h2 class="section-title">Featured Collection</h2>
           <p class="section-text">
@@ -59,7 +65,6 @@
           </p>
         </div>
 
-        <!-- Products Grid -->
         <div class="products-grid">
           <div class="product-card" style="animation-delay: 0ms">
             <div class="product-image">
@@ -202,17 +207,14 @@
           </div>
         </div>
 
-        <!-- View All Button -->
         <div class="view-all-container">
           <button class="btn-view-all">View All Products</button>
         </div>
       </div>
     </section>
 
-    <!-- Brand Showcase -->
     <section class="brand-showcase">
-      <div class="container">
-        <!-- Section Header -->
+      <div class="container-fluid">
         <div class="section-header">
           <h2 class="section-title">Shop by Brand</h2>
           <p class="section-text">
@@ -220,29 +222,447 @@
           </p>
         </div>
 
-        <!-- Brands Grid -->
-        <div class="brands-grid">
-          <div class="brand-card" style="animation-delay: 0ms">
-            <h3 class="brand-name">Nike</h3>
-            <p class="brand-tagline">Just Do It</p>
+        <div class="marquee-wrapper">
+          <div class="marquee-row reverse">
+            <div class="marquee-track">
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="Nike"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/adidas.png"
+                  alt="Adidas"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/puma.png"
+                  alt="Puma"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/reebok.png"
+                  alt="Reebok"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/underarmour.png"
+                  alt="Under Armour"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/newbalance.png"
+                  alt="New Balance"
+                  class="brand-icon"
+                />
+              </div>
+
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/skechers.png"
+                  alt="Skechers"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/converse.png"
+                  alt="Converse"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/vans.png"
+                  alt="Vans"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/jordan.png"
+                  alt="Jordan"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="Nike"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/adidas.png"
+                  alt="Adidas"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/puma.png"
+                  alt="Puma"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/reebok.png"
+                  alt="Reebok"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/underarmour.png"
+                  alt="Under Armour"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/newbalance.png"
+                  alt="New Balance"
+                  class="brand-icon"
+                />
+              </div>
+
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/skechers.png"
+                  alt="Skechers"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/converse.png"
+                  alt="Converse"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/vans.png"
+                  alt="Vans"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/jordan.png"
+                  alt="Jordan"
+                  class="brand-icon"
+                />
+              </div>
+            </div>
           </div>
-          <div class="brand-card" style="animation-delay: 100ms">
-            <h3 class="brand-name">Adidas</h3>
-            <p class="brand-tagline">Impossible is Nothing</p>
+
+          <div class="marquee-row normal">
+            <div class="marquee-track">
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/fila.png"
+                  alt="Fila"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/brooks.png"
+                  alt="Brooks"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/saucony.png"
+                  alt="Saucony"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/asics.png"
+                  alt="Asics"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/hokaoneone.png"
+                  alt="Hoka One One"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/columbia.png"
+                  alt="Columbia"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/thenorthface.png"
+                  alt="The North Face"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/salomon.png"
+                  alt="Salomon"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/merrell.png"
+                  alt="Merrell"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/timberland.png"
+                  alt="Timberland"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/fila.png"
+                  alt="Fila"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/brooks.png"
+                  alt="Brooks"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/saucony.png"
+                  alt="Saucony"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/asics.png"
+                  alt="Asics"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/hokaoneone.png"
+                  alt="Hoka One One"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/columbia.png"
+                  alt="Columbia"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/thenorthface.png"
+                  alt="The North Face"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/salomon.png"
+                  alt="Salomon"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/merrell.png"
+                  alt="Merrell"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/timberland.png"
+                  alt="Timberland"
+                  class="brand-icon"
+                />
+              </div>
+            </div>
           </div>
-          <div class="brand-card" style="animation-delay: 200ms">
-            <h3 class="brand-name">New Balance</h3>
-            <p class="brand-tagline">Fearlessly Independent</p>
-          </div>
-          <div class="brand-card" style="animation-delay: 300ms">
-            <h3 class="brand-name">Jordan</h3>
-            <p class="brand-tagline">Become Legendary</p>
+
+          <div class="marquee-row reverse">
+            <div class="marquee-track">
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="Ecco"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="K-Swiss"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="Champion"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="Lotto"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="Diadora"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="On Running"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="Altra"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="Vibram"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="Camper"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="Superga"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="Ecco"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="K-Swiss"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="Champion"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="Lotto"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="Diadora"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="On Running"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="Altra"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="Vibram"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="Camper"
+                  class="brand-icon"
+                />
+              </div>
+              <div class="brand-card-mini">
+                <img
+                  src="../../public/images/logos/brands/nike.png"
+                  alt="Superga"
+                  class="brand-icon"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Footer will be injected here -->
     <div id="footer-placeholder"></div>
 
     <script src="../scripts/main.js"></script>

@@ -9,18 +9,33 @@
   background: linear-gradient(135deg, #171717 0%, #333333 100%);
 }
 
+/* Hero Video Background */
 .hero-bg {
+  display: none; /* hide old image background */
+}
+
+.hero-video {
   position: absolute;
   inset: 0;
-  background-image: url("../../../public/images/hero-shoe.jpg");
-  background-size: cover;
-  background-position: center;
-  opacity: 0.4;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 1;
+}
+
+/* Dark overlay on video */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 2;
 }
 
 .hero-content {
   position: relative;
-  z-index: 10;
+  z-index: 3;
   text-align: center;
   padding: 2rem 0;
   animation: fadeIn 0.6s ease-out;
@@ -47,12 +62,14 @@
   margin: 0 auto 2rem;
 }
 
+/* Center buttons perfectly */
 .hero-buttons {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 1rem;
-  padding-top: 1rem;
+  margin-top: 1rem;
 }
 
 .btn {
@@ -244,48 +261,118 @@
   transform: scale(1.05);
 }
 
-/* Brand Showcase */
+/* =========================================
+   Brand Showcase (Infinite Marquee)
+   ========================================= */
+
 .brand-showcase {
   padding: 5rem 0;
   background: var(--color-secondary);
+  overflow: hidden; /* Hide scrollbars */
 }
 
-.brands-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
+/* Full width container for marquees */
+.container-fluid {
+  width: 100%;
+  padding: 0;
 }
 
-.brand-card {
-  background: white;
+.marquee-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+}
+
+.marquee-row {
+  display: flex;
+  width: 100%;
+  user-select: none;
+  padding: 0.5rem 0;
+}
+
+.marquee-track {
+  display: flex;
+  align-items: center;
+  gap: 2rem; /* Spacing between cards */
+  flex-shrink: 0;
+  width: max-content;
+  will-change: transform;
+}
+
+/* Animation Defintions */
+.marquee-row.normal .marquee-track {
+  animation: scroll-left 40s linear infinite;
+}
+
+.marquee-row.reverse .marquee-track {
+  animation: scroll-right 40s linear infinite;
+}
+
+/* Pause on hover for interaction */
+.marquee-row:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Marquee Keyframes */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(
+      -50%
+    ); /* Moves exactly half the track length (1 set of items) */
+  }
+}
+
+@keyframes scroll-right {
+  0% {
+    transform: translateX(-50%); /* Starts shifted left */
+  }
+  100% {
+    transform: translateX(0); /* Moves back to 0 */
+  }
+}
+
+/* Brand Card Mini Styling */
+.brand-card-mini {
+  background: var(--color-accent);
   border-radius: 1rem;
-  padding: 2rem;
-  text-align: center;
+  padding: 2.5rem 1rem;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: var(--transition-smooth);
-  cursor: pointer;
-  animation: scaleIn 0.5s ease-out;
-  animation-fill-mode: both;
 }
 
-.brand-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.15);
+.brand-card-mini:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.brand-name {
-  font-size: 1.875rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  transition: color 0.3s;
-}
-
-.brand-card:hover .brand-name {
-  color: var(--color-accent);
-}
-
-.brand-tagline {
-  font-size: 0.875rem;
-  color: var(--color-muted-fg);
+.brand-icon {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  transition: var(--transition-smooth);
 }
 
 /* Responsive Design */
@@ -302,9 +389,6 @@
   .products-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  .brands-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
 }
 
 @media (min-width: 1024px) {
@@ -319,5 +403,39 @@
 @media (min-width: 1280px) {
   .hero-title {
     font-size: 6rem;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
