@@ -75,5 +75,3 @@ const observer = new IntersectionObserver((entries) => {
 document.querySelectorAll(".product-card, .brand-card").forEach((el) => {
   observer.observe(el);
 });
-
-console.log("KICKZ Website Loaded Successfully! 🚀");
