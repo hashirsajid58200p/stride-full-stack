@@ -1,38 +1,64 @@
-// Accordion functionality
-const accordionHeaders = document.querySelectorAll('.accordion-header');
+document.addEventListener("DOMContentLoaded", () => {
+  // --- ACCORDION FUNCTIONALITY ---
+  const faqItems = document.querySelectorAll(".faq-item");
 
-accordionHeaders.forEach(header => {
-    header.addEventListener('click', () => {
-        const accordionItem = header.parentElement;
-        const isActive = accordionItem.classList.contains('active');
-        
-        // Close all accordion items
-        document.querySelectorAll('.accordion-item').forEach(item => {
-            item.classList.remove('active');
+  faqItems.forEach((item) => {
+    const header = item.querySelector(".faq-question-header");
+    const answer = item.querySelector(".faq-answer");
+    const icon = item.querySelector(".faq-toggle-icon");
+
+    header.addEventListener("click", () => {
+      const isActive = item.classList.contains("active");
+
+      // Close all other items
+      faqItems.forEach((otherItem) => {
+        if (otherItem !== item) {
+          otherItem.classList.remove("active");
+          otherItem.querySelector(".faq-answer").style.maxHeight = "0px";
+          const otherIcon = otherItem.querySelector(".faq-toggle-icon");
+          otherIcon.classList.remove("bi-dash-lg");
+          otherIcon.classList.add("bi-plus-lg");
+        }
+      });
+
+      // Toggle the clicked item
+      if (isActive) {
+        // Close it
+        item.classList.remove("active");
+        answer.style.maxHeight = "0px";
+        icon.classList.remove("bi-dash-lg");
+        icon.classList.add("bi-plus-lg");
+      } else {
+        // Open it
+        item.classList.add("active");
+        answer.style.maxHeight = answer.scrollHeight + "px";
+        icon.classList.remove("bi-plus-lg");
+        icon.classList.add("bi-dash-lg");
+      }
+    });
+  });
+
+  // --- SMOOTH SCROLLING FOR "JUMP TO SECTION" ---
+  document.querySelectorAll(".jump-link").forEach((anchor) => {
+    anchor.addEventListener("click", function (e) {
+      e.preventDefault();
+
+      // Remove active class from all links
+      document
+        .querySelectorAll(".jump-link")
+        .forEach((link) => link.classList.remove("active"));
+      // Add active class to clicked link
+      this.classList.add("active");
+
+      const targetId = this.getAttribute("href");
+      const targetElement = document.querySelector(targetId);
+
+      if (targetElement) {
+        // Smooth scroll to the target card
+        targetElement.scrollIntoView({
+          behavior: "smooth",
         });
-        
-        // Open clicked item if it wasn't active
-        if (!isActive) {
-            accordionItem.classList.add('active');
-        }
+      }
     });
-});
-
-// Search functionality
-const searchInput = document.getElementById('searchInput');
-const accordionItems = document.querySelectorAll('.accordion-item');
-
-searchInput.addEventListener('input', (e) => {
-    const searchTerm = e.target.value.toLowerCase();
-    
-    accordionItems.forEach(item => {
-        const question = item.querySelector('.accordion-header span').textContent.toLowerCase();
-        const answer = item.querySelector('.accordion-content p').textContent.toLowerCase();
-        
-        if (question.includes(searchTerm) || answer.includes(searchTerm)) {
-            item.style.display = 'block';
-        } else {
-            item.style.display = 'none';
-        }
-    });
+  });
 });
