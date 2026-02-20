@@ -7,7 +7,7 @@ addToCartButtons.forEach((button) => {
   button.addEventListener("click", (e) => {
     e.preventDefault();
     cartCount++;
-    cartBadge.textContent = cartCount;
+    if (cartBadge) cartBadge.textContent = cartCount;
 
     // Add animation feedback
     button.style.transform = "scale(1.2)";

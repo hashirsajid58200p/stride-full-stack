@@ -6,12 +6,27 @@
   right: 0;
   z-index: 1000;
 
-  /* Acrylic / glass effect */
-  background: rgba(255, 255, 255, 0.25); /* semi-transparent */
+  /* Explicitly use background-color mapped to CSS variables */
+  background-color: var(--nav-bg-transparent);
+
+  /* Standard beautiful blur effect */
   backdrop-filter: blur(20px) saturate(150%);
   -webkit-backdrop-filter: blur(20px) saturate(150%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3); /* subtle border */
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05); /* subtle shadow for depth */
+
+  border-bottom: 1px solid var(--nav-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+
+  /* Transition all properties smoothly */
+  transition:
+    background-color 0.4s ease,
+    box-shadow 0.4s ease,
+    border-color 0.4s ease;
+}
+
+/* Applied dynamically via JavaScript on scroll */
+.navbar.scrolled {
+  background-color: var(--nav-bg-solid);
+  box-shadow: var(--nav-shadow);
 }
 
 .nav-content {
@@ -63,7 +78,7 @@
   transition: color 0.3s;
   text-decoration: none;
   color: var(--color-primary);
-  text-transform: uppercase; /* make links uppercase */
+  text-transform: uppercase;
 }
 
 .nav-links a:hover {
@@ -86,12 +101,13 @@
   border-radius: 8px;
   transition: background-color 0.3s;
   cursor: pointer;
-  font-size: 18px; /* increased size for bolder icons */
+  font-size: 18px;
+  color: var(--color-fg);
 }
 
 .icon-btn i {
-  font-size: 1.2rem; /* slightly bigger icons */
-  font-weight: 600; /* bolder look */
+  font-size: 1.2rem;
+  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -145,10 +161,4 @@
   .mobile-menu-btn {
     display: none;
   }
-}
-
-/* Hover effects for account and theme buttons */
-.account-btn:hover,
-.theme-toggle-btn:hover {
-  background-color: var(--color-secondary);
 }

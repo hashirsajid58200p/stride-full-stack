@@ -45,7 +45,7 @@
   font-size: 3rem;
   font-weight: 700;
   letter-spacing: -0.03em;
-  color: var(--color-primary-fg);
+  color: #fafafa; /* Hardcoded light so it stays readable on the video */
   line-height: 1.1;
   margin-bottom: 1.5rem;
 }
@@ -97,7 +97,7 @@
 
 .btn-outline {
   border: 2px solid rgba(250, 250, 250, 0.2);
-  color: var(--color-primary-fg);
+  color: #fafafa; /* Hardcoded light for video bg visibility */
 }
 
 .btn-outline:hover {
@@ -186,7 +186,8 @@
 }
 
 .product-card {
-  background: white;
+  background: var(--color-bg); /* Use dynamic background */
+  border: 1px solid var(--color-border); /* Added border to separate from body */
   border-radius: 1rem;
   overflow: hidden;
   transition: var(--transition-smooth);
@@ -487,7 +488,8 @@
 
 .testimonial-card {
   flex: 0 0 calc(100% - 2rem);
-  background: white;
+  background: var(--color-bg); /* Use dynamic background */
+  border: 1px solid var(--color-border); /* Added border to separate from body */
   padding: 2.5rem 1.5rem;
   display: flex;
   flex-direction: column;
