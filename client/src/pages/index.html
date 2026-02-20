@@ -32,6 +32,7 @@
   </head>
   <body>
     <div id="header-placeholder"></div>
+    <div id="cart-placeholder"></div>
 
     <section class="hero">
       <video class="hero-video" autoplay muted loop playsinline>
@@ -68,20 +69,6 @@
           <a href="#">Live Now</a>
           <a href="#">Shop Men</a>
           <a href="#">Shop Women</a>
-          <a href="#">New Arrivals</a>
-          <a href="#">Live Now</a>
-          <a href="#">Shop Men</a>
-          <a href="#">Shop Women</a>
-        </div>
-        <div class="hero-marquee-content" aria-hidden="true">
-          <a href="#">New Arrivals</a>
-          <a href="#">Live Now</a>
-          <a href="#">Shop Men</a>
-          <a href="#">Shop Women</a>
-          <a href="#">New Arrivals</a>
-          <a href="#">Live Now</a>
-          <a href="#">Shop Men</a>
-          <a href="#">Shop Women</a>
         </div>
       </div>
     </div>
@@ -98,34 +85,53 @@
         <div class="products-grid">
           <div class="product-card" style="animation-delay: 0ms">
             <div class="product-image">
-              <img src="../../public/images/shoe-1.jpg" alt="Air Max Fusion" />
+              <div class="badge-container">
+                <span class="badge-tag">Men</span>
+                <span class="badge-new">New Arrival</span>
+              </div>
+              <img
+                src="../../public/images/shoe-1.jpg"
+                alt="Nike Air Max Fusion"
+              />
               <div class="product-overlay"></div>
             </div>
             <div class="product-content">
               <div class="product-info">
-                <p class="product-brand">NIKE</p>
-                <h3 class="product-name">Air Max Fusion</h3>
-              </div>
-              <div class="product-footer">
-                <p class="product-price">$149.99</p>
-                <button class="add-to-cart" aria-label="Add to cart">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                <div class="product-header">
+                  <h3 class="product-name">Nike Air Max Fusion</h3>
+                  <button
+                    class="action-btn-wishlist"
+                    aria-label="Add to wishlist"
+                    title="Wishlist"
                   >
-                    <circle cx="8" cy="21" r="1"></circle>
-                    <circle cx="19" cy="21" r="1"></circle>
-                    <path
-                      d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"
-                    ></path>
-                  </svg>
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+                <div class="product-stars">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-half"></i>
+                  <span class="review-count">(128)</span>
+                </div>
+                <p class="product-price">$149.99</p>
+              </div>
+              <div class="product-actions">
+                <a
+                  href="checkout.html"
+                  class="action-btn-buy"
+                  aria-label="Buy Now"
+                  title="Buy Now"
+                >
+                  Buy Now
+                </a>
+                <button
+                  class="action-btn-cart add-to-cart"
+                  aria-label="Add to cart"
+                  title="Add to Cart"
+                >
+                  Add to Cart
                 </button>
               </div>
             </div>
@@ -133,34 +139,52 @@
 
           <div class="product-card" style="animation-delay: 100ms">
             <div class="product-image">
-              <img src="../../public/images/shoe-2.jpg" alt="Ultraboost 23" />
+              <div class="badge-container">
+                <span class="badge-tag">Women</span>
+              </div>
+              <img
+                src="../../public/images/shoe-2.jpg"
+                alt="Adidas Ultraboost 23"
+              />
               <div class="product-overlay"></div>
             </div>
             <div class="product-content">
               <div class="product-info">
-                <p class="product-brand">ADIDAS</p>
-                <h3 class="product-name">Ultraboost 23</h3>
-              </div>
-              <div class="product-footer">
-                <p class="product-price">$179.99</p>
-                <button class="add-to-cart" aria-label="Add to cart">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                <div class="product-header">
+                  <h3 class="product-name">Adidas Ultraboost 23</h3>
+                  <button
+                    class="action-btn-wishlist"
+                    aria-label="Add to wishlist"
+                    title="Wishlist"
                   >
-                    <circle cx="8" cy="21" r="1"></circle>
-                    <circle cx="19" cy="21" r="1"></circle>
-                    <path
-                      d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"
-                    ></path>
-                  </svg>
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+                <div class="product-stars">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <span class="review-count">(245)</span>
+                </div>
+                <p class="product-price">$179.99</p>
+              </div>
+              <div class="product-actions">
+                <a
+                  href="checkout.html"
+                  class="action-btn-buy"
+                  aria-label="Buy Now"
+                  title="Buy Now"
+                >
+                  Buy Now
+                </a>
+                <button
+                  class="action-btn-cart add-to-cart"
+                  aria-label="Add to cart"
+                  title="Add to Cart"
+                >
+                  Add to Cart
                 </button>
               </div>
             </div>
@@ -168,34 +192,53 @@
 
           <div class="product-card" style="animation-delay: 200ms">
             <div class="product-image">
-              <img src="../../public/images/shoe-3.jpg" alt="Jordan Legacy" />
+              <div class="badge-container">
+                <span class="badge-tag">Unisex</span>
+                <span class="badge-new">New Arrival</span>
+              </div>
+              <img
+                src="../../public/images/shoe-3.jpg"
+                alt="Nike Jordan Legacy"
+              />
               <div class="product-overlay"></div>
             </div>
             <div class="product-content">
               <div class="product-info">
-                <p class="product-brand">NIKE</p>
-                <h3 class="product-name">Jordan Legacy</h3>
-              </div>
-              <div class="product-footer">
-                <p class="product-price">$199.99</p>
-                <button class="add-to-cart" aria-label="Add to cart">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                <div class="product-header">
+                  <h3 class="product-name">Nike Jordan Legacy</h3>
+                  <button
+                    class="action-btn-wishlist"
+                    aria-label="Add to wishlist"
+                    title="Wishlist"
                   >
-                    <circle cx="8" cy="21" r="1"></circle>
-                    <circle cx="19" cy="21" r="1"></circle>
-                    <path
-                      d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"
-                    ></path>
-                  </svg>
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+                <div class="product-stars">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star"></i>
+                  <span class="review-count">(89)</span>
+                </div>
+                <p class="product-price">$199.99</p>
+              </div>
+              <div class="product-actions">
+                <a
+                  href="checkout.html"
+                  class="action-btn-buy"
+                  aria-label="Buy Now"
+                  title="Buy Now"
+                >
+                  Buy Now
+                </a>
+                <button
+                  class="action-btn-cart add-to-cart"
+                  aria-label="Add to cart"
+                  title="Add to Cart"
+                >
+                  Add to Cart
                 </button>
               </div>
             </div>
@@ -203,34 +246,153 @@
 
           <div class="product-card" style="animation-delay: 300ms">
             <div class="product-image">
-              <img src="../../public/images/shoe-4.jpg" alt="550 Classic" />
+              <div class="badge-container">
+                <span class="badge-tag">Men</span>
+              </div>
+              <img
+                src="../../public/images/shoe-4.jpg"
+                alt="New Balance 550 Classic"
+              />
               <div class="product-overlay"></div>
             </div>
             <div class="product-content">
               <div class="product-info">
-                <p class="product-brand">NEW BALANCE</p>
-                <h3 class="product-name">550 Classic</h3>
-              </div>
-              <div class="product-footer">
-                <p class="product-price">$129.99</p>
-                <button class="add-to-cart" aria-label="Add to cart">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                <div class="product-header">
+                  <h3 class="product-name">New Balance 550 Classic</h3>
+                  <button
+                    class="action-btn-wishlist"
+                    aria-label="Add to wishlist"
+                    title="Wishlist"
                   >
-                    <circle cx="8" cy="21" r="1"></circle>
-                    <circle cx="19" cy="21" r="1"></circle>
-                    <path
-                      d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"
-                    ></path>
-                  </svg>
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+                <div class="product-stars">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-half"></i>
+                  <span class="review-count">(312)</span>
+                </div>
+                <p class="product-price">$129.99</p>
+              </div>
+              <div class="product-actions">
+                <a
+                  href="checkout.html"
+                  class="action-btn-buy"
+                  aria-label="Buy Now"
+                  title="Buy Now"
+                >
+                  Buy Now
+                </a>
+                <button
+                  class="action-btn-cart add-to-cart"
+                  aria-label="Add to cart"
+                  title="Add to Cart"
+                >
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="product-card" style="animation-delay: 400ms">
+            <div class="product-image">
+              <div class="badge-container">
+                <span class="badge-tag">Women</span>
+              </div>
+              <img src="../../public/images/shoe-5.jpg" alt="Puma RS-X Tech" />
+              <div class="product-overlay"></div>
+            </div>
+            <div class="product-content">
+              <div class="product-info">
+                <div class="product-header">
+                  <h3 class="product-name">Puma RS-X Tech</h3>
+                  <button
+                    class="action-btn-wishlist"
+                    aria-label="Add to wishlist"
+                    title="Wishlist"
+                  >
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+                <div class="product-stars">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star"></i>
+                  <span class="review-count">(156)</span>
+                </div>
+                <p class="product-price">$119.99</p>
+              </div>
+              <div class="product-actions">
+                <a
+                  href="checkout.html"
+                  class="action-btn-buy"
+                  aria-label="Buy Now"
+                  title="Buy Now"
+                >
+                  Buy Now
+                </a>
+                <button
+                  class="action-btn-cart add-to-cart"
+                  aria-label="Add to cart"
+                  title="Add to Cart"
+                >
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="product-card" style="animation-delay: 500ms">
+            <div class="product-image">
+              <div class="badge-container">
+                <span class="badge-tag">Unisex</span>
+                <span class="badge-new">New Arrival</span>
+              </div>
+              <img src="../../public/images/shoe-6.jpg" alt="Nike Dunk Low" />
+              <div class="product-overlay"></div>
+            </div>
+            <div class="product-content">
+              <div class="product-info">
+                <div class="product-header">
+                  <h3 class="product-name">Nike Dunk Low</h3>
+                  <button
+                    class="action-btn-wishlist"
+                    aria-label="Add to wishlist"
+                    title="Wishlist"
+                  >
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>
+                <div class="product-stars">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <span class="review-count">(892)</span>
+                </div>
+                <p class="product-price">$159.99</p>
+              </div>
+              <div class="product-actions">
+                <a
+                  href="checkout.html"
+                  class="action-btn-buy"
+                  aria-label="Buy Now"
+                  title="Buy Now"
+                >
+                  Buy Now
+                </a>
+                <button
+                  class="action-btn-cart add-to-cart"
+                  aria-label="Add to cart"
+                  title="Add to Cart"
+                >
+                  Add to Cart
                 </button>
               </div>
             </div>
@@ -246,18 +408,6 @@
     <section class="text-marquee">
       <div class="text-marquee-track">
         <div class="text-marquee-content">
-          <span>BUY NOW PAY LATER</span>
-          <span>FREE SHIPPING ON ALL ORDERS</span>
-          <span>BUY NOW PAY LATER</span>
-          <span>FREE SHIPPING ON ALL ORDERS</span>
-          <span>BUY NOW PAY LATER</span>
-          <span>FREE SHIPPING ON ALL ORDERS</span>
-        </div>
-        <div class="text-marquee-content" aria-hidden="true">
-          <span>BUY NOW PAY LATER</span>
-          <span>FREE SHIPPING ON ALL ORDERS</span>
-          <span>BUY NOW PAY LATER</span>
-          <span>FREE SHIPPING ON ALL ORDERS</span>
           <span>BUY NOW PAY LATER</span>
           <span>FREE SHIPPING ON ALL ORDERS</span>
         </div>
@@ -276,76 +426,6 @@
         <div class="marquee-wrapper">
           <div class="marquee-row reverse">
             <div class="marquee-track">
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/nike.png"
-                  alt="Nike"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/adidas.png"
-                  alt="Adidas"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/puma.png"
-                  alt="Puma"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/reebok.png"
-                  alt="Reebok"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/underarmour.png"
-                  alt="Under Armour"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/newbalance.png"
-                  alt="New Balance"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/onrunning.png"
-                  alt="On Running"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/converse.png"
-                  alt="Converse"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/vans.png"
-                  alt="Vans"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/jordan.png"
-                  alt="Jordan"
-                  class="brand-icon"
-                />
-              </div>
               <div class="brand-card-mini">
                 <img
                   src="../../public/images/logos/brands/nike.png"
@@ -491,151 +571,11 @@
                   class="brand-icon"
                 />
               </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/fila.png"
-                  alt="Fila"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/brooks.png"
-                  alt="Brooks"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/saucony.png"
-                  alt="Saucony"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/asics.png"
-                  alt="Asics"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/hokaoneone.png"
-                  alt="Hoka One One"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/columbia.png"
-                  alt="Columbia"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/thenorthface.png"
-                  alt="The North Face"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/salomon.png"
-                  alt="Salomon"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/merrell.png"
-                  alt="Merrell"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/timberland.png"
-                  alt="Timberland"
-                  class="brand-icon"
-                />
-              </div>
             </div>
           </div>
 
           <div class="marquee-row reverse">
             <div class="marquee-track">
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/ecco.png"
-                  alt="Ecco"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/kswiss.png"
-                  alt="K-Swiss"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/champion.png"
-                  alt="Champion"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/lotto.png"
-                  alt="Lotto"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/diadora.png"
-                  alt="Diadora"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/mizuno.png"
-                  alt="Mizuno"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/altra.png"
-                  alt="Altra"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/vibram.png"
-                  alt="Vibram"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/camper.png"
-                  alt="Camper"
-                  class="brand-icon"
-                />
-              </div>
-              <div class="brand-card-mini">
-                <img
-                  src="../../public/images/logos/brands/superga.png"
-                  alt="Superga"
-                  class="brand-icon"
-                />
-              </div>
               <div class="brand-card-mini">
                 <img
                   src="../../public/images/logos/brands/ecco.png"
@@ -714,7 +654,7 @@
 
     <section class="testimonials">
       <div class="container">
-        <h2 class="section-title testimonials-title">HAPPY CUSTOMERS</h2>
+        <h2 class="section-title testimonials-title">Happy Customers</h2>
         <div class="carousel-wrapper">
           <button class="carousel-btn prev" aria-label="Previous">
             <svg
@@ -734,31 +674,11 @@
           <div class="carousel-track" id="testimonial-track">
             <div class="testimonial-card">
               <div class="stars">
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
               </div>
               <p class="review-text">
                 Very comfortable and perfect for everyday wear. Great quality
@@ -768,31 +688,11 @@
 
             <div class="testimonial-card">
               <div class="stars">
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
               </div>
               <p class="review-text">Perfect mix of casual and formal</p>
               <p class="customer-name">HAMDAAN</p>
@@ -800,31 +700,11 @@
 
             <div class="testimonial-card">
               <div class="stars">
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
               </div>
               <p class="review-text">
                 I wear them every day to work. Still feel like new
@@ -834,31 +714,11 @@
 
             <div class="testimonial-card">
               <div class="stars">
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
               </div>
               <p class="review-text">Great value for money</p>
               <p class="customer-name">ZUNAIR KHAN</p>
@@ -866,31 +726,11 @@
 
             <div class="testimonial-card">
               <div class="stars">
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
               </div>
               <p class="review-text">
                 Perfect for office and casual wear. I'm really happy with the
@@ -901,31 +741,11 @@
 
             <div class="testimonial-card">
               <div class="stars">
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
               </div>
               <p class="review-text">
                 Didn't expect this level of comfort. Really impressed
@@ -935,31 +755,11 @@
 
             <div class="testimonial-card">
               <div class="stars">
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
               </div>
               <p class="review-text">
                 Hushpuppies never disappoint. This pair is my new favorite
@@ -989,8 +789,8 @@
     <section class="newsletter">
       <div class="container">
         <div class="newsletter-content">
-          <p class="newsletter-intro">KEEP ME UPDATED</p>
-          <h2 class="newsletter-title">NEWSLETTER</h2>
+          <p class="newsletter-intro">Keep me updated</p>
+          <h2 class="newsletter-title">Newsletter</h2>
           <p class="newsletter-text">
             Receive exclusive promotions, private sales and news
           </p>
