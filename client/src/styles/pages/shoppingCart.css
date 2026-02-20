@@ -1,0 +1,352 @@
+/* =========================================
+   Shopping Cart Page Styles
+   ========================================= */
+
+.shopping-cart-page {
+  padding-top: 64px; /* Account for fixed header */
+  min-height: 80vh;
+  background-color: var(--color-bg);
+  padding-bottom: 4rem;
+}
+
+/* Page Banner - Grey background removed */
+.page-banner {
+  padding: 4rem 1rem 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.page-banner h2 {
+  color: var(--color-fg);
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+/* Empty State */
+.cart-page-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 1rem;
+  gap: 1.5rem;
+}
+
+.cart-page-empty i {
+  font-size: 5rem;
+  color: var(--color-fg);
+}
+
+.cart-page-empty h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-fg);
+}
+
+.cart-page-empty p {
+  color: var(--color-muted-fg);
+  line-height: 1.6;
+  max-width: 600px;
+}
+
+.return-shop-btn {
+  background-color: #1f1f1f;
+  color: #fff;
+  padding: 1rem 2.5rem;
+  border-radius: 999px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-top: 1rem;
+  transition: var(--transition-smooth);
+}
+
+.return-shop-btn:hover {
+  background-color: var(--color-accent);
+}
+
+/* Filled State Table Header */
+.cart-table-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--color-fg);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  color: var(--color-fg);
+  margin-bottom: 2rem;
+}
+
+/* Cart Item Row */
+.cart-page-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  align-items: center;
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.col-product-wrap {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.col-product-wrap img {
+  width: 120px;
+  height: 150px;
+  object-fit: cover;
+  background-color: var(--color-secondary);
+  border-radius: 8px; /* Added rounded corners to images */
+}
+
+.product-info h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-fg);
+  margin-bottom: 0.25rem;
+}
+
+.product-info p {
+  font-size: 0.85rem;
+  color: var(--color-muted-fg);
+  margin-bottom: 0.75rem;
+}
+
+.product-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.product-actions button {
+  color: var(--color-muted-fg);
+  font-size: 1.2rem;
+  transition: color 0.2s;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.product-actions button:hover {
+  color: var(--color-accent);
+}
+
+.col-price-wrap {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.price-old {
+  text-decoration: line-through;
+  color: var(--color-muted-fg);
+  font-size: 0.9rem;
+}
+
+.price-new {
+  color: #e53935;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.col-qty-wrap .quantity-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  width: 120px;
+  height: 40px;
+  padding: 0 1rem;
+}
+
+.qty-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-fg);
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: color 0.2s;
+}
+
+.qty-btn:hover {
+  color: var(--color-accent);
+}
+
+.qty-value {
+  font-weight: 600;
+  color: var(--color-fg);
+}
+
+.col-total-wrap {
+  font-weight: 600;
+  color: var(--color-fg);
+}
+
+/* Bottom Section */
+.cart-bottom-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 4rem;
+  margin-top: 2rem;
+}
+
+.cart-notes-coupon {
+  flex: 1;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.order-note label,
+.coupon-section label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-fg);
+}
+
+.order-note textarea {
+  width: 100%;
+  height: 100px;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px; /* Rounded corners */
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  resize: none;
+  font-family: inherit;
+}
+
+.order-note textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.coupon-hint {
+  font-size: 0.85rem;
+  color: var(--color-muted-fg);
+  margin-bottom: 1rem;
+}
+
+.coupon-input-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.coupon-input-group input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px; /* Rounded corners */
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+}
+
+.coupon-input-group input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.btn-apply {
+  background-color: var(--color-primary);
+  color: var(--color-primary-fg);
+  padding: 0 1.5rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px; /* Rounded corners */
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-apply:hover {
+  opacity: 0.9;
+}
+
+.coupon-message {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.coupon-message.success {
+  color: #10b981;
+}
+.coupon-message.error {
+  color: #e53935;
+}
+
+/* Totals Section */
+.cart-totals {
+  flex: 0 0 350px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.subtotal-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.subtotal-row .label {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-fg);
+}
+
+.subtotal-row .value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--color-fg);
+}
+
+.checkout-btn {
+  width: 100%;
+  padding: 1rem;
+  background-color: #1f1f1f;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.checkout-btn:hover {
+  background-color: var(--color-accent);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .cart-table-header {
+    display: none;
+  }
+  .cart-page-item {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .col-price-wrap,
+  .col-qty-wrap,
+  .col-total-wrap {
+    justify-content: flex-start;
+  }
+  .cart-bottom-section {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .cart-notes-coupon,
+  .cart-totals {
+    width: 100%;
+    max-width: 100%;
+  }
+}

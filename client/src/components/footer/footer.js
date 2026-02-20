@@ -1,25 +1,3 @@
-// Add to Cart Functionality
-let cartCount = 0;
-const cartBadge = document.querySelector(".cart-badge");
-const addToCartButtons = document.querySelectorAll(".add-to-cart");
-
-addToCartButtons.forEach((button) => {
-  button.addEventListener("click", (e) => {
-    e.preventDefault();
-    cartCount++;
-    if (cartBadge) cartBadge.textContent = cartCount;
-
-    // Add animation feedback
-    button.style.transform = "scale(1.2)";
-    setTimeout(() => {
-      button.style.transform = "";
-    }, 200);
-
-    // Optional: Show toast notification
-    showToast("Added to cart!");
-  });
-});
-
 // Toast Notification Function
 function showToast(message) {
   // Remove existing toast if any

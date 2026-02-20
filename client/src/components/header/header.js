@@ -69,4 +69,55 @@ function initHeader() {
         logoImg.src = "../../public/images/logos/stride_logo_dark.png";
     }
   });
+
+  // ==========================================
+  // Account Dropdown & Auth Logic
+  // ==========================================
+  const accountBtn = document.querySelector(".account-btn");
+  const accountDropdown = document.getElementById("accountDropdown");
+  const dashboardLink = document.getElementById("dashboardLink");
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  if (accountBtn) {
+    accountBtn.addEventListener("click", (e) => {
+      e.stopPropagation(); // Prevent document click from immediately closing it
+
+      // Check if user is logged in
+      const userRole = localStorage.getItem("userRole");
+
+      if (!userRole) {
+        // Not logged in: Redirect to login
+        window.location.href = "login.html";
+      } else {
+        // Logged in: Toggle Dropdown
+        accountDropdown.classList.toggle("show");
+
+        // Dynamically set Dashboard route
+        if (userRole === "admin") {
+          dashboardLink.href = "adminDashboard.html";
+        } else {
+          dashboardLink.href = "clientDashboard.html";
+        }
+      }
+    });
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener("click", (e) => {
+    if (accountDropdown && accountDropdown.classList.contains("show")) {
+      if (!e.target.closest(".account-container")) {
+        accountDropdown.classList.remove("show");
+      }
+    }
+  });
+
+  // Logout Logic
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.removeItem("userRole");
+      // Redirect to home or login page after logout
+      window.location.href = "login.html";
+    });
+  }
 }

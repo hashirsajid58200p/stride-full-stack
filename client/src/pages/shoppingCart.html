@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopping Cart - Stride</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../public/images/logos/stride_logo_dark.png"
+    />
+
+    <link rel="stylesheet" href="../styles/root.css" />
+    <link rel="stylesheet" href="../styles/pages/shoppingCart.css" />
+  </head>
+  <body>
+    <div id="header-placeholder"></div>
+    <div id="cart-placeholder"></div>
+
+    <main class="shopping-cart-page">
+      <div class="page-banner">
+        <h2>SHOPPING CART</h2>
+      </div>
+
+      <div class="container">
+        <div class="cart-page-empty" id="cartPageEmpty" style="display: none">
+          <i class="bi bi-cart-x"></i>
+          <h3>YOUR CART IS EMPTY.</h3>
+          <p>
+            Before proceed to checkout you must add some products to your
+            shopping cart.<br />You will find a lot of interesting products on
+            our "Shop" page.
+          </p>
+          <a href="products.html" class="btn btn-primary return-shop-btn"
+            >RETURN TO SHOP</a
+          >
+        </div>
+
+        <div class="cart-page-filled" id="cartPageFilled">
+          <div class="cart-table-header">
+            <div class="col-product">PRODUCT</div>
+            <div class="col-price">PRICE</div>
+            <div class="col-qty">QUANTITY</div>
+            <div class="col-total">TOTAL</div>
+          </div>
+
+          <div class="cart-page-items" id="cartPageItemsContainer"></div>
+
+          <div class="cart-bottom-section">
+            <div class="cart-notes-coupon">
+              <div class="order-note">
+                <label for="orderNote">Add Order Note</label>
+                <textarea
+                  id="orderNote"
+                  placeholder="How can we help you?"
+                ></textarea>
+              </div>
+              <div class="coupon-section">
+                <label for="pageCouponCode">Coupon:</label>
+                <p class="coupon-hint">
+                  Coupon code will work on checkout page (Try "STRIDE10")
+                </p>
+                <div class="coupon-input-group">
+                  <input
+                    type="text"
+                    id="pageCouponCode"
+                    placeholder="Coupon code"
+                  />
+                  <button id="applyPageCouponBtn" class="btn-apply">
+                    Apply
+                  </button>
+                </div>
+                <p id="pageCouponMessage" class="coupon-message"></p>
+              </div>
+            </div>
+
+            <div class="cart-totals">
+              <div class="subtotal-row">
+                <span class="label">SUBTOTAL:</span>
+                <span class="value" id="pageSubtotalValue">Rs.0.00 PKR</span>
+              </div>
+              <button class="btn btn-primary checkout-btn">Check Out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../scripts/main.js"></script>
+    <script src="../scripts/pages/shoppingCart.js"></script>
+  </body>
+</html>

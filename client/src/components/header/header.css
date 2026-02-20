@@ -6,24 +6,19 @@
   right: 0;
   z-index: 1000;
 
-  /* Explicitly use background-color mapped to CSS variables */
   background-color: var(--nav-bg-transparent);
-
-  /* Standard beautiful blur effect */
   backdrop-filter: blur(20px) saturate(150%);
   -webkit-backdrop-filter: blur(20px) saturate(150%);
 
   border-bottom: 1px solid var(--nav-border);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
 
-  /* Transition all properties smoothly */
   transition:
     background-color 0.4s ease,
     box-shadow 0.4s ease,
     border-color 0.4s ease;
 }
 
-/* Applied dynamically via JavaScript on scroll */
 .navbar.scrolled {
   background-color: var(--nav-bg-solid);
   box-shadow: var(--nav-shadow);
@@ -42,14 +37,12 @@
   gap: 2rem;
 }
 
-/* Logo text (if used) */
 .logo {
   font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
-/* Logo image */
 .logo-link {
   display: flex;
   align-items: center;
@@ -60,7 +53,6 @@
   width: auto;
 }
 
-/* Center navigation */
 .nav-center {
   flex: 1;
   display: flex;
@@ -85,7 +77,6 @@
   color: var(--color-accent);
 }
 
-/* Right side buttons */
 .nav-right {
   display: flex;
   align-items: center;
@@ -117,7 +108,6 @@
   background-color: var(--color-secondary);
 }
 
-/* Cart button with badge */
 .cart-btn {
   position: relative;
 }
@@ -137,20 +127,75 @@
   border-radius: 50%;
 }
 
-/* Account and Theme buttons */
-.account-btn,
-.theme-toggle-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Mobile menu button */
 .mobile-menu-btn {
   display: flex;
+}
+
+/* =========================================
+   Account Dropdown Styles
+   ========================================= */
+.account-container {
+  position: relative;
+}
+
+.account-dropdown {
+  position: absolute;
+  top: 130%;
+  right: 0;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: var(--transition-smooth);
+}
+
+.account-dropdown.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: var(--color-fg);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 8px;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: var(--color-secondary);
+  color: var(--color-accent);
+}
+
+.dropdown-item i {
+  font-size: 1.1rem;
+  color: var(--color-muted-fg);
+  transition: color 0.2s ease;
+}
+
+.dropdown-item:hover i {
+  color: var(--color-accent);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: 0.5rem 0;
 }
 
 /* Responsive Design */

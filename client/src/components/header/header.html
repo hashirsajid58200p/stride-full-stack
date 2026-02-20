@@ -40,9 +40,24 @@
           <span class="cart-badge">0</span>
         </button>
 
-        <button class="icon-btn account-btn" aria-label="Account">
-          <i class="bi bi-person-circle"></i>
-        </button>
+        <div class="account-container">
+          <button class="icon-btn account-btn" aria-label="Account">
+            <i class="bi bi-person"></i>
+          </button>
+
+          <div class="account-dropdown" id="accountDropdown">
+            <a href="#" id="dashboardLink" class="dropdown-item">
+              <i class="bi bi-grid-1x2"></i> Dashboard
+            </a>
+            <a href="#" class="dropdown-item">
+              <i class="bi bi-person"></i> Account
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" id="logoutBtn" class="dropdown-item">
+              <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </div>

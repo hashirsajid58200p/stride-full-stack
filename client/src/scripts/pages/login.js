@@ -1,15 +1,27 @@
 document.getElementById("loginForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
-  const email = document.getElementById("email").value;
+  const email = document.getElementById("email").value.toLowerCase();
   const password = document.getElementById("password").value;
 
-  showToast("Logged in successfully!", "success");
+  // Simulate backend auth logic for demo purposes
+  if (email.includes("admin")) {
+    // Logged in as Admin
+    localStorage.setItem("userRole", "admin");
+    showToast("Admin logged in successfully!", "success");
 
-  // Redirect after 2 seconds
-  setTimeout(() => {
-    window.location.href = "client-dashboard.html";
-  }, 2000);
+    setTimeout(() => {
+      window.location.href = "adminDashboard.html";
+    }, 2000);
+  } else {
+    // Logged in as Client
+    localStorage.setItem("userRole", "client");
+    showToast("Logged in successfully!", "success");
+
+    setTimeout(() => {
+      window.location.href = "clientDashboard.html";
+    }, 2000);
+  }
 });
 
 function showToast(message, type) {
