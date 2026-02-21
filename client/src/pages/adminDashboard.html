@@ -6,29 +6,28 @@
     <title>Admin Dashboard - Stride</title>
     
     <link
+      rel="icon"
+      type="image/png"
+      href="../../public/images/logos/stride_logo_dark.png"
+    />
+
+    <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
-    />
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
     />
 
     <link rel="stylesheet" href="../styles/root.css" />
     <link rel="stylesheet" href="../styles/pages/adminDashboard.css" />
   </head>
   <body>
+    <div id="cart-placeholder"></div>
     
     <div class="admin-layout">
       <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-          <h2 class="sidebar-logo">
-            <i class="bi bi-hexagon-fill logo-icon"></i>
-            Stride Admin
-          </h2>
+          <a href="index.html" class="sidebar-logo">
+            <img src="../../public/images/logos/stride_logo_light.png" alt="Stride" class="sidebar-logo-img" id="sidebar-logo" />
+          </a>
           <button class="mobile-close-btn" id="closeSidebar">
             <i class="bi bi-x-lg"></i>
           </button>
@@ -38,9 +37,8 @@
           <ul class="nav-list">
             <li class="nav-item">
               <a href="#" class="nav-link active" data-target="dashboard">
-                <i class="bi bi-house-door"></i>
+                <i class="bi bi-speedometer2"></i>
                 <span>Dashboard</span>
-                <i class="bi bi-chevron-right ms-auto"></i>
               </a>
             </li>
             <li class="nav-item">
@@ -75,8 +73,14 @@
             </li>
             <li class="nav-item">
               <a href="#" class="nav-link" data-target="customers">
-                <i class="bi bi-person"></i>
+                <i class="bi bi-people"></i>
                 <span>Customers</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" data-target="profile">
+                <i class="bi bi-person-lines-fill"></i>
+                <span>Personal Info</span>
               </a>
             </li>
           </ul>
@@ -84,9 +88,9 @@
           <div class="nav-bottom">
             <ul class="nav-list">
               <li class="nav-item">
-                <a href="#" class="nav-link" data-target="settings">
-                  <i class="bi bi-sliders"></i>
-                  <span>Settings</span>
+                <a href="index.html" class="nav-link text-danger-hover">
+                  <i class="bi bi-box-arrow-right"></i>
+                  <span>Logout</span>
                 </a>
               </li>
             </ul>
@@ -101,32 +105,39 @@
             <button class="mobile-toggle-btn" id="openSidebar">
               <i class="bi bi-list"></i>
             </button>
-            <h1 class="page-title" id="dynamic-page-title">Overview</h1>
+            <div class="search-bar">
+              <i class="bi bi-search search-icon"></i>
+              <input type="text" placeholder="Search products, orders..." />
+            </div>
           </div>
           
           <div class="header-right">
-            <div class="search-bar">
-              <i class="bi bi-search search-icon"></i>
-              <input type="text" placeholder="Search" />
-            </div>
-            <div class="header-actions">
-              <button class="action-btn date-btn">
-                <i class="bi bi-calendar4"></i>
-                <span id="current-date">Today</span>
-              </button>
-              <button class="action-btn icon-btn">
-                <i class="bi bi-bell"></i>
-                <span class="notification-dot"></span>
-              </button>
-              <button class="action-btn avatar-btn">
-                <i class="bi bi-person-circle"></i>
-              </button>
+            <button class="action-btn icon-btn" id="themeToggle" aria-label="Toggle Theme">
+              <i class="bi bi-moon"></i>
+            </button>
+            
+            <button class="action-btn icon-btn" aria-label="Notifications">
+              <i class="bi bi-bell"></i>
+              <span class="notification-badge">5</span>
+            </button>
+            
+            <div class="user-profile-header">
+              <div class="user-avatar" id="header-avatar">A</div>
+              <div class="user-info">
+                <span class="user-name" id="header-user-name">Admin</span>
+                <span class="user-role">Super Admin</span>
+              </div>
             </div>
           </div>
         </header>
 
         <div class="dashboard-content view-section active" id="view-dashboard">
           
+          <div class="page-header">
+            <h2 class="page-title" id="dynamic-page-title">Overview</h2>
+            <p class="page-subtitle">Monitor your store's performance metrics.</p>
+          </div>
+
           <div class="stats-row" id="overview-stats-container">
             </div>
 
@@ -212,7 +223,7 @@
                 </div>
               </div>
               <div class="product-cards-scroll" id="top-products-container">
-                </div>
+                 </div>
             </div>
 
             <div class="bottom-card current-offer">
@@ -221,7 +232,7 @@
                 <button class="btn-sm btn-primary add-offer-btn">Add New</button>
               </div>
               <div class="offer-list" id="current-offers-container">
-                </div>
+                 </div>
             </div>
 
           </div>
@@ -254,8 +265,8 @@
                 </thead>
                 <tbody id="products-table-body">
                   </tbody>
-              </div>
-            </table>
+              </table>
+            </div>
           </div>
         </div>
 
@@ -287,8 +298,8 @@
                 </thead>
                 <tbody id="orders-table-body">
                   </tbody>
-              </div>
-            </table>
+              </table>
+            </div>
           </div>
         </div>
 
@@ -319,8 +330,95 @@
                 </thead>
                 <tbody id="offers-table-body">
                   </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-content view-section" id="view-profile">
+          <div class="page-header">
+            <h2 class="page-title">Personal Information</h2>
+            <p class="page-subtitle">Update your admin account details and security preferences.</p>
+          </div>
+          
+          <div class="profile-card">
+
+            <h3 class="card-section-title">Profile Image</h3>
+            <div class="profile-upload-section">
+              <div class="profile-preview" id="profile-preview">
+                <span id="preview-initials">A</span>
               </div>
-            </table>
+              <div class="upload-actions">
+                 <label for="profile-upload-input" class="btn-outline">
+                    <i class="bi bi-upload"></i> Upload New Image
+                 </label>
+                 <input type="file" id="profile-upload-input" accept="image/*" hidden>
+                 <p class="text-muted mt-2" style="font-size: 0.85rem;">Recommended size: 200x200px. Max size 2MB.</p>
+              </div>
+            </div>
+
+            <hr class="section-divider" />
+            
+            <h3 class="card-section-title">Account Details</h3>
+            <form class="profile-form" id="profileForm">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Full Name</label>
+                  <input type="text" id="prof-fullname" required />
+                </div>
+                <div class="form-group">
+                  <label>Email Address</label>
+                  <input type="email" id="prof-email" required />
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Mobile Number</label>
+                  <input type="tel" id="prof-phone" />
+                </div>
+                <div class="form-group">
+                  <label>Postal Code</label>
+                  <input type="text" id="prof-postal" />
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label>Address</label>
+                <textarea id="prof-address" rows="2"></textarea>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn-primary mt-2">Save Changes</button>
+              </div>
+            </form>
+
+            <hr class="section-divider" />
+
+            <h3 class="card-section-title">Update Password</h3>
+            <form class="profile-form" id="passwordForm">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Current Password</label>
+                  <input type="password" required placeholder="Enter current password" />
+                </div>
+                <div class="form-group">
+                  <label>New Password</label>
+                  <input type="password" required placeholder="Enter new password" />
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn-outline mt-2">Change Password</button>
+              </div>
+            </form>
+
+            <hr class="section-divider" />
+
+            <h3 class="card-section-title text-danger">Danger Zone</h3>
+            <p class="text-muted mb-3">Once you delete your admin account, there is no going back. Please be certain.</p>
+            <button class="btn-danger" onclick="if(confirm('Are you sure you want to permanently delete your account?')) showToast('Account deletion requested.')">
+              <i class="bi bi-trash"></i> Delete Account
+            </button>
+
           </div>
         </div>
 
@@ -335,6 +433,9 @@
       </main>
     </div>
 
+    <div id="toast" class="toast"></div>
+
+    <script src="../scripts/main.js"></script>
     <script src="../scripts/pages/adminDashboard.js"></script>
   </body>
 </html>

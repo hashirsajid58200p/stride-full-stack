@@ -4,6 +4,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // ==========================================
 
   const db = {
+    user: {
+      fullName: "Super Admin",
+      email: "admin@stride.com",
+      phone: "+1 987 654 3210",
+      address: "Stride HQ, Admin Block",
+      postalCode: "10001",
+      avatarUrl: null,
+    },
     overview: {
       revenue: "$82,650",
       revTrend: "+11%",
@@ -170,10 +178,59 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ==========================================
+  // THEME TOGGLE LOGIC
+  // ==========================================
+  const themeBtn = document.getElementById("themeToggle");
+  const themeIcon = themeBtn.querySelector("i");
+  const logoImg = document.getElementById("sidebar-logo");
+
+  // Check saved theme or default to light
+  const savedTheme = localStorage.getItem("theme") || "light";
+  document.documentElement.setAttribute("data-theme", savedTheme);
+  updateThemeIcon(savedTheme);
+
+  themeBtn.addEventListener("click", () => {
+    const currentTheme = document.documentElement.getAttribute("data-theme");
+    const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+    document.documentElement.setAttribute("data-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
+    updateThemeIcon(newTheme);
+  });
+
+  function updateThemeIcon(theme) {
+    if (theme === "dark") {
+      themeIcon.classList.remove("bi-moon");
+      themeIcon.classList.add("bi-sun");
+      if (logoImg)
+        logoImg.src = "../../public/images/logos/stride_logo_light.png";
+    } else {
+      themeIcon.classList.remove("bi-sun");
+      themeIcon.classList.add("bi-moon");
+      if (logoImg)
+        logoImg.src = "../../public/images/logos/stride_logo_dark.png";
+    }
+  }
+
+  // ==========================================
   // RENDER FUNCTIONS (Injecting data into HTML)
   // ==========================================
 
   function renderDashboard() {
+    // Top Right Profile Name Setup
+    document.getElementById("header-user-name").textContent = db.user.fullName;
+    updateAvatarDisplay(db.user.avatarUrl, db.user.fullName);
+
+    // Populate Profile Form fields
+    const profFullname = document.getElementById("prof-fullname");
+    if (profFullname) {
+      profFullname.value = db.user.fullName;
+      document.getElementById("prof-email").value = db.user.email;
+      document.getElementById("prof-phone").value = db.user.phone;
+      document.getElementById("prof-postal").value = db.user.postalCode;
+      document.getElementById("prof-address").value = db.user.address;
+    }
+
     // Render Stats
     const statsContainer = document.getElementById("overview-stats-container");
     if (statsContainer) {
@@ -352,6 +409,27 @@ document.addEventListener("DOMContentLoaded", () => {
       .join("");
   }
 
+  // Helper to update avatar in header and profile section
+  function updateAvatarDisplay(imageUrl, fullName) {
+    const headerAvatar = document.getElementById("header-avatar");
+    const profilePreview = document.getElementById("profile-preview");
+    const initials = fullName
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
+
+    if (imageUrl) {
+      const imgHTML = `<img src="${imageUrl}" alt="Profile">`;
+      headerAvatar.innerHTML = imgHTML;
+      if (profilePreview) profilePreview.innerHTML = imgHTML;
+    } else {
+      headerAvatar.textContent = initials;
+      if (profilePreview)
+        profilePreview.innerHTML = `<span id="preview-initials">${initials}</span>`;
+    }
+  }
+
   // ==========================================
   // SPA NAVIGATION LOGIC (Tab Switching)
   // ==========================================
@@ -362,6 +440,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   navLinks.forEach((link) => {
     link.addEventListener("click", (e) => {
+      // Allow logout to work natively
+      if (link.getAttribute("href") === "index.html") return;
+
       e.preventDefault();
 
       // 1. Get target view
@@ -374,7 +455,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // 3. Update Page Title
       if (pageTitle) {
-        pageTitle.textContent = target === "dashboard" ? "Overview" : target;
+        if (target === "dashboard") {
+          pageTitle.textContent = "Overview";
+        } else if (target === "profile") {
+          pageTitle.textContent = "Personal Information";
+        } else {
+          pageTitle.textContent = target;
+        }
       }
 
       // 4. Hide all views
@@ -388,20 +475,19 @@ document.addEventListener("DOMContentLoaded", () => {
         targetView.classList.add("active");
       } else {
         document.getElementById("view-generic").classList.add("active");
-        // Update generic title
         document.querySelector("#view-generic h2").textContent =
           `${target.charAt(0).toUpperCase() + target.slice(1)} Module`;
       }
 
       // Close mobile sidebar on click
       if (window.innerWidth <= 768) {
-        sidebar.classList.remove("active");
+        document.getElementById("sidebar").classList.remove("active");
       }
     });
   });
 
   // ==========================================
-  // INITIALIZATION & EVENT LISTENERS
+  // EVENT LISTENERS & INITIALIZATION
   // ==========================================
 
   // Initialize Data
@@ -409,6 +495,45 @@ document.addEventListener("DOMContentLoaded", () => {
   renderProductsTable();
   renderOrdersTable();
   renderOffersTable();
+
+  // Profile Image Upload Logic
+  const profileUploadInput = document.getElementById("profile-upload-input");
+  if (profileUploadInput) {
+    profileUploadInput.addEventListener("change", function (e) {
+      const file = e.target.files[0];
+      if (file) {
+        const imageUrl = URL.createObjectURL(file);
+        db.user.avatarUrl = imageUrl;
+        updateAvatarDisplay(imageUrl, db.user.fullName);
+        showToast("Profile image updated!");
+      }
+    });
+  }
+
+  // Profile Form Submission
+  const profileForm = document.getElementById("profileForm");
+  if (profileForm) {
+    profileForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      db.user.fullName = document.getElementById("prof-fullname").value;
+      document.getElementById("header-user-name").textContent =
+        db.user.fullName;
+      if (!db.user.avatarUrl) {
+        updateAvatarDisplay(null, db.user.fullName);
+      }
+      showToast("Personal Information Saved Successfully!");
+    });
+  }
+
+  // Password Form Submission
+  const passwordForm = document.getElementById("passwordForm");
+  if (passwordForm) {
+    passwordForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      showToast("Password Updated Successfully!");
+      passwordForm.reset();
+    });
+  }
 
   // Set Current Date in Header
   const dateElement = document.getElementById("current-date");
@@ -431,4 +556,14 @@ document.addEventListener("DOMContentLoaded", () => {
       sidebar.classList.remove("active");
     });
   }
+
+  // Custom Toast Function
+  window.showToast = function (message) {
+    const toast = document.getElementById("toast");
+    if (toast) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 3000);
+    }
+  };
 });
