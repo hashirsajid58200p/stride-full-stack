@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard - Stride</title>
-    
+
     <link
       rel="icon"
       type="image/png"
@@ -21,12 +21,17 @@
   </head>
   <body>
     <div id="cart-placeholder"></div>
-    
+
     <div class="admin-layout">
       <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
           <a href="index.html" class="sidebar-logo">
-            <img src="../../public/images/logos/stride_logo_light.png" alt="Stride" class="sidebar-logo-img" id="sidebar-logo" />
+            <img
+              src="../../public/images/logos/stride_logo_light.png"
+              alt="Stride"
+              class="sidebar-logo-img"
+              id="sidebar-logo"
+            />
           </a>
           <button class="mobile-close-btn" id="closeSidebar">
             <i class="bi bi-x-lg"></i>
@@ -43,8 +48,8 @@
             </li>
             <li class="nav-item">
               <a href="#" class="nav-link" data-target="analytics">
-                <i class="bi bi-pie-chart"></i>
-                <span>Analytics</span>
+                <i class="bi bi-graph-up-arrow"></i>
+                <span>Product Analytics</span>
               </a>
             </li>
             <li class="nav-item">
@@ -99,7 +104,6 @@
       </aside>
 
       <main class="main-content">
-        
         <header class="top-header">
           <div class="header-left">
             <button class="mobile-toggle-btn" id="openSidebar">
@@ -107,20 +111,26 @@
             </button>
             <div class="search-bar">
               <i class="bi bi-search search-icon"></i>
-              <input type="text" placeholder="Search products, orders..." />
+              <input type="text" placeholder="Search..." />
             </div>
           </div>
-          
+
           <div class="header-right">
-            <button class="action-btn icon-btn" id="themeToggle" aria-label="Toggle Theme">
+            <span class="header-date text-muted" id="top-header-date"></span>
+
+            <button
+              class="action-btn icon-btn"
+              id="themeToggle"
+              aria-label="Toggle Theme"
+            >
               <i class="bi bi-moon"></i>
             </button>
-            
+
             <button class="action-btn icon-btn" aria-label="Notifications">
               <i class="bi bi-bell"></i>
               <span class="notification-badge">5</span>
             </button>
-            
+
             <div class="user-profile-header">
               <div class="user-avatar" id="header-avatar">A</div>
               <div class="user-info">
@@ -132,17 +142,16 @@
         </header>
 
         <div class="dashboard-content view-section active" id="view-dashboard">
-          
           <div class="page-header">
             <h2 class="page-title" id="dynamic-page-title">Overview</h2>
-            <p class="page-subtitle">Monitor your store's performance metrics.</p>
+            <p class="page-subtitle">
+              Monitor your store's performance metrics.
+            </p>
           </div>
 
-          <div class="stats-row" id="overview-stats-container">
-            </div>
+          <div class="stats-row" id="overview-stats-container"></div>
 
           <div class="charts-row">
-            
             <div class="chart-card main-chart">
               <div class="card-header">
                 <h3 class="card-title">Sales Analytic</h3>
@@ -154,30 +163,57 @@
                   </select>
                 </div>
               </div>
-              
+
               <div class="chart-metrics">
                 <div class="metric">
                   <p class="metric-label">Income</p>
-                  <p class="metric-value">23,262.00 <span class="trend positive">+0.05% <i class="bi bi-caret-up-fill"></i></span></p>
+                  <p class="metric-value">
+                    23,262.00
+                    <span class="trend positive"
+                      >+0.05% <i class="bi bi-caret-up-fill"></i
+                    ></span>
+                  </p>
                 </div>
                 <div class="metric">
                   <p class="metric-label">Expenses</p>
-                  <p class="metric-value">11,135.00 <span class="trend negative">-0.05% <i class="bi bi-caret-down-fill"></i></span></p>
+                  <p class="metric-value">
+                    11,135.00
+                    <span class="trend negative"
+                      >-0.05% <i class="bi bi-caret-down-fill"></i
+                    ></span>
+                  </p>
                 </div>
                 <div class="metric">
                   <p class="metric-label">Balance</p>
-                  <p class="metric-value">48,135.00 <span class="trend positive">+0.05% <i class="bi bi-caret-up-fill"></i></span></p>
+                  <p class="metric-value">
+                    48,135.00
+                    <span class="trend positive"
+                      >+0.05% <i class="bi bi-caret-up-fill"></i
+                    ></span>
+                  </p>
                 </div>
               </div>
 
               <div class="chart-placeholder">
-                 <svg viewBox="0 0 500 150" class="mock-line-chart" preserveAspectRatio="none">
-                    <path d="M0,150 L0,100 C50,100 80,140 120,120 C160,100 180,60 220,80 C260,100 280,130 320,110 C360,90 380,40 420,30 C460,20 480,60 500,50 L500,150 Z" class="chart-area"></path>
-                    <path d="M0,100 C50,100 80,140 120,120 C160,100 180,60 220,80 C260,100 280,130 320,110 C360,90 380,40 420,30 C460,20 480,60 500,50" class="chart-line"></path>
-                 </svg>
-                 <div class="chart-axis">
-                   <span>22 Jul</span><span>23 Jul</span><span>24 Jul</span><span>25 Jul</span><span>26 Jul</span><span>27 Jul</span><span>28 Jul</span><span>29 Jul</span>
-                 </div>
+                <svg
+                  viewBox="0 0 500 150"
+                  class="mock-line-chart"
+                  preserveAspectRatio="none"
+                >
+                  <path
+                    d="M0,150 L0,100 C50,100 80,140 120,120 C160,100 180,60 220,80 C260,100 280,130 320,110 C360,90 380,40 420,30 C460,20 480,60 500,50 L500,150 Z"
+                    class="chart-area"
+                  ></path>
+                  <path
+                    d="M0,100 C50,100 80,140 120,120 C160,100 180,60 220,80 C260,100 280,130 320,110 C360,90 380,40 420,30 C460,20 480,60 500,50"
+                    class="chart-line"
+                  ></path>
+                </svg>
+                <div class="chart-axis">
+                  <span>22 Jul</span><span>23 Jul</span><span>24 Jul</span
+                  ><span>25 Jul</span><span>26 Jul</span><span>27 Jul</span
+                  ><span>28 Jul</span><span>29 Jul</span>
+                </div>
               </div>
             </div>
 
@@ -189,52 +225,205 @@
               <div class="target-content">
                 <div class="target-metrics">
                   <div class="t-metric">
-                    <p class="t-label"><span class="dot daily"></span> Daily Target</p>
-                    <p class="t-value"><i class="bi bi-arrow-down text-red"></i> 650</p>
+                    <p class="t-label">
+                      <span class="dot daily"></span> Daily Target
+                    </p>
+                    <p class="t-value">
+                      <i class="bi bi-arrow-down text-red"></i> 650
+                    </p>
                   </div>
                   <div class="t-metric">
-                    <p class="t-label"><span class="dot monthly"></span> Monthly Target</p>
-                    <p class="t-value"><i class="bi bi-arrow-up text-green"></i> $145,000</p>
+                    <p class="t-label">
+                      <span class="dot monthly"></span> Monthly Target
+                    </p>
+                    <p class="t-value">
+                      <i class="bi bi-arrow-up text-green"></i> $145,000
+                    </p>
                   </div>
                 </div>
                 <div class="donut-chart-placeholder">
                   <svg viewBox="0 0 36 36" class="circular-chart">
-                    <path class="circle-bg"
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                    <path class="circle-primary" stroke-dasharray="75, 100"
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                    <path class="circle-secondary" stroke-dasharray="40, 100"
-                      d="M18 8 a 10 10 0 0 1 0 20 a 10 10 0 0 1 0 -20" />
+                    <path
+                      class="circle-bg"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                    <path
+                      class="circle-primary"
+                      stroke-dasharray="75, 100"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                    <path
+                      class="circle-secondary"
+                      stroke-dasharray="40, 100"
+                      d="M18 8 a 10 10 0 0 1 0 20 a 10 10 0 0 1 0 -20"
+                    />
                   </svg>
                 </div>
               </div>
             </div>
-
           </div>
 
           <div class="bottom-row">
-            
             <div class="bottom-card top-selling">
               <div class="card-header">
                 <h3 class="card-title">Top Selling Products</h3>
                 <div class="header-nav">
-                  <i class="bi bi-arrow-left"></i>
-                  <i class="bi bi-arrow-right text-dark"></i>
+                  <i class="bi bi-arrow-left" id="scroll-left-btn"></i>
+                  <i
+                    class="bi bi-arrow-right text-dark"
+                    id="scroll-right-btn"
+                  ></i>
                 </div>
               </div>
-              <div class="product-cards-scroll" id="top-products-container">
-                 </div>
+              <div
+                class="product-cards-scroll"
+                id="top-products-container"
+              ></div>
             </div>
 
             <div class="bottom-card current-offer">
               <div class="card-header">
                 <h3 class="card-title">Current Offers</h3>
-                <button class="btn-sm btn-primary add-offer-btn">Add New</button>
+                <button
+                  class="btn-sm btn-primary add-offer-btn"
+                  id="dashOpenOfferModal"
+                >
+                  Add New
+                </button>
               </div>
-              <div class="offer-list" id="current-offers-container">
-                 </div>
+              <div class="offer-list" id="current-offers-container"></div>
             </div>
+          </div>
+        </div>
 
+        <div class="dashboard-content view-section" id="view-analytics">
+          <div class="page-header">
+            <h2 class="page-title">Product Analytics</h2>
+            <p class="page-subtitle">
+              Insights into inventory performance and sales trends.
+            </p>
+          </div>
+
+          <div class="analytics-stat-grid">
+            <div class="stat-card">
+              <div class="stat-info">
+                <p class="stat-label">Total Products</p>
+                <h3 class="stat-value">452</h3>
+              </div>
+              <div class="stat-icon-wrapper text-blue">
+                <i class="bi bi-box-seam"></i>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-info">
+                <p class="stat-label">Total Inventory Value</p>
+                <h3 class="stat-value">$124,500</h3>
+              </div>
+              <div class="stat-icon-wrapper text-green">
+                <i class="bi bi-cash-stack"></i>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-info">
+                <p class="stat-label">Low Stock Items</p>
+                <h3 class="stat-value text-red">12</h3>
+                <p class="stat-period">Needs attention</p>
+              </div>
+              <div class="stat-icon-wrapper text-orange">
+                <i class="bi bi-exclamation-triangle"></i>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-info">
+                <p class="stat-label">Top Category</p>
+                <h3 class="stat-value">Running Shoes</h3>
+              </div>
+              <div class="stat-icon-wrapper text-purple">
+                <i class="bi bi-tag"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="charts-row">
+            <div class="chart-card">
+              <div class="card-header">
+                <h3 class="card-title">Product Sales Trend (30 Days)</h3>
+              </div>
+              <div class="chart-placeholder">
+                <svg
+                  viewBox="0 0 500 150"
+                  class="mock-line-chart"
+                  preserveAspectRatio="none"
+                >
+                  <path
+                    d="M0,120 L50,100 L100,130 L150,80 L200,90 L250,40 L300,60 L350,20 L400,50 L450,30 L500,60"
+                    fill="none"
+                    stroke="#10b981"
+                    stroke-width="3"
+                  ></path>
+                  <path
+                    d="M0,150 L0,120 L50,100 L100,130 L150,80 L200,90 L250,40 L300,60 L350,20 L400,50 L450,30 L500,60 L500,150 Z"
+                    fill="rgba(16, 185, 129, 0.1)"
+                  ></path>
+                </svg>
+                <div class="chart-axis">
+                  <span>Week 1</span><span>Week 2</span><span>Week 3</span
+                  ><span>Week 4</span>
+                </div>
+              </div>
+            </div>
+            <div class="chart-card">
+              <div class="card-header">
+                <h3 class="card-title">Inventory by Category</h3>
+              </div>
+              <div class="donut-chart-placeholder" style="height: 200px">
+                <svg
+                  viewBox="0 0 36 36"
+                  class="circular-chart"
+                  style="max-height: 180px"
+                >
+                  <path
+                    class="pie-slice"
+                    stroke-dasharray="40, 100"
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    stroke="#3b82f6"
+                    fill="none"
+                    stroke-width="32"
+                  ></path>
+                  <path
+                    class="pie-slice"
+                    stroke-dasharray="30, 100"
+                    stroke-dashoffset="-40"
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    stroke="#10b981"
+                    fill="none"
+                    stroke-width="32"
+                  ></path>
+                  <path
+                    class="pie-slice"
+                    stroke-dasharray="30, 100"
+                    stroke-dashoffset="-70"
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    stroke="#f59e0b"
+                    fill="none"
+                    stroke-width="32"
+                  ></path>
+                </svg>
+              </div>
+              <div
+                class="pie-legend"
+                style="justify-content: center; margin-top: 1rem"
+              >
+                <span><i class="bi bi-circle-fill text-blue"></i> Running</span>
+                <span
+                  ><i class="bi bi-circle-fill text-green"></i> Lifestyle</span
+                >
+                <span
+                  ><i class="bi bi-circle-fill text-orange"></i>
+                  Basketball</span
+                >
+              </div>
+            </div>
           </div>
         </div>
 
@@ -243,28 +432,681 @@
             <div class="card-header">
               <div>
                 <h3 class="card-title">Product Inventory</h3>
-                <p class="card-subtitle">Manage your catalog, pricing, and stock.</p>
+                <p class="card-subtitle">
+                  Manage your catalog, pricing, and stock.
+                </p>
               </div>
-              <button class="btn btn-primary" onclick="alert('Open Add Product Modal')">
+              <div class="search-bar table-search">
+                <i class="bi bi-search search-icon"></i>
+                <input
+                  type="text"
+                  id="product-search-input"
+                  placeholder="Search products by name, brand..."
+                />
+              </div>
+              <button class="btn btn-primary" id="openAddProductModal">
                 <i class="bi bi-plus-lg"></i> Add New Product
               </button>
             </div>
-            
+
             <div class="table-responsive">
               <table class="admin-table">
                 <thead>
                   <tr>
                     <th>Product ID</th>
                     <th>Product Details</th>
-                    <th>Category</th>
+                    <th>Brand</th>
                     <th>Price</th>
                     <th>Stock</th>
                     <th>Status</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody id="products-table-body">
-                  </tbody>
+                <tbody id="products-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-overlay" id="productModal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>Add New Product</h3>
+              <button class="close-modal" id="closeProductModal">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+            <form id="addProductForm" class="modal-form">
+              <div class="form-group full-width">
+                <label>Initial Product Image</label>
+                <div class="image-upload-wrapper">
+                  <input
+                    type="file"
+                    id="prod-init-img"
+                    accept="image/*"
+                    required
+                  />
+                  <div class="upload-placeholder">
+                    <i class="bi bi-cloud-upload"></i> Click to upload main
+                    image
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Product Brand</label>
+                  <input
+                    type="text"
+                    id="prod-brand"
+                    placeholder="e.g. Nike, Adidas"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Product Name</label>
+                  <input
+                    type="text"
+                    id="prod-name"
+                    placeholder="e.g. Air Max 270"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-group full-width">
+                <label>Product Description</label>
+                <textarea
+                  id="prod-desc"
+                  rows="3"
+                  placeholder="Enter product details..."
+                ></textarea>
+              </div>
+
+              <div class="form-group full-width">
+                <label>Available Colors</label>
+                <div class="color-checkbox-group">
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Red"
+                      class="color-input" /><span
+                      class="swatch color-red"
+                      title="Red"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Blue"
+                      class="color-input" /><span
+                      class="swatch color-blue"
+                      title="Blue"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Yellow"
+                      class="color-input" /><span
+                      class="swatch color-yellow"
+                      title="Yellow"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Green"
+                      class="color-input" /><span
+                      class="swatch color-green"
+                      title="Green"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Orange"
+                      class="color-input" /><span
+                      class="swatch color-orange"
+                      title="Orange"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Purple"
+                      class="color-input" /><span
+                      class="swatch color-purple"
+                      title="Purple"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Pink"
+                      class="color-input" /><span
+                      class="swatch color-pink"
+                      title="Pink"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Brown"
+                      class="color-input" /><span
+                      class="swatch color-brown"
+                      title="Brown"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Black"
+                      class="color-input" /><span
+                      class="swatch color-black"
+                      title="Black"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="White"
+                      class="color-input" /><span
+                      class="swatch color-white"
+                      title="White"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Gray"
+                      class="color-input" /><span
+                      class="swatch color-gray"
+                      title="Gray"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Maroon"
+                      class="color-input" /><span
+                      class="swatch color-maroon"
+                      title="Maroon"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Crimson"
+                      class="color-input" /><span
+                      class="swatch color-crimson"
+                      title="Crimson"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Scarlet"
+                      class="color-input" /><span
+                      class="swatch color-scarlet"
+                      title="Scarlet"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Navy"
+                      class="color-input" /><span
+                      class="swatch color-navy"
+                      title="Navy"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Sky Blue"
+                      class="color-input" /><span
+                      class="swatch color-skyblue"
+                      title="Sky Blue"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Royal Blue"
+                      class="color-input" /><span
+                      class="swatch color-royalblue"
+                      title="Royal Blue"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Mustard"
+                      class="color-input" /><span
+                      class="swatch color-mustard"
+                      title="Mustard"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Gold"
+                      class="color-input" /><span
+                      class="swatch color-gold"
+                      title="Gold"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Lemon"
+                      class="color-input" /><span
+                      class="swatch color-lemon"
+                      title="Lemon"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Olive"
+                      class="color-input" /><span
+                      class="swatch color-olive"
+                      title="Olive"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Lime"
+                      class="color-input" /><span
+                      class="swatch color-lime"
+                      title="Lime"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Emerald"
+                      class="color-input" /><span
+                      class="swatch color-emerald"
+                      title="Emerald"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Coral"
+                      class="color-input" /><span
+                      class="swatch color-coral"
+                      title="Coral"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Peach"
+                      class="color-input" /><span
+                      class="swatch color-peach"
+                      title="Peach"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Tangerine"
+                      class="color-input" /><span
+                      class="swatch color-tangerine"
+                      title="Tangerine"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Violet"
+                      class="color-input" /><span
+                      class="swatch color-violet"
+                      title="Violet"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Lavender"
+                      class="color-input" /><span
+                      class="swatch color-lavender"
+                      title="Lavender"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Magenta"
+                      class="color-input" /><span
+                      class="swatch color-magenta"
+                      title="Magenta"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Hot Pink"
+                      class="color-input" /><span
+                      class="swatch color-hotpink"
+                      title="Hot Pink"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Rose"
+                      class="color-input" /><span
+                      class="swatch color-rose"
+                      title="Rose"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Fuchsia"
+                      class="color-input" /><span
+                      class="swatch color-fuchsia"
+                      title="Fuchsia"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Chocolate"
+                      class="color-input" /><span
+                      class="swatch color-chocolate"
+                      title="Chocolate"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Tan"
+                      class="color-input" /><span
+                      class="swatch color-tan"
+                      title="Tan"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Beige"
+                      class="color-input" /><span
+                      class="swatch color-beige"
+                      title="Beige"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Charcoal"
+                      class="color-input" /><span
+                      class="swatch color-charcoal"
+                      title="Charcoal"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Jet Black"
+                      class="color-input" /><span
+                      class="swatch color-jetblack"
+                      title="Jet Black"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Ivory"
+                      class="color-input" /><span
+                      class="swatch color-ivory"
+                      title="Ivory"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Off-White"
+                      class="color-input" /><span
+                      class="swatch color-offwhite"
+                      title="Off-White"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Silver"
+                      class="color-input" /><span
+                      class="swatch color-silver"
+                      title="Silver"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                  <label class="color-swatch-item"
+                    ><input
+                      type="checkbox"
+                      name="color"
+                      value="Slate"
+                      class="color-input" /><span
+                      class="swatch color-slate"
+                      title="Slate"
+                      ><i class="bi bi-check"></i></span
+                  ></label>
+                </div>
+                <div id="color-uploads-container" class="dynamic-uploads"></div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Custom Tags (comma separated)</label>
+                  <input
+                    type="text"
+                    id="prod-tags"
+                    placeholder="New Arrival, Men, Unisex"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Price ($)</label>
+                  <input
+                    type="number"
+                    id="prod-price"
+                    step="0.01"
+                    min="0"
+                    placeholder="149.99"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-group full-width">
+                <label>Sizes & Stock</label>
+                <div class="size-qty-grid">
+                  <div class="size-row">
+                    <label
+                      ><input
+                        type="checkbox"
+                        class="size-check"
+                        data-size="7"
+                      />
+                      Size 7</label
+                    >
+                    <input
+                      type="number"
+                      class="qty-input"
+                      placeholder="Qty"
+                      min="0"
+                      disabled
+                    />
+                  </div>
+                  <div class="size-row">
+                    <label
+                      ><input
+                        type="checkbox"
+                        class="size-check"
+                        data-size="8"
+                      />
+                      Size 8</label
+                    >
+                    <input
+                      type="number"
+                      class="qty-input"
+                      placeholder="Qty"
+                      min="0"
+                      disabled
+                    />
+                  </div>
+                  <div class="size-row">
+                    <label
+                      ><input
+                        type="checkbox"
+                        class="size-check"
+                        data-size="9"
+                      />
+                      Size 9</label
+                    >
+                    <input
+                      type="number"
+                      class="qty-input"
+                      placeholder="Qty"
+                      min="0"
+                      disabled
+                    />
+                  </div>
+                  <div class="size-row">
+                    <label
+                      ><input
+                        type="checkbox"
+                        class="size-check"
+                        data-size="10"
+                      />
+                      Size 10</label
+                    >
+                    <input
+                      type="number"
+                      class="qty-input"
+                      placeholder="Qty"
+                      min="0"
+                      disabled
+                    />
+                  </div>
+                  <div class="size-row">
+                    <label
+                      ><input
+                        type="checkbox"
+                        class="size-check"
+                        data-size="11"
+                      />
+                      Size 11</label
+                    >
+                    <input
+                      type="number"
+                      class="qty-input"
+                      placeholder="Qty"
+                      min="0"
+                      disabled
+                    />
+                  </div>
+                  <div class="size-row">
+                    <label
+                      ><input
+                        type="checkbox"
+                        class="size-check"
+                        data-size="12"
+                      />
+                      Size 12</label
+                    >
+                    <input
+                      type="number"
+                      class="qty-input"
+                      placeholder="Qty"
+                      min="0"
+                      disabled
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary full-width">
+                  Add Product to Stride
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="dashboard-content view-section" id="view-inventory">
+          <div class="data-table-card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Inventory Management</h3>
+                <p class="card-subtitle">
+                  Restock and manage current product availability.
+                </p>
+              </div>
+              <div class="search-bar table-search">
+                <i class="bi bi-search search-icon"></i>
+                <input
+                  type="text"
+                  id="inventory-search-input"
+                  placeholder="Search by product name..."
+                />
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Product Details</th>
+                    <th>Current Stock</th>
+                    <th>Manage Stock</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-table-body"></tbody>
               </table>
             </div>
           </div>
@@ -275,14 +1117,20 @@
             <div class="card-header">
               <div>
                 <h3 class="card-title">Recent Orders</h3>
-                <p class="card-subtitle">Track and update customer fulfillment.</p>
+                <p class="card-subtitle">
+                  Track and update customer fulfillment.
+                </p>
               </div>
               <div class="search-bar table-search">
                 <i class="bi bi-search search-icon"></i>
-                <input type="text" placeholder="Search orders by ID or Customer..." />
+                <input
+                  type="text"
+                  id="order-search-input"
+                  placeholder="Search orders by ID or Customer..."
+                />
               </div>
             </div>
-            
+
             <div class="table-responsive">
               <table class="admin-table">
                 <thead>
@@ -296,9 +1144,29 @@
                     <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody id="orders-table-body">
-                  </tbody>
+                <tbody id="orders-table-body"></tbody>
               </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-overlay" id="orderDetailsModal">
+          <div class="modal-content" style="max-width: 600px">
+            <div class="modal-header">
+              <h3 id="order-details-title">Order Details</h3>
+              <button class="close-modal" id="closeOrderDetailsModal">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+            <div class="modal-form" id="order-details-content"></div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-outline full-width"
+                id="closeOrderDetailsBtn"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>
@@ -308,13 +1176,15 @@
             <div class="card-header">
               <div>
                 <h3 class="card-title">Active Campaigns & Offers</h3>
-                <p class="card-subtitle">Manage discount codes and promotional banners.</p>
+                <p class="card-subtitle">
+                  Manage discount codes and promotional banners.
+                </p>
               </div>
-              <button class="btn btn-primary" onclick="alert('Open Create Offer Modal')">
+              <button class="btn btn-primary" id="openOfferModal">
                 <i class="bi bi-tag-fill"></i> Create Offer
               </button>
             </div>
-            
+
             <div class="table-responsive">
               <table class="admin-table">
                 <thead>
@@ -328,37 +1198,168 @@
                     <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody id="offers-table-body">
-                  </tbody>
+                <tbody id="offers-table-body"></tbody>
               </table>
             </div>
+          </div>
+        </div>
+
+        <div class="modal-overlay" id="offerModal">
+          <div class="modal-content" style="max-width: 500px">
+            <div class="modal-header">
+              <h3>Create New Offer</h3>
+              <button class="close-modal" id="closeOfferModal">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+            <form id="addOfferForm" class="modal-form">
+              <div class="form-group">
+                <label>Campaign Name</label>
+                <input type="text" placeholder="e.g. Summer Kickoff" required />
+              </div>
+              <div class="form-group">
+                <label>Discount Code</label>
+                <input type="text" placeholder="e.g. SUMMER24" required />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Discount Percentage (%)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="100"
+                    placeholder="e.g. 20"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Usage Limit</label>
+                  <input type="number" min="1" placeholder="e.g. 1000" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Valid Till</label>
+                <input type="date" required />
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary full-width">
+                  Create Offer
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="dashboard-content view-section" id="view-customers">
+          <div class="data-table-card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Customer Management</h3>
+                <p class="card-subtitle">View and edit registered clients.</p>
+              </div>
+              <div class="search-bar table-search">
+                <i class="bi bi-search search-icon"></i>
+                <input
+                  type="text"
+                  id="customer-search-input"
+                  placeholder="Search customers by name or email..."
+                />
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="customers-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-overlay" id="customerModal">
+          <div class="modal-content" style="max-width: 600px">
+            <div class="modal-header">
+              <h3>Edit Customer Details</h3>
+              <button class="close-modal" id="closeCustomerModal">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+            <form id="editCustomerForm" class="modal-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Full Name</label>
+                  <input type="text" id="cust-fullname" required />
+                </div>
+                <div class="form-group">
+                  <label>Email Address</label>
+                  <input type="email" id="cust-email" required />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Mobile Number</label>
+                  <input type="tel" id="cust-phone" />
+                </div>
+                <div class="form-group">
+                  <label>Postal Code</label>
+                  <input type="text" id="cust-postal" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Address</label>
+                <textarea id="cust-address" rows="2"></textarea>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary full-width">
+                  Save Changes
+                </button>
+              </div>
+            </form>
           </div>
         </div>
 
         <div class="dashboard-content view-section" id="view-profile">
           <div class="page-header">
             <h2 class="page-title">Personal Information</h2>
-            <p class="page-subtitle">Update your admin account details and security preferences.</p>
+            <p class="page-subtitle">
+              Update your account details and security preferences.
+            </p>
           </div>
-          
-          <div class="profile-card">
 
+          <div class="profile-card">
             <h3 class="card-section-title">Profile Image</h3>
             <div class="profile-upload-section">
               <div class="profile-preview" id="profile-preview">
-                <span id="preview-initials">A</span>
+                <span id="preview-initials">JD</span>
               </div>
               <div class="upload-actions">
-                 <label for="profile-upload-input" class="btn-outline">
-                    <i class="bi bi-upload"></i> Upload New Image
-                 </label>
-                 <input type="file" id="profile-upload-input" accept="image/*" hidden>
-                 <p class="text-muted mt-2" style="font-size: 0.85rem;">Recommended size: 200x200px. Max size 2MB.</p>
+                <label for="profile-upload-input" class="btn-outline">
+                  <i class="bi bi-upload"></i> Upload New Image
+                </label>
+                <input
+                  type="file"
+                  id="profile-upload-input"
+                  accept="image/*"
+                  hidden
+                />
+                <p class="text-muted mt-2" style="font-size: 0.85rem">
+                  Recommended size: 200x200px. Max size 2MB.
+                </p>
               </div>
             </div>
 
             <hr class="section-divider" />
-            
+
             <h3 class="card-section-title">Account Details</h3>
             <form class="profile-form" id="profileForm">
               <div class="form-row">
@@ -371,7 +1372,7 @@
                   <input type="email" id="prof-email" required />
                 </div>
               </div>
-              
+
               <div class="form-row">
                 <div class="form-group">
                   <label>Mobile Number</label>
@@ -382,13 +1383,15 @@
                   <input type="text" id="prof-postal" />
                 </div>
               </div>
-              
+
               <div class="form-group">
                 <label>Address</label>
                 <textarea id="prof-address" rows="2"></textarea>
               </div>
               <div class="form-actions">
-                <button type="submit" class="btn-primary mt-2">Save Changes</button>
+                <button type="submit" class="btn-primary mt-2">
+                  Save Changes
+                </button>
               </div>
             </form>
 
@@ -399,37 +1402,56 @@
               <div class="form-row">
                 <div class="form-group">
                   <label>Current Password</label>
-                  <input type="password" required placeholder="Enter current password" />
+                  <input
+                    type="password"
+                    required
+                    placeholder="Enter current password"
+                  />
                 </div>
                 <div class="form-group">
                   <label>New Password</label>
-                  <input type="password" required placeholder="Enter new password" />
+                  <input
+                    type="password"
+                    required
+                    placeholder="Enter new password"
+                  />
                 </div>
               </div>
               <div class="form-actions">
-                <button type="submit" class="btn-outline mt-2">Change Password</button>
+                <button
+                  type="submit"
+                  class="btn-outline mt-2"
+                  style="border-radius: 8px !important"
+                >
+                  Change Password
+                </button>
               </div>
             </form>
 
             <hr class="section-divider" />
 
             <h3 class="card-section-title text-danger">Danger Zone</h3>
-            <p class="text-muted mb-3">Once you delete your admin account, there is no going back. Please be certain.</p>
-            <button class="btn-danger" onclick="if(confirm('Are you sure you want to permanently delete your account?')) showToast('Account deletion requested.')">
-              <i class="bi bi-trash"></i> Delete Account
-            </button>
-
+            <p class="text-muted mb-3">
+              Once you delete your account, there is no going back. Please be
+              certain.
+            </p>
+            <div class="delete-account-section">
+              <button
+                class="btn-danger"
+                onclick="
+                  if (
+                    confirm(
+                      'Are you sure you want to permanently delete your account?',
+                    )
+                  )
+                    showToast('Account deletion requested.');
+                "
+              >
+                <i class="bi bi-trash"></i> Delete Account
+              </button>
+            </div>
           </div>
         </div>
-
-        <div class="dashboard-content view-section" id="view-generic">
-          <div class="placeholder-card">
-            <i class="bi bi-tools placeholder-icon"></i>
-            <h2>Module in Development</h2>
-            <p>This section is currently being built. Please check back later.</p>
-          </div>
-        </div>
-
       </main>
     </div>
 

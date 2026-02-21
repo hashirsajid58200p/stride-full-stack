@@ -1,5 +1,22 @@
 document.addEventListener("DOMContentLoaded", () => {
   // ==========================================
+  // DYNAMIC DATE
+  // ==========================================
+  const topDateElement = document.getElementById("top-header-date");
+  if (topDateElement) {
+    const options = {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    };
+    topDateElement.textContent = new Date().toLocaleDateString(
+      "en-US",
+      options,
+    );
+  }
+
+  // ==========================================
   // MOCK DATABASE (Simulating a real backend API)
   // ==========================================
 
@@ -81,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
       {
         id: "PRD-001",
         name: "Nike Air Max Fusion",
-        category: "Running",
+        brand: "Nike",
         price: "$149.99",
         stock: 45,
         status: "In Stock",
@@ -90,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
       {
         id: "PRD-002",
         name: "Adidas Ultraboost 23",
-        category: "Running",
+        brand: "Adidas",
         price: "$179.99",
         stock: 12,
         status: "Low Stock",
@@ -99,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
       {
         id: "PRD-003",
         name: "Jordan Legacy",
-        category: "Basketball",
+        brand: "Nike",
         price: "$199.99",
         stock: 0,
         status: "Out of Stock",
@@ -108,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
       {
         id: "PRD-004",
         name: "New Balance 550",
-        category: "Lifestyle",
+        brand: "New Balance",
         price: "$129.99",
         stock: 156,
         status: "In Stock",
@@ -175,7 +192,49 @@ document.addEventListener("DOMContentLoaded", () => {
         status: "Expired",
       },
     ],
+    customers: [
+      {
+        name: "John Doe",
+        email: "john@example.com",
+        mobile: "+1 234 567 8900",
+        status: "Active",
+        postal: "10001",
+        address: "123 Main St, NY",
+      },
+      {
+        name: "Sarah Williams",
+        email: "sarah.w@example.com",
+        mobile: "+1 987 654 3210",
+        status: "Active",
+        postal: "90210",
+        address: "456 Oak Ave, CA",
+      },
+      {
+        name: "Michael Chen",
+        email: "m.chen@example.com",
+        mobile: "+1 555 123 4567",
+        status: "Inactive",
+        postal: "60601",
+        address: "789 Pine Rd, IL",
+      },
+    ],
   };
+
+  // ==========================================
+  // TOP SELLING HORIZONTAL SCROLL
+  // ==========================================
+  const leftArrow = document.getElementById("scroll-left-btn");
+  const rightArrow = document.getElementById("scroll-right-btn");
+  const scrollContainer = document.getElementById("top-products-container");
+
+  if (leftArrow && rightArrow && scrollContainer) {
+    leftArrow.addEventListener("click", () => {
+      scrollContainer.scrollBy({ left: -250, behavior: "smooth" });
+    });
+    rightArrow.addEventListener("click", () => {
+      scrollContainer.scrollBy({ left: 250, behavior: "smooth" });
+    });
+  }
 
   // ==========================================
   // THEME TOGGLE LOGIC
@@ -184,7 +243,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const themeIcon = themeBtn.querySelector("i");
   const logoImg = document.getElementById("sidebar-logo");
 
-  // Check saved theme or default to light
   const savedTheme = localStorage.getItem("theme") || "light";
   document.documentElement.setAttribute("data-theme", savedTheme);
   updateThemeIcon(savedTheme);
@@ -213,15 +271,210 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ==========================================
-  // RENDER FUNCTIONS (Injecting data into HTML)
+  // MODALS LOGIC
+  // ==========================================
+
+  // Product Modal
+  const prodModal = document.getElementById("productModal");
+  const openProdBtn = document.getElementById("openAddProductModal");
+  const closeProdBtn = document.getElementById("closeProductModal");
+  const colorUploadsContainer = document.getElementById(
+    "color-uploads-container",
+  );
+  const colorCheckboxes = document.querySelectorAll('input[name="color"]');
+  const sizeCheckboxes = document.querySelectorAll(".size-check");
+
+  if (openProdBtn)
+    openProdBtn.addEventListener("click", () =>
+      prodModal.classList.add("active"),
+    );
+  if (closeProdBtn)
+    closeProdBtn.addEventListener("click", () =>
+      prodModal.classList.remove("active"),
+    );
+
+  colorCheckboxes.forEach((cb) => {
+    cb.addEventListener("change", () => {
+      const color = cb.value;
+      if (cb.checked) {
+        const row = document.createElement("div");
+        row.className = "color-upload-row";
+        row.id = `upload-row-${color}`;
+        row.innerHTML = `
+          <span style="min-width: 80px; font-weight: 600;">${color}:</span>
+          <input type="file" accept="image/*" required style="flex-grow: 1;">
+        `;
+        colorUploadsContainer.appendChild(row);
+      } else {
+        const row = document.getElementById(`upload-row-${color}`);
+        if (row) row.remove();
+      }
+    });
+  });
+
+  sizeCheckboxes.forEach((sc) => {
+    sc.addEventListener("change", () => {
+      const qtyInput = sc.closest(".size-row").querySelector(".qty-input");
+      if (sc.checked) {
+        qtyInput.disabled = false;
+        qtyInput.focus();
+        qtyInput.required = true;
+      } else {
+        qtyInput.disabled = true;
+        qtyInput.value = "";
+        qtyInput.required = false;
+      }
+    });
+  });
+
+  const addProductForm = document.getElementById("addProductForm");
+  if (addProductForm) {
+    addProductForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      showToast("Product Added Successfully to Database!");
+      prodModal.classList.remove("active");
+      addProductForm.reset();
+      colorUploadsContainer.innerHTML = "";
+      document
+        .querySelectorAll(".qty-input")
+        .forEach((input) => (input.disabled = true));
+    });
+  }
+
+  // Offer Modal
+  const offerModal = document.getElementById("offerModal");
+  const dashOpenOfferBtn = document.getElementById("dashOpenOfferModal");
+  const openOfferBtn = document.getElementById("openOfferModal");
+  const closeOfferBtn = document.getElementById("closeOfferModal");
+  const addOfferForm = document.getElementById("addOfferForm");
+
+  if (dashOpenOfferBtn)
+    dashOpenOfferBtn.addEventListener("click", () =>
+      offerModal.classList.add("active"),
+    );
+  if (openOfferBtn)
+    openOfferBtn.addEventListener("click", () =>
+      offerModal.classList.add("active"),
+    );
+  if (closeOfferBtn)
+    closeOfferBtn.addEventListener("click", () =>
+      offerModal.classList.remove("active"),
+    );
+
+  if (addOfferForm) {
+    addOfferForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      showToast("Offer Created Successfully!");
+      offerModal.classList.remove("active");
+      addOfferForm.reset();
+    });
+  }
+
+  // Customer Modal (Exposed globally so inline HTML handlers can call it)
+  const custModal = document.getElementById("customerModal");
+  const closeCustBtn = document.getElementById("closeCustomerModal");
+  const editCustomerForm = document.getElementById("editCustomerForm");
+
+  if (closeCustBtn)
+    closeCustBtn.addEventListener("click", () =>
+      custModal.classList.remove("active"),
+    );
+
+  if (editCustomerForm) {
+    editCustomerForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      showToast("Customer details updated!");
+      custModal.classList.remove("active");
+    });
+  }
+
+  window.openCustomerEditModal = function (index) {
+    const cust = db.customers[index];
+    document.getElementById("cust-fullname").value = cust.name;
+    document.getElementById("cust-email").value = cust.email;
+    document.getElementById("cust-phone").value = cust.mobile;
+    document.getElementById("cust-postal").value = cust.postal;
+    document.getElementById("cust-address").value = cust.address;
+    if (custModal) custModal.classList.add("active");
+  };
+
+  // Order Details Modal
+  const orderDetailsModal = document.getElementById("orderDetailsModal");
+  const closeOrderDetailsBtn = document.getElementById("closeOrderDetailsBtn");
+  const closeOrderDetailsIcon = document.getElementById(
+    "closeOrderDetailsModal",
+  );
+  const orderDetailsContent = document.getElementById("order-details-content");
+  const orderDetailsTitle = document.getElementById("order-details-title");
+
+  if (closeOrderDetailsBtn)
+    closeOrderDetailsBtn.addEventListener("click", () =>
+      orderDetailsModal.classList.remove("active"),
+    );
+  if (closeOrderDetailsIcon)
+    closeOrderDetailsIcon.addEventListener("click", () =>
+      orderDetailsModal.classList.remove("active"),
+    );
+
+  window.openOrderDetailsModal = function (orderId) {
+    const order = db.orders.find((o) => o.id === orderId);
+    if (!order) return;
+
+    orderDetailsTitle.textContent = `Order Details: ${order.id}`;
+    orderDetailsContent.innerHTML = `
+        <div class="form-row">
+            <div class="form-group">
+                <label>Customer Name</label>
+                <input type="text" value="${order.customer}" readonly />
+            </div>
+            <div class="form-group">
+                <label>Order Date</label>
+                <input type="text" value="${order.date}" readonly />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Total Items</label>
+                <input type="text" value="${order.items}" readonly />
+            </div>
+             <div class="form-group">
+                <label>Total Amount</label>
+                <input type="text" value="${order.total}" readonly />
+            </div>
+        </div>
+         <div class="form-group">
+            <label>Status</label>
+            <div><span class="badge ${getStatusBadge(order.status)}">${order.status}</span></div>
+        </div>
+    `;
+    if (orderDetailsModal) orderDetailsModal.classList.add("active");
+  };
+
+  // ==========================================
+  // SEARCH FUNCTIONALITY
+  // ==========================================
+  function setupSearch(inputId, tableBodyId, data, renderFn) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    input.addEventListener("input", (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      const filteredData = data.filter((item) => {
+        return Object.values(item).some((val) =>
+          String(val).toLowerCase().includes(searchTerm),
+        );
+      });
+      renderFn(filteredData);
+    });
+  }
+
+  // ==========================================
+  // RENDER FUNCTIONS
   // ==========================================
 
   function renderDashboard() {
-    // Top Right Profile Name Setup
     document.getElementById("header-user-name").textContent = db.user.fullName;
     updateAvatarDisplay(db.user.avatarUrl, db.user.fullName);
 
-    // Populate Profile Form fields
     const profFullname = document.getElementById("prof-fullname");
     if (profFullname) {
       profFullname.value = db.user.fullName;
@@ -231,7 +484,6 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("prof-address").value = db.user.address;
     }
 
-    // Render Stats
     const statsContainer = document.getElementById("overview-stats-container");
     if (statsContainer) {
       statsContainer.innerHTML = `
@@ -278,7 +530,6 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
     }
 
-    // Render Top Products
     const topProductsContainer = document.getElementById(
       "top-products-container",
     );
@@ -300,7 +551,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .join("");
     }
 
-    // Render Offers
     const offersContainer = document.getElementById("current-offers-container");
     if (offersContainer) {
       offersContainer.innerHTML = db.offers
@@ -324,16 +574,20 @@ document.addEventListener("DOMContentLoaded", () => {
       return "badge-success";
     if (status === "Low Stock" || status === "Processing")
       return "badge-warning";
-    if (status === "Out of Stock" || status === "Expired")
+    if (
+      status === "Out of Stock" ||
+      status === "Expired" ||
+      status === "Inactive"
+    )
       return "badge-danger";
     if (status === "Shipped") return "badge-info";
     return "";
   }
 
-  function renderProductsTable() {
+  function renderProductsTable(data = db.products) {
     const tbody = document.getElementById("products-table-body");
     if (!tbody) return;
-    tbody.innerHTML = db.products
+    tbody.innerHTML = data
       .map(
         (p) => `
             <tr>
@@ -344,7 +598,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <span class="table-product-name">${p.name}</span>
                     </div>
                 </td>
-                <td>${p.category}</td>
+                <td>${p.brand}</td>
                 <td class="font-semibold">${p.price}</td>
                 <td>${p.stock} units</td>
                 <td><span class="badge ${getStatusBadge(p.status)}">${p.status}</span></td>
@@ -360,10 +614,37 @@ document.addEventListener("DOMContentLoaded", () => {
       .join("");
   }
 
-  function renderOrdersTable() {
+  function renderInventoryTable(data = db.products) {
+    const tbody = document.getElementById("inventory-table-body");
+    if (!tbody) return;
+    tbody.innerHTML = data
+      .map(
+        (p) => `
+            <tr>
+                <td>
+                    <div class="table-product-cell">
+                        <img src="${p.img}" alt="${p.name}" class="table-product-img">
+                        <span class="table-product-name">${p.name}</span>
+                    </div>
+                </td>
+                <td>${p.stock} units</td>
+                <td>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="number" min="1" placeholder="Qty" style="width: 80px; padding: 0.3rem; border-radius: 4px; border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-fg);" />
+                        <button class="btn btn-primary btn-sm" onclick="showToast('Stock Added for ${p.name}')">Restock</button>
+                        <button class="btn btn-danger-outline btn-sm" onclick="if(confirm('Mark ${p.name} as Out of Stock?')) showToast('${p.name} marked Out of Stock')">Out of Stock</button>
+                    </div>
+                </td>
+            </tr>
+        `,
+      )
+      .join("");
+  }
+
+  function renderOrdersTable(data = db.orders) {
     const tbody = document.getElementById("orders-table-body");
     if (!tbody) return;
-    tbody.innerHTML = db.orders
+    tbody.innerHTML = data
       .map(
         (o) => `
             <tr>
@@ -375,7 +656,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td><span class="badge ${getStatusBadge(o.status)}">${o.status}</span></td>
                 <td>
                     <div class="table-actions">
-                        <button class="btn-outline" onclick="alert('View Order ${o.id}')">View Details</button>
+                        <button class="btn-outline" onclick="openOrderDetailsModal('${o.id}')">View Details</button>
                     </div>
                 </td>
             </tr>
@@ -409,7 +690,29 @@ document.addEventListener("DOMContentLoaded", () => {
       .join("");
   }
 
-  // Helper to update avatar in header and profile section
+  function renderCustomersTable(data = db.customers) {
+    const tbody = document.getElementById("customers-table-body");
+    if (!tbody) return;
+    tbody.innerHTML = data
+      .map(
+        (c, index) => `
+            <tr>
+                <td class="font-semibold">${c.name}</td>
+                <td>${c.email}</td>
+                <td>${c.mobile}</td>
+                <td><span class="badge ${getStatusBadge(c.status)}">${c.status}</span></td>
+                <td>
+                    <div class="table-actions">
+                        <button class="btn-outline" onclick="openCustomerEditModal(${index})"><i class="bi bi-pencil"></i></button>
+                        <button class="btn-danger-outline" onclick="if(confirm('Remove user ${c.name}?')) showToast('User removed.')"><i class="bi bi-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+        `,
+      )
+      .join("");
+  }
+
   function updateAvatarDisplay(imageUrl, fullName) {
     const headerAvatar = document.getElementById("header-avatar");
     const profilePreview = document.getElementById("profile-preview");
@@ -431,55 +734,41 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ==========================================
-  // SPA NAVIGATION LOGIC (Tab Switching)
+  // SPA NAVIGATION LOGIC
   // ==========================================
-
   const navLinks = document.querySelectorAll(".sidebar-nav .nav-link");
   const viewSections = document.querySelectorAll(".view-section");
   const pageTitle = document.getElementById("dynamic-page-title");
 
   navLinks.forEach((link) => {
     link.addEventListener("click", (e) => {
-      // Allow logout to work natively
       if (link.getAttribute("href") === "index.html") return;
-
       e.preventDefault();
 
-      // 1. Get target view
       const target = link.getAttribute("data-target");
       if (!target) return;
 
-      // 2. Update Active Link Styling
       navLinks.forEach((l) => l.classList.remove("active"));
       link.classList.add("active");
 
-      // 3. Update Page Title
       if (pageTitle) {
         if (target === "dashboard") {
           pageTitle.textContent = "Overview";
         } else if (target === "profile") {
           pageTitle.textContent = "Personal Information";
+        } else if (target === "analytics") {
+          pageTitle.textContent = "Product Analytics";
         } else {
           pageTitle.textContent = target;
         }
       }
 
-      // 4. Hide all views
-      viewSections.forEach((section) => {
-        section.classList.remove("active");
-      });
-
-      // 5. Show target view (or generic placeholder if not built yet)
+      viewSections.forEach((section) => section.classList.remove("active"));
       const targetView = document.getElementById(`view-${target}`);
       if (targetView) {
         targetView.classList.add("active");
-      } else {
-        document.getElementById("view-generic").classList.add("active");
-        document.querySelector("#view-generic h2").textContent =
-          `${target.charAt(0).toUpperCase() + target.slice(1)} Module`;
       }
 
-      // Close mobile sidebar on click
       if (window.innerWidth <= 768) {
         document.getElementById("sidebar").classList.remove("active");
       }
@@ -487,16 +776,41 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ==========================================
-  // EVENT LISTENERS & INITIALIZATION
+  // INITIALIZATION
   // ==========================================
-
-  // Initialize Data
   renderDashboard();
   renderProductsTable();
+  renderInventoryTable();
   renderOrdersTable();
   renderOffersTable();
+  renderCustomersTable();
 
-  // Profile Image Upload Logic
+  // Setup Search Listeners
+  setupSearch(
+    "product-search-input",
+    "products-table-body",
+    db.products,
+    renderProductsTable,
+  );
+  setupSearch(
+    "inventory-search-input",
+    "inventory-table-body",
+    db.products,
+    renderInventoryTable,
+  );
+  setupSearch(
+    "order-search-input",
+    "orders-table-body",
+    db.orders,
+    renderOrdersTable,
+  );
+  setupSearch(
+    "customer-search-input",
+    "customers-table-body",
+    db.customers,
+    renderCustomersTable,
+  );
+
   const profileUploadInput = document.getElementById("profile-upload-input");
   if (profileUploadInput) {
     profileUploadInput.addEventListener("change", function (e) {
@@ -510,7 +824,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Profile Form Submission
   const profileForm = document.getElementById("profileForm");
   if (profileForm) {
     profileForm.addEventListener("submit", (e) => {
@@ -525,7 +838,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Password Form Submission
   const passwordForm = document.getElementById("passwordForm");
   if (passwordForm) {
     passwordForm.addEventListener("submit", (e) => {
@@ -535,29 +847,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Set Current Date in Header
-  const dateElement = document.getElementById("current-date");
-  if (dateElement) {
-    const options = { day: "numeric", month: "short" };
-    dateElement.textContent = new Date().toLocaleDateString("en-US", options);
-  }
-
-  // Mobile Sidebar Toggle
   const sidebar = document.getElementById("sidebar");
-  const openBtn = document.getElementById("openSidebar");
-  const closeBtn = document.getElementById("closeSidebar");
+  const openBtnNav = document.getElementById("openSidebar");
+  const closeBtnNav = document.getElementById("closeSidebar");
 
-  if (openBtn && closeBtn && sidebar) {
-    openBtn.addEventListener("click", () => {
-      sidebar.classList.add("active");
-    });
-
-    closeBtn.addEventListener("click", () => {
-      sidebar.classList.remove("active");
-    });
+  if (openBtnNav && closeBtnNav && sidebar) {
+    openBtnNav.addEventListener("click", () => sidebar.classList.add("active"));
+    closeBtnNav.addEventListener("click", () =>
+      sidebar.classList.remove("active"),
+    );
   }
 
-  // Custom Toast Function
   window.showToast = function (message) {
     const toast = document.getElementById("toast");
     if (toast) {

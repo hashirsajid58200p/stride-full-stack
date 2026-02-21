@@ -223,6 +223,12 @@ body {
   gap: 0.5rem;
 }
 
+.header-date {
+  margin-right: 15px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
 /* Base styling for header icon buttons */
 .icon-btn {
   display: flex;
@@ -428,6 +434,12 @@ body {
   color: #f59e0b;
   background: rgba(245, 158, 11, 0.1);
 }
+.text-red {
+  color: #ef4444;
+}
+.text-green {
+  color: #10b981;
+}
 
 /* =========================================
    Charts Row
@@ -454,7 +466,7 @@ body {
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1.5rem;
-  flex-wrap: wrap; /* Fixes overlap on mobile */
+  flex-wrap: wrap;
   gap: 1rem;
 }
 
@@ -478,11 +490,15 @@ body {
 .sort-select {
   background: var(--color-bg);
   border: 1px solid var(--color-border);
-  color: var(--color-fg);
+  color: var(--color-accent);
   padding: 0.3rem 0.5rem;
   border-radius: 6px;
   font-size: 0.85rem;
+  font-weight: 600;
   outline: none;
+}
+.sort-select option {
+  color: var(--color-accent);
 }
 
 /* Analytic Chart Internals */
@@ -490,7 +506,7 @@ body {
   display: flex;
   gap: 3rem;
   margin-bottom: 2rem;
-  flex-wrap: wrap; /* Ensures metrics don't overflow on small screens */
+  flex-wrap: wrap;
 }
 
 .metric-label {
@@ -525,7 +541,7 @@ body {
   width: 100%;
   height: 200px;
   position: relative;
-  overflow: hidden; /* Prevent SVG spill on narrow screens */
+  overflow: hidden;
 }
 
 .mock-line-chart {
@@ -598,14 +614,6 @@ body {
   align-items: center;
   gap: 0.5rem;
 }
-.text-red {
-  color: #ef4444;
-  font-size: 1rem;
-}
-.text-green {
-  color: #10b981;
-  font-size: 1rem;
-}
 
 .donut-chart-placeholder {
   width: 120px;
@@ -668,7 +676,7 @@ body {
   color: var(--color-fg);
 }
 
-/* Top Selling Products */
+/* Top Selling Products Scroll */
 .product-cards-scroll {
   display: flex;
   gap: 1.5rem;
@@ -699,8 +707,6 @@ body {
   transform: translateY(-4px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
   border-color: var(--color-accent);
-  position: relative;
-  z-index: 10;
 }
 
 .prod-img {
@@ -732,7 +738,7 @@ body {
   font-size: 0.85rem;
 }
 
-/* Current Offer */
+/* Current Offer List */
 .offer-list {
   display: flex;
   flex-direction: column;
@@ -751,7 +757,7 @@ body {
   align-items: flex-end;
   font-size: 0.85rem;
   font-weight: 600;
-  flex-wrap: wrap; /* Ensure long dates don't break layout */
+  flex-wrap: wrap;
 }
 
 .offer-text .date {
@@ -783,13 +789,27 @@ body {
   background-color: #10b981;
 }
 
-.btn-sm {
-  padding: 0.4rem 0.8rem;
+/* =========================================
+   Product Analytics Layout Module
+   ========================================= */
+.analytics-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+.pie-slice {
+  transition: transform 0.3s ease;
+}
+.pie-legend {
+  display: flex;
+  gap: 1rem;
   font-size: 0.8rem;
+  flex-wrap: wrap;
 }
 
 /* =========================================
-   Data Tables (Products, Orders, Offers)
+   Data Tables
    ========================================= */
 .data-table-card {
   background-color: var(--color-secondary);
@@ -838,13 +858,11 @@ body {
   border-bottom: none;
 }
 
-/* Table Specific Components */
 .table-product-cell {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
-
 .table-product-img {
   width: 45px;
   height: 45px;
@@ -852,16 +870,14 @@ body {
   object-fit: cover;
   background-color: var(--color-bg);
 }
-
 .table-product-name {
   font-weight: 600;
   color: var(--color-fg);
 }
-
 .table-actions {
   display: flex;
   gap: 0.5rem;
-  flex-wrap: wrap; /* Prevent button overflow on small screens */
+  flex-wrap: wrap;
 }
 
 /* Badges */
@@ -897,7 +913,6 @@ body {
   align-items: center;
   gap: 0.5rem;
   border: none;
-  border-radius: 8px;
   font-family: inherit;
   font-weight: 600;
   cursor: pointer;
@@ -908,6 +923,7 @@ body {
   background-color: var(--color-accent);
   color: var(--color-accent-fg);
   padding: 0.6rem 1.2rem;
+  border-radius: 8px; /* Default */
 }
 
 .btn-primary:hover {
@@ -915,11 +931,23 @@ body {
   transform: translateY(-1px);
 }
 
+/* All action and small buttons should be rounded */
+.btn-sm,
+.btn-outline,
+.btn-danger-outline {
+  border-radius: 50px !important;
+}
+
+.btn-sm {
+  padding: 0.4rem 1rem;
+  font-size: 0.8rem;
+}
+
 .btn-outline {
   background-color: transparent;
   border: 1px solid var(--color-border);
   color: var(--color-fg);
-  padding: 0.4rem 0.8rem;
+  padding: 0.4rem 1rem;
   font-size: 0.85rem;
 }
 
@@ -932,7 +960,7 @@ body {
   background-color: transparent;
   border: 1px solid rgba(239, 68, 68, 0.3);
   color: #ef4444;
-  padding: 0.4rem 0.8rem;
+  padding: 0.4rem 1rem;
   font-size: 0.85rem;
 }
 
@@ -941,8 +969,339 @@ body {
   color: white;
 }
 
+/* Danger Button (Standard) */
+.btn-danger {
+  background-color: #ef4444;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: var(--transition-smooth);
+}
+.btn-danger:hover {
+  background-color: #dc2626;
+  transform: translateY(-2px);
+}
+
 /* =========================================
-   Profile Form & Image Upload (Admin)
+   Modal Popups
+   ========================================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 2rem;
+  backdrop-filter: blur(5px);
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--color-secondary);
+  width: 100%;
+  max-width: 700px;
+  max-height: 90vh;
+  border-radius: 16px;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.modal-content::-webkit-scrollbar {
+  display: none;
+}
+
+.modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: var(--color-secondary);
+  z-index: 10;
+}
+
+.modal-form {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.image-upload-wrapper {
+  position: relative;
+  height: 120px;
+  border: 2px dashed var(--color-border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.image-upload-wrapper:hover {
+  border-color: var(--color-accent);
+}
+.image-upload-wrapper input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Circular Color Checkboxes Styling */
+.color-checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.color-swatch-item {
+  position: relative;
+  cursor: pointer;
+}
+
+.color-input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.swatch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  transition: transform 0.2s ease;
+}
+
+.swatch i {
+  color: white;
+  font-size: 1.2rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.color-white i,
+.color-ivory i,
+.color-offwhite i,
+.color-silver i {
+  color: #000;
+}
+
+.color-input:checked + .swatch i {
+  opacity: 1;
+}
+
+.color-input:checked + .swatch {
+  transform: scale(1.1);
+  box-shadow:
+    0 0 0 2px var(--color-bg),
+    0 0 0 4px var(--color-accent);
+}
+
+/* Accurate Standardized Color Map */
+.color-red {
+  background-color: #ff0000;
+}
+.color-blue {
+  background-color: #0000ff;
+}
+.color-yellow {
+  background-color: #ffff00;
+}
+.color-green {
+  background-color: #008000;
+}
+.color-orange {
+  background-color: #ffa500;
+}
+.color-purple {
+  background-color: #800080;
+}
+.color-pink {
+  background-color: #ffc0cb;
+}
+.color-brown {
+  background-color: #a52a2a;
+}
+.color-black {
+  background-color: #000000;
+}
+.color-white {
+  background-color: #ffffff;
+}
+.color-gray {
+  background-color: #808080;
+}
+.color-maroon {
+  background-color: #800000;
+}
+.color-crimson {
+  background-color: #dc143c;
+}
+.color-scarlet {
+  background-color: #ff2400;
+}
+.color-navy {
+  background-color: #000080;
+}
+.color-skyblue {
+  background-color: #87ceeb;
+}
+.color-royalblue {
+  background-color: #4169e1;
+}
+.color-mustard {
+  background-color: #ffdb58;
+}
+.color-gold {
+  background-color: #ffd700;
+}
+.color-lemon {
+  background-color: #fff700;
+}
+.color-olive {
+  background-color: #808000;
+}
+.color-lime {
+  background-color: #00ff00;
+}
+.color-emerald {
+  background-color: #50c878;
+}
+.color-coral {
+  background-color: #ff7f50;
+}
+.color-peach {
+  background-color: #ffdab9;
+}
+.color-tangerine {
+  background-color: #f28500;
+}
+.color-violet {
+  background-color: #ee82ee;
+}
+.color-lavender {
+  background-color: #e6e6fa;
+}
+.color-magenta {
+  background-color: #ff00ff;
+}
+.color-hotpink {
+  background-color: #ff69b4;
+}
+.color-rose {
+  background-color: #ff007f;
+}
+.color-fuchsia {
+  background-color: #ff00ff;
+}
+.color-chocolate {
+  background-color: #d2691e;
+}
+.color-tan {
+  background-color: #d2b48c;
+}
+.color-beige {
+  background-color: #f5f5dc;
+}
+.color-charcoal {
+  background-color: #36454f;
+}
+.color-jetblack {
+  background-color: #0a0a0a;
+}
+.color-ivory {
+  background-color: #fffff0;
+}
+.color-offwhite {
+  background-color: #faf9f6;
+}
+.color-silver {
+  background-color: #c0c0c0;
+}
+.color-slate {
+  background-color: #708090;
+}
+
+.size-check {
+  accent-color: var(--color-accent);
+}
+
+.dynamic-uploads {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.color-upload-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem;
+  background: var(--color-bg);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+
+.size-qty-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+.size-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-bg);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+.qty-input {
+  width: 80px;
+  padding: 0.3rem;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  background: var(--color-secondary);
+  color: var(--color-fg);
+}
+
+.full-width {
+  grid-column: span 2;
+}
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--color-fg);
+  cursor: pointer;
+}
+
+/* =========================================
+   Profile Section (MATCHED TO CLIENT DASHBOARD)
    ========================================= */
 .profile-card {
   background-color: var(--color-secondary);
@@ -969,7 +1328,6 @@ body {
   transition: border-color 0.5s ease;
 }
 
-/* Profile Upload Styles */
 .profile-upload-section {
   display: flex;
   align-items: center;
@@ -1053,60 +1411,12 @@ body {
   justify-content: flex-start;
 }
 
-/* Danger Button */
-.btn-danger {
-  background-color: #ef4444;
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: var(--transition-smooth);
-}
-.btn-danger:hover {
-  background-color: #dc2626;
-  transform: translateY(-2px);
+/* Delete Account Section Styling */
+.delete-account-section {
+  margin-top: 1rem;
 }
 
-.text-danger {
-  color: #ef4444 !important;
-}
-.text-muted {
-  color: var(--color-muted-fg);
-}
-.mb-3 {
-  margin-bottom: 1.5rem;
-}
-.mt-2 {
-  margin-top: 0.5rem;
-}
-
-/* Toast */
-.toast {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  background: var(--color-accent);
-  color: var(--color-accent-fg);
-  padding: 1rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-  transform: translateY(150px);
-  opacity: 0;
-  transition: var(--transition-smooth);
-  z-index: 2000;
-}
-.toast.show {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-/* Generic Empty State */
+/* Empty States */
 .placeholder-card {
   display: flex;
   flex-direction: column;
@@ -1119,23 +1429,10 @@ body {
   text-align: center;
   color: var(--color-muted-fg);
 }
-
 .placeholder-icon {
   font-size: 4rem;
   color: var(--color-border);
   margin-bottom: 1rem;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* =========================================
@@ -1143,6 +1440,9 @@ body {
    ========================================= */
 @media (max-width: 1200px) {
   .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .analytics-stat-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
@@ -1172,18 +1472,17 @@ body {
     transform: translateX(0);
     box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
   }
-
   .mobile-toggle-btn,
   .mobile-close-btn {
     display: block;
   }
-
-  /* Hide ONLY top nav search, leave table search working perfectly */
   .header-left .search-bar {
     display: none;
   }
-
   .stats-row {
+    grid-template-columns: 1fr;
+  }
+  .analytics-stat-grid {
     grid-template-columns: 1fr;
   }
   .target-content {
@@ -1196,20 +1495,20 @@ body {
   .user-info {
     display: none;
   }
-
   .form-row {
     grid-template-columns: 1fr;
   }
   .profile-upload-section {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 1rem;
+  }
+  .upload-actions {
+    text-align: center;
   }
   .profile-card {
     padding: 1.5rem;
   }
-
-  /* Fix Card Headers wrapping cleanly */
   .card-header {
     flex-direction: column;
     align-items: flex-start;
@@ -1222,8 +1521,6 @@ body {
     width: 100%;
     justify-content: center;
   }
-
-  /* Make table search full width */
   .table-search {
     display: block;
     width: 100%;
@@ -1233,16 +1530,15 @@ body {
   .table-search input {
     width: 100%;
   }
-
-  /* Ensure chart metrics stack correctly */
   .chart-metrics {
     gap: 1rem;
     flex-direction: column;
   }
-
-  /* Fix horizontal list padding on small screens */
   .product-cards-scroll {
     margin: -1.5rem -0.5rem -0.5rem -0.5rem;
+  }
+  .size-qty-grid {
+    grid-template-columns: 1fr;
   }
 }
 
