@@ -3,117 +3,365 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Client Dashboard - KICKZ</title>
+    <title>Client Dashboard</title>
+
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../public/images/logos/stride_logo_dark.png"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
     <link rel="stylesheet" href="../styles/root.css" />
     <link rel="stylesheet" href="../styles/pages/clientDashboard.css" />
   </head>
   <body>
-    <div class="container">
-      <a href="index.html" class="logo">KICKZ</a>
+    <div id="cart-placeholder"></div>
 
-      <div class="dashboard-header">
-        <h2 class="title">My Dashboard</h2>
-        <p class="subtitle">Manage your orders and account</p>
-      </div>
-
-      <div class="tabs">
-        <button class="tab-btn active" data-tab="orders">
-          <span class="icon">📦</span> Orders
-        </button>
-        <button class="tab-btn" data-tab="wishlist">
-          <span class="icon">❤️</span> Wishlist
-        </button>
-        <button class="tab-btn" data-tab="profile">
-          <span class="icon">👤</span> Profile
-        </button>
-      </div>
-
-      <div class="tab-content active" id="orders">
-        <div class="order-card">
-          <div class="order-header">
-            <div>
-              <h3>Order #12345</h3>
-              <p class="date">Placed on 2024-01-15</p>
-            </div>
-            <div class="order-info">
-              <p class="price">$299.99</p>
-              <span class="status delivered">Delivered</span>
-            </div>
-          </div>
-          <button class="view-btn">View Details</button>
+    <div class="client-layout">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <a href="index.html" class="sidebar-logo">
+            <img
+              src="../../public/images/logos/stride_logo_dark.png"
+              alt="Stride"
+              class="sidebar-logo-img"
+              id="sidebar-logo"
+            />
+          </a>
+          <button class="mobile-close-btn" id="closeSidebar">
+            <i class="bi bi-x-lg"></i>
+          </button>
         </div>
 
-        <div class="order-card">
-          <div class="order-header">
-            <div>
-              <h3>Order #12344</h3>
-              <p class="date">Placed on 2024-01-10</p>
-            </div>
-            <div class="order-info">
-              <p class="price">$159.99</p>
-              <span class="status transit">In Transit</span>
+        <nav class="sidebar-nav">
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="#" class="nav-link active" data-target="dashboard">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" data-target="orders">
+                <i class="bi bi-box-seam"></i>
+                <span>My Orders</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" data-target="wishlist">
+                <i class="bi bi-heart"></i>
+                <span>Wishlist</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" data-target="profile">
+                <i class="bi bi-person"></i>
+                <span>Personal Info</span>
+              </a>
+            </li>
+          </ul>
+
+          <div class="nav-bottom">
+            <ul class="nav-list">
+              <li class="nav-item">
+                <a href="index.html" class="nav-link text-danger-hover">
+                  <i class="bi bi-box-arrow-right"></i>
+                  <span>Logout</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </aside>
+
+      <main class="main-content">
+        <header class="top-header">
+          <div class="header-left">
+            <button class="mobile-toggle-btn" id="openSidebar">
+              <i class="bi bi-list"></i>
+            </button>
+            <div class="search-bar">
+              <i class="bi bi-search search-icon"></i>
+              <input type="text" placeholder="Search products, orders..." />
             </div>
           </div>
-          <button class="view-btn">View Details</button>
-        </div>
 
-        <div class="order-card">
-          <div class="order-header">
-            <div>
-              <h3>Order #12343</h3>
-              <p class="date">Placed on 2024-01-05</p>
-            </div>
-            <div class="order-info">
-              <p class="price">$249.99</p>
-              <span class="status processing">Processing</span>
+          <div class="header-right">
+            <button
+              class="action-btn icon-btn"
+              id="themeToggle"
+              aria-label="Toggle Theme"
+            >
+              <i class="bi bi-moon"></i>
+            </button>
+
+            <button class="action-btn icon-btn cart-btn" aria-label="Cart">
+              <i class="bi bi-cart"></i>
+              <span class="cart-badge" style="display: none">0</span>
+            </button>
+
+            <button class="action-btn icon-btn" aria-label="Notifications">
+              <i class="bi bi-bell"></i>
+              <span class="notification-badge">3</span>
+            </button>
+
+            <div class="user-profile-header">
+              <div class="user-avatar" id="header-avatar">JD</div>
+              <div class="user-info">
+                <span class="user-name" id="header-user-name">John Doe</span>
+                <span class="user-role">Stride Member</span>
+              </div>
             </div>
           </div>
-          <button class="view-btn">View Details</button>
-        </div>
-      </div>
+        </header>
 
-      <div class="tab-content" id="wishlist">
-        <div class="wishlist-grid">
-          <div class="wishlist-card">
-            <div class="product-image">🛍️</div>
-            <h3>Nike Air Max 270</h3>
-            <p class="price">$150.00</p>
-            <button class="add-cart-btn">Add to Cart</button>
+        <div class="dashboard-content view-section active" id="view-dashboard">
+          <div class="welcome-banner">
+            <div class="banner-content">
+              <p class="banner-date" id="current-date">July 25, 2025</p>
+              <h1 class="banner-title">
+                Welcome back, <span id="banner-user-name">John</span>!
+              </h1>
+              <p class="banner-subtitle">
+                Always stay updated with your latest orders and drops.
+              </p>
+            </div>
+            <div class="banner-image">
+              <img
+                src="../../public/images/backgrounds/client_dashboard_background.jpg"
+                alt="Dashboard Background"
+                class="banner-graphic"
+              />
+            </div>
           </div>
 
-          <div class="wishlist-card">
-            <div class="product-image">🛍️</div>
-            <h3>Adidas Ultraboost</h3>
-            <p class="price">$180.00</p>
-            <button class="add-cart-btn">Add to Cart</button>
+          <div class="dashboard-grid">
+            <div class="grid-main-col">
+              <div class="section-block">
+                <div class="section-header">
+                  <h3>Your Wishlist</h3>
+                  <a
+                    href="#"
+                    class="see-all-link"
+                    onclick="
+                      document
+                        .querySelector('[data-target=\'wishlist\']')
+                        .click()
+                    "
+                    >See all</a
+                  >
+                </div>
+                <div
+                  class="wishlist-preview-cards"
+                  id="dashboard-wishlist-preview"
+                ></div>
+              </div>
+
+              <div class="section-block">
+                <div class="section-header">
+                  <h3>Recent Orders</h3>
+                  <a
+                    href="#"
+                    class="see-all-link"
+                    onclick="
+                      document.querySelector('[data-target=\'orders\']').click()
+                    "
+                    >See all</a
+                  >
+                </div>
+                <div
+                  class="orders-preview-cards"
+                  id="dashboard-orders-preview"
+                ></div>
+              </div>
+            </div>
+
+            <div class="grid-side-col">
+              <div class="section-block">
+                <div class="section-header">
+                  <h3>Support Team</h3>
+                </div>
+                <div class="support-avatars">
+                  <div class="support-avatar">
+                    <img
+                      src="https://i.pravatar.cc/150?img=47"
+                      alt="Helper 1"
+                    />
+                  </div>
+                  <div class="support-avatar">
+                    <img
+                      src="https://i.pravatar.cc/150?img=12"
+                      alt="Helper 2"
+                    />
+                  </div>
+                  <div class="support-avatar">
+                    <img
+                      src="https://i.pravatar.cc/150?img=33"
+                      alt="Helper 3"
+                    />
+                  </div>
+                  <button class="btn-outline w-100 mt-3">Chat with us</button>
+                </div>
+              </div>
+
+              <div class="section-block">
+                <div class="section-header">
+                  <h3>Latest Drops</h3>
+                  <a href="#" class="see-all-link">See all</a>
+                </div>
+                <div class="news-list" id="dashboard-news-list"></div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="tab-content" id="profile">
-        <div class="profile-card">
-          <h3>Profile Information</h3>
-          <p class="card-subtitle">Update your account details</p>
-
-          <form class="profile-form">
-            <div class="form-group">
-              <label>Full Name</label>
-              <input type="text" value="John Doe" />
-            </div>
-            <div class="form-group">
-              <label>Email</label>
-              <input type="email" value="john@example.com" />
-            </div>
-            <div class="form-group">
-              <label>Phone</label>
-              <input type="tel" value="+1 234 567 8900" />
-            </div>
-            <button type="submit" class="save-btn">Save Changes</button>
-          </form>
+        <div class="dashboard-content view-section" id="view-orders">
+          <div class="page-header">
+            <h2 class="page-title">My Orders</h2>
+            <p class="page-subtitle">
+              Track, return, or view your order history.
+            </p>
+          </div>
+          <div class="full-list-container" id="full-orders-list"></div>
         </div>
-      </div>
+
+        <div class="dashboard-content view-section" id="view-wishlist">
+          <div class="page-header">
+            <h2 class="page-title">My Wishlist</h2>
+            <p class="page-subtitle">Items you've saved for later.</p>
+          </div>
+          <div class="wishlist-grid" id="full-wishlist-grid"></div>
+        </div>
+
+        <div class="dashboard-content view-section" id="view-profile">
+          <div class="page-header">
+            <h2 class="page-title">Personal Information</h2>
+            <p class="page-subtitle">
+              Update your account details and security preferences.
+            </p>
+          </div>
+
+          <div class="profile-card">
+            <h3 class="card-section-title">Profile Image</h3>
+            <div class="profile-upload-section">
+              <div class="profile-preview" id="profile-preview">
+                <span id="preview-initials">JD</span>
+              </div>
+              <div class="upload-actions">
+                <label for="profile-upload-input" class="btn-outline">
+                  <i class="bi bi-upload"></i> Upload New Image
+                </label>
+                <input
+                  type="file"
+                  id="profile-upload-input"
+                  accept="image/*"
+                  hidden
+                />
+                <p class="text-muted mt-2" style="font-size: 0.85rem">
+                  Recommended size: 200x200px. Max size 2MB.
+                </p>
+              </div>
+            </div>
+
+            <hr class="section-divider" />
+
+            <h3 class="card-section-title">Account Details</h3>
+            <form class="profile-form" id="profileForm">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Full Name</label>
+                  <input type="text" id="prof-fullname" required />
+                </div>
+                <div class="form-group">
+                  <label>Email Address</label>
+                  <input type="email" id="prof-email" required />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Mobile Number</label>
+                  <input type="tel" id="prof-phone" />
+                </div>
+                <div class="form-group">
+                  <label>Postal Code</label>
+                  <input type="text" id="prof-postal" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Address</label>
+                <textarea id="prof-address" rows="2"></textarea>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn-primary mt-2">
+                  Save Changes
+                </button>
+              </div>
+            </form>
+
+            <hr class="section-divider" />
+
+            <h3 class="card-section-title">Update Password</h3>
+            <form class="profile-form" id="passwordForm">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Current Password</label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Enter current password"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>New Password</label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Enter new password"
+                  />
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn-outline mt-2">
+                  Change Password
+                </button>
+              </div>
+            </form>
+
+            <hr class="section-divider" />
+
+            <h3 class="card-section-title text-danger">Danger Zone</h3>
+            <p class="text-muted mb-3">
+              Once you delete your account, there is no going back. Please be
+              certain.
+            </p>
+            <button
+              class="btn-danger"
+              onclick="
+                if (
+                  confirm(
+                    'Are you sure you want to permanently delete your account?',
+                  )
+                )
+                  showToast('Account deletion requested.');
+              "
+            >
+              <i class="bi bi-trash"></i> Delete Account
+            </button>
+          </div>
+        </div>
+      </main>
     </div>
 
+    <div id="toast" class="toast"></div>
+
+    <script src="../scripts/main.js"></script>
     <script src="../scripts/pages/clientDashboard.js"></script>
   </body>
 </html>

@@ -3,260 +3,336 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard - KICKZ</title>
-    <link rel="stylesheet" href="../styles/root.css" />
-    <link rel="stylesheet" href="../styles/pages/adminDashboard.css" />
+    <title>Admin Dashboard - Stride</title>
+    
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+
+    <link rel="stylesheet" href="../styles/root.css" />
+    <link rel="stylesheet" href="../styles/pages/adminDashboard.css" />
   </head>
   <body>
-    <div class="container">
-      <header class="header">
-        <h1 class="title">Admin Dashboard</h1>
-        <p class="subtitle">Manage your store and monitor performance</p>
-      </header>
-
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-header">
-            <svg
-              class="stat-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <path d="M16 10a4 4 0 0 1-8 0" />
-            </svg>
-            <span class="stat-change">+12%</span>
-          </div>
-          <p class="stat-label">Total Orders</p>
-          <p class="stat-value">1,234</p>
+    
+    <div class="admin-layout">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <h2 class="sidebar-logo">
+            <i class="bi bi-hexagon-fill logo-icon"></i>
+            Stride Admin
+          </h2>
+          <button class="mobile-close-btn" id="closeSidebar">
+            <i class="bi bi-x-lg"></i>
+          </button>
         </div>
 
-        <div class="stat-card">
-          <div class="stat-header">
-            <svg
-              class="stat-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <line x1="12" y1="1" x2="12" y2="23" />
-              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            </svg>
-            <span class="stat-change">+8%</span>
+        <nav class="sidebar-nav">
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="#" class="nav-link active" data-target="dashboard">
+                <i class="bi bi-house-door"></i>
+                <span>Dashboard</span>
+                <i class="bi bi-chevron-right ms-auto"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" data-target="analytics">
+                <i class="bi bi-pie-chart"></i>
+                <span>Analytics</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" data-target="products">
+                <i class="bi bi-box-seam"></i>
+                <span>Products</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" data-target="offers">
+                <i class="bi bi-tags"></i>
+                <span>Offers</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" data-target="inventory">
+                <i class="bi bi-boxes"></i>
+                <span>Inventory</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" data-target="orders">
+                <i class="bi bi-cart-check"></i>
+                <span>Orders</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" data-target="customers">
+                <i class="bi bi-person"></i>
+                <span>Customers</span>
+              </a>
+            </li>
+          </ul>
+
+          <div class="nav-bottom">
+            <ul class="nav-list">
+              <li class="nav-item">
+                <a href="#" class="nav-link" data-target="settings">
+                  <i class="bi bi-sliders"></i>
+                  <span>Settings</span>
+                </a>
+              </li>
+            </ul>
           </div>
-          <p class="stat-label">Revenue</p>
-          <p class="stat-value">$45,678</p>
-        </div>
+        </nav>
+      </aside>
 
-        <div class="stat-card">
-          <div class="stat-header">
-            <svg
-              class="stat-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
-              />
-              <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-              <line x1="12" y1="22.08" x2="12" y2="12" />
-            </svg>
-            <span class="stat-change">+3%</span>
+      <main class="main-content">
+        
+        <header class="top-header">
+          <div class="header-left">
+            <button class="mobile-toggle-btn" id="openSidebar">
+              <i class="bi bi-list"></i>
+            </button>
+            <h1 class="page-title" id="dynamic-page-title">Overview</h1>
           </div>
-          <p class="stat-label">Products</p>
-          <p class="stat-value">156</p>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-header">
-            <svg
-              class="stat-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-            <span class="stat-change">+15%</span>
-          </div>
-          <p class="stat-label">Customers</p>
-          <p class="stat-value">892</p>
-        </div>
-      </div>
-
-      <div class="tabs">
-        <button class="tab-btn active" data-tab="orders">Orders</button>
-        <button class="tab-btn" data-tab="products">Products</button>
-      </div>
-
-      <div class="tab-content active" id="orders">
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h2 class="card-title">Recent Orders</h2>
-              <p class="card-subtitle">Monitor and manage customer purchases</p>
+          
+          <div class="header-right">
+            <div class="search-bar">
+              <i class="bi bi-search search-icon"></i>
+              <input type="text" placeholder="Search" />
             </div>
-            <div class="search-box">
-              <svg
-                class="search-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.35-4.35" />
-              </svg>
-              <input
-                type="text"
-                placeholder="Search orders..."
-                id="orderSearch"
-              />
+            <div class="header-actions">
+              <button class="action-btn date-btn">
+                <i class="bi bi-calendar4"></i>
+                <span id="current-date">Today</span>
+              </button>
+              <button class="action-btn icon-btn">
+                <i class="bi bi-bell"></i>
+                <span class="notification-dot"></span>
+              </button>
+              <button class="action-btn avatar-btn">
+                <i class="bi bi-person-circle"></i>
+              </button>
             </div>
           </div>
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Order ID</th>
-                  <th>Customer</th>
-                  <th>Product</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody id="ordersTable">
-                <tr>
-                  <td class="font-medium">#ORD-001</td>
-                  <td>John Doe</td>
-                  <td>Air Max 270</td>
-                  <td class="font-semibold">$150</td>
-                  <td><span class="badge badge-delivered">Delivered</span></td>
-                  <td class="text-muted">2024-01-15</td>
-                </tr>
-                <tr>
-                  <td class="font-medium">#ORD-002</td>
-                  <td>Jane Smith</td>
-                  <td>Ultraboost 22</td>
-                  <td class="font-semibold">$180</td>
-                  <td><span class="badge badge-shipped">Shipped</span></td>
-                  <td class="text-muted">2024-01-14</td>
-                </tr>
-                <tr>
-                  <td class="font-medium">#ORD-003</td>
-                  <td>Mike Johnson</td>
-                  <td>Chuck Taylor</td>
-                  <td class="font-semibold">$65</td>
-                  <td>
-                    <span class="badge badge-processing">Processing</span>
-                  </td>
-                  <td class="text-muted">2024-01-14</td>
-                </tr>
-                <tr>
-                  <td class="font-medium">#ORD-004</td>
-                  <td>Sarah Williams</td>
-                  <td>Air Jordan 1</td>
-                  <td class="font-semibold">$170</td>
-                  <td><span class="badge badge-delivered">Delivered</span></td>
-                  <td class="text-muted">2024-01-13</td>
-                </tr>
-                <tr>
-                  <td class="font-medium">#ORD-005</td>
-                  <td>Tom Brown</td>
-                  <td>Yeezy Boost</td>
-                  <td class="font-semibold">$220</td>
-                  <td><span class="badge badge-shipped">Shipped</span></td>
-                  <td class="text-muted">2024-01-13</td>
-                </tr>
-              </tbody>
+        </header>
+
+        <div class="dashboard-content view-section active" id="view-dashboard">
+          
+          <div class="stats-row" id="overview-stats-container">
+            </div>
+
+          <div class="charts-row">
+            
+            <div class="chart-card main-chart">
+              <div class="card-header">
+                <h3 class="card-title">Sales Analytic</h3>
+                <div class="card-filters">
+                  <span class="sort-label">Sort by</span>
+                  <select class="sort-select">
+                    <option>Jul 2024</option>
+                    <option>Aug 2024</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="chart-metrics">
+                <div class="metric">
+                  <p class="metric-label">Income</p>
+                  <p class="metric-value">23,262.00 <span class="trend positive">+0.05% <i class="bi bi-caret-up-fill"></i></span></p>
+                </div>
+                <div class="metric">
+                  <p class="metric-label">Expenses</p>
+                  <p class="metric-value">11,135.00 <span class="trend negative">-0.05% <i class="bi bi-caret-down-fill"></i></span></p>
+                </div>
+                <div class="metric">
+                  <p class="metric-label">Balance</p>
+                  <p class="metric-value">48,135.00 <span class="trend positive">+0.05% <i class="bi bi-caret-up-fill"></i></span></p>
+                </div>
+              </div>
+
+              <div class="chart-placeholder">
+                 <svg viewBox="0 0 500 150" class="mock-line-chart" preserveAspectRatio="none">
+                    <path d="M0,150 L0,100 C50,100 80,140 120,120 C160,100 180,60 220,80 C260,100 280,130 320,110 C360,90 380,40 420,30 C460,20 480,60 500,50 L500,150 Z" class="chart-area"></path>
+                    <path d="M0,100 C50,100 80,140 120,120 C160,100 180,60 220,80 C260,100 280,130 320,110 C360,90 380,40 420,30 C460,20 480,60 500,50" class="chart-line"></path>
+                 </svg>
+                 <div class="chart-axis">
+                   <span>22 Jul</span><span>23 Jul</span><span>24 Jul</span><span>25 Jul</span><span>26 Jul</span><span>27 Jul</span><span>28 Jul</span><span>29 Jul</span>
+                 </div>
+              </div>
+            </div>
+
+            <div class="chart-card target-chart">
+              <div class="card-header">
+                <h3 class="card-title">Sales Target</h3>
+                <i class="bi bi-three-dots-vertical text-muted"></i>
+              </div>
+              <div class="target-content">
+                <div class="target-metrics">
+                  <div class="t-metric">
+                    <p class="t-label"><span class="dot daily"></span> Daily Target</p>
+                    <p class="t-value"><i class="bi bi-arrow-down text-red"></i> 650</p>
+                  </div>
+                  <div class="t-metric">
+                    <p class="t-label"><span class="dot monthly"></span> Monthly Target</p>
+                    <p class="t-value"><i class="bi bi-arrow-up text-green"></i> $145,000</p>
+                  </div>
+                </div>
+                <div class="donut-chart-placeholder">
+                  <svg viewBox="0 0 36 36" class="circular-chart">
+                    <path class="circle-bg"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    <path class="circle-primary" stroke-dasharray="75, 100"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    <path class="circle-secondary" stroke-dasharray="40, 100"
+                      d="M18 8 a 10 10 0 0 1 0 20 a 10 10 0 0 1 0 -20" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="bottom-row">
+            
+            <div class="bottom-card top-selling">
+              <div class="card-header">
+                <h3 class="card-title">Top Selling Products</h3>
+                <div class="header-nav">
+                  <i class="bi bi-arrow-left"></i>
+                  <i class="bi bi-arrow-right text-dark"></i>
+                </div>
+              </div>
+              <div class="product-cards-scroll" id="top-products-container">
+                </div>
+            </div>
+
+            <div class="bottom-card current-offer">
+              <div class="card-header">
+                <h3 class="card-title">Current Offers</h3>
+                <button class="btn-sm btn-primary add-offer-btn">Add New</button>
+              </div>
+              <div class="offer-list" id="current-offers-container">
+                </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="dashboard-content view-section" id="view-products">
+          <div class="data-table-card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Product Inventory</h3>
+                <p class="card-subtitle">Manage your catalog, pricing, and stock.</p>
+              </div>
+              <button class="btn btn-primary" onclick="alert('Open Add Product Modal')">
+                <i class="bi bi-plus-lg"></i> Add New Product
+              </button>
+            </div>
+            
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Product ID</th>
+                    <th>Product Details</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="products-table-body">
+                  </tbody>
+              </div>
             </table>
           </div>
         </div>
-      </div>
 
-      <div class="tab-content" id="products">
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h2 class="card-title">Product Inventory</h2>
-              <p class="card-subtitle">Manage your product catalog</p>
+        <div class="dashboard-content view-section" id="view-orders">
+          <div class="data-table-card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Recent Orders</h3>
+                <p class="card-subtitle">Track and update customer fulfillment.</p>
+              </div>
+              <div class="search-bar table-search">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" placeholder="Search orders by ID or Customer..." />
+              </div>
             </div>
-            <button class="btn-primary">Add New Product</button>
-          </div>
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Product Name</th>
-                  <th>Brand</th>
-                  <th>Price</th>
-                  <th>Stock</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="font-medium">Air Max 270</td>
-                  <td>Nike</td>
-                  <td class="font-semibold">$150</td>
-                  <td>45 units</td>
-                  <td>
-                    <button class="btn-secondary">Edit</button>
-                    <button class="btn-secondary">Delete</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="font-medium">Ultraboost 22</td>
-                  <td>Adidas</td>
-                  <td class="font-semibold">$180</td>
-                  <td>32 units</td>
-                  <td>
-                    <button class="btn-secondary">Edit</button>
-                    <button class="btn-secondary">Delete</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="font-medium">Chuck Taylor</td>
-                  <td>Converse</td>
-                  <td class="font-semibold">$65</td>
-                  <td>78 units</td>
-                  <td>
-                    <button class="btn-secondary">Edit</button>
-                    <button class="btn-secondary">Delete</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="font-medium">Air Jordan 1</td>
-                  <td>Nike</td>
-                  <td class="font-semibold">$170</td>
-                  <td class="stock-low">23 units</td>
-                  <td>
-                    <button class="btn-secondary">Edit</button>
-                    <button class="btn-secondary">Delete</button>
-                  </td>
-                </tr>
-              </tbody>
+            
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Customer Name</th>
+                    <th>Date</th>
+                    <th>Items</th>
+                    <th>Total Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="orders-table-body">
+                  </tbody>
+              </div>
             </table>
           </div>
         </div>
-      </div>
+
+        <div class="dashboard-content view-section" id="view-offers">
+          <div class="data-table-card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Active Campaigns & Offers</h3>
+                <p class="card-subtitle">Manage discount codes and promotional banners.</p>
+              </div>
+              <button class="btn btn-primary" onclick="alert('Open Create Offer Modal')">
+                <i class="bi bi-tag-fill"></i> Create Offer
+              </button>
+            </div>
+            
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Campaign Name</th>
+                    <th>Discount Code</th>
+                    <th>Discount Value</th>
+                    <th>Valid Until</th>
+                    <th>Usage Limit</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="offers-table-body">
+                  </tbody>
+              </div>
+            </table>
+          </div>
+        </div>
+
+        <div class="dashboard-content view-section" id="view-generic">
+          <div class="placeholder-card">
+            <i class="bi bi-tools placeholder-icon"></i>
+            <h2>Module in Development</h2>
+            <p>This section is currently being built. Please check back later.</p>
+          </div>
+        </div>
+
+      </main>
     </div>
 
     <script src="../scripts/pages/adminDashboard.js"></script>

@@ -115,7 +115,7 @@
 }
 
 /* =========================================
-   Hero Marquee Strip (Clickable)
+   Hero Marquee Strip
    ========================================= */
 .hero-marquee {
   background-color: var(--color-fg);
@@ -130,8 +130,8 @@
 .hero-marquee-track {
   display: flex;
   white-space: nowrap;
-  /* INCREASED TIME: Was 60s, now 180s for a smooth, slow glide across multiplied items */
-  animation: scroll-text 180s linear infinite;
+  animation: scroll-text 45s linear infinite;
+  width: max-content;
 }
 
 .hero-marquee-content {
@@ -181,7 +181,6 @@
   margin: 0 auto;
 }
 
-/* PRODUCT CARD WIDTH: 1 column mobile, 3 columns desktop for wider cards */
 .products-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -206,14 +205,12 @@
 
 .product-image {
   position: relative;
-  /* INCREASED HEIGHT: Was 220px, now 280px for larger images */
   height: 280px;
   width: 100%;
   overflow: hidden;
   background: var(--color-secondary);
 }
 
-/* MULTIPLE BADGES CONTAINER */
 .badge-container {
   position: absolute;
   top: 1rem;
@@ -277,17 +274,12 @@
 }
 
 .product-content {
-  /* REDUCED PADDING: Was 1.5rem */
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  /* REDUCED GAP: Was 0.5rem */
   gap: 0.25rem;
 }
 
-/* Category removed, style deleted */
-
-/* Container for Title and Wishlist button */
 .product-header {
   display: flex;
   justify-content: space-between;
@@ -308,7 +300,6 @@
   gap: 0.4rem;
 }
 
-/* STAR RATING COLOR: var(--color-accent) */
 .product-stars {
   display: flex;
   align-items: center;
@@ -324,7 +315,6 @@
 }
 
 .product-price {
-  /* INCREASED PRICE SIZE: Was 1.3rem */
   font-size: 1.5rem;
   font-weight: 800;
   color: var(--color-fg);
@@ -335,7 +325,6 @@
 .product-actions {
   display: flex;
   gap: 1rem;
-  /* REDUCED MARGIN TOP: Was 1.5rem */
   margin-top: 1rem;
 }
 
@@ -346,7 +335,7 @@
   color: var(--color-accent);
   width: 40px;
   height: 40px;
-  border-radius: 50%; /* Makes it circular */
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -365,21 +354,19 @@
 .action-btn-buy,
 .action-btn-cart {
   flex: 1;
-  background: var(--color-accent); /* Solid background */
-  color: var(--color-accent-fg); /* White text */
+  background: var(--color-accent);
+  color: var(--color-accent-fg);
   border: none;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* SMALLER FONT: Was 1rem */
   font-size: 0.9rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   cursor: pointer;
   transition: var(--transition-smooth);
-  /* REDUCED PADDING: Was 0.8rem 0 */
   padding: 0.6rem 0;
   text-decoration: none;
 }
@@ -413,7 +400,7 @@
 }
 
 /* =========================================
-   Text Marquee Strip (Info)
+   Text Marquee Strip
    ========================================= */
 .text-marquee {
   background-color: var(--color-muted-fg);
@@ -426,8 +413,8 @@
 .text-marquee-track {
   display: flex;
   white-space: nowrap;
-  /* INCREASED TIME: Was 60s, now 180s */
-  animation: scroll-text 180s linear infinite;
+  animation: scroll-text 45s linear infinite;
+  width: max-content;
 }
 
 .text-marquee-content {
@@ -453,7 +440,7 @@
 }
 
 /* =========================================
-   Brand Showcase (Infinite Marquee)
+   Brand Showcase (JS Infinite Marquee)
    ========================================= */
 .brand-showcase {
   padding: 5rem 0;
@@ -486,13 +473,12 @@
   );
 }
 
+/* NATIVE SCROLL ENABLED: Removes white-space bugs when controlled by JS loop */
 .marquee-row {
   display: flex;
   width: 100%;
-  user-select: none;
   padding: 0.5rem 0;
   overflow-x: auto;
-  /* Removed drag cursors */
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -501,46 +487,16 @@
   display: none;
 }
 
-/* Removed active state */
-
 .marquee-track {
   display: flex;
-  align-items: center;
-  gap: 2rem;
-  flex-shrink: 0;
   width: max-content;
   will-change: transform;
 }
 
-/* INCREASED TIME: Was 40s, now 150s for a very gentle crawl */
-.marquee-row.normal .marquee-track {
-  animation: scroll-left 150s linear infinite;
-}
-
-.marquee-row.reverse .marquee-track {
-  animation: scroll-right 150s linear infinite;
-}
-
-.marquee-row:hover .marquee-track {
-  animation-play-state: paused;
-}
-
-@keyframes scroll-left {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-@keyframes scroll-right {
-  0% {
-    transform: translateX(-50%);
-  }
-  100% {
-    transform: translateX(0);
-  }
+.marquee-content {
+  display: flex;
+  gap: 2rem;
+  padding-right: 2rem;
 }
 
 .brand-card-mini {
@@ -567,6 +523,8 @@
   height: 100px;
   object-fit: contain;
   transition: var(--transition-smooth);
+  -webkit-user-drag: none;
+  pointer-events: none; /* Prevents ghost image drag */
 }
 
 /* =========================================
@@ -578,7 +536,6 @@
 }
 
 .testimonials-title {
-  /* Removed uppercase */
   letter-spacing: 0.1em;
   font-weight: 700;
   margin-bottom: 3rem;
@@ -700,7 +657,6 @@
 
 .newsletter-intro {
   font-size: 0.875rem;
-  /* Removed uppercase */
   letter-spacing: 0.2em;
   margin-bottom: 1rem;
   opacity: 0.9;
@@ -711,7 +667,6 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   margin-bottom: 1rem;
-  /* Removed uppercase */
 }
 
 .newsletter-text {
@@ -810,7 +765,6 @@
   .hero-title {
     font-size: 5rem;
   }
-  /* CHANGED: 4 columns to 3 columns to make cards wider */
   .products-grid {
     grid-template-columns: repeat(3, 1fr);
   }

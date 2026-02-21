@@ -32,8 +32,9 @@ function loadComponent(url, placeholderId, cssPath = null, jsPath = null) {
     })
     .then((html) => {
       const placeholder = document.getElementById(placeholderId);
-      if (!placeholder)
-        throw new Error(`Placeholder #${placeholderId} not found`);
+      // Silent return to prevent console errors if placeholder is legitimately missing (like on dashboards)
+      if (!placeholder) return;
+
       placeholder.innerHTML = html;
 
       if (jsPath) {
@@ -71,24 +72,31 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.appendChild(cartPlaceholder);
   }
 
-  loadComponent(
-    "../components/header/header.html",
-    "header-placeholder",
-    "../components/header/header.css",
-    "../components/header/header.js",
-  );
+  // Check if placeholder exists before loading to prevent console errors
+  if (document.getElementById("header-placeholder")) {
+    loadComponent(
+      "../components/header/header.html",
+      "header-placeholder",
+      "../components/header/header.css",
+      "../components/header/header.js",
+    );
+  }
 
-  loadComponent(
-    "../components/cart/cart.html",
-    "cart-placeholder",
-    "../components/cart/cart.css",
-    "../components/cart/cart.js",
-  );
+  if (document.getElementById("cart-placeholder")) {
+    loadComponent(
+      "../components/cart/cart.html",
+      "cart-placeholder",
+      "../components/cart/cart.css",
+      "../components/cart/cart.js",
+    );
+  }
 
-  loadComponent(
-    "../components/footer/footer.html",
-    "footer-placeholder",
-    "../components/footer/footer.css",
-    "../components/footer/footer.js",
-  );
+  if (document.getElementById("footer-placeholder")) {
+    loadComponent(
+      "../components/footer/footer.html",
+      "footer-placeholder",
+      "../components/footer/footer.css",
+      "../components/footer/footer.js",
+    );
+  }
 });
