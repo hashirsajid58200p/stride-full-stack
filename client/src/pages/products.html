@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>All Products - Stride</title>
+    <meta
+      name="description"
+      content="Shop the full collection of premium athletic footwear at Stride. Filter by Men, Women, Unisex, and top brands like Nike, Adidas, and Puma."
+    />
+
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../public/images/logos/stride_logo_dark.png"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
+    <link rel="stylesheet" href="../styles/root.css" />
+    <link rel="stylesheet" href="../styles/pages/index.css" />
+    <link rel="stylesheet" href="../styles/pages/products.css" />
+  </head>
+  <body>
+    <div id="header-placeholder"></div>
+    <div id="cart-placeholder"></div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="products-page">
+      <div class="container products-layout">
+        <aside class="products-sidebar" id="productsSidebar">
+          <button class="close-sidebar-btn" id="closeSidebarBtn">
+            <i class="bi bi-x-lg"></i>
+          </button>
+
+          <div class="sidebar-section">
+            <h3 class="sidebar-title">Categories</h3>
+            <ul class="sidebar-list" id="category-filter">
+              <li>
+                <button class="sidebar-btn active" data-filter="all">
+                  All Products
+                </button>
+              </li>
+              <li>
+                <button class="sidebar-btn" data-filter="new-arrival">
+                  New Arrivals
+                </button>
+              </li>
+              <li>
+                <button class="sidebar-btn" data-filter="men">Men</button>
+              </li>
+              <li>
+                <button class="sidebar-btn" data-filter="women">Women</button>
+              </li>
+              <li>
+                <button class="sidebar-btn" data-filter="unisex">Unisex</button>
+              </li>
+            </ul>
+          </div>
+
+          <div class="sidebar-section">
+            <h3 class="sidebar-title">Brands</h3>
+            <ul class="sidebar-list" id="brand-filter">
+              <li>
+                <button class="sidebar-btn active" data-brand="all">
+                  All Brands
+                </button>
+              </li>
+              <li>
+                <button class="sidebar-btn" data-brand="nike">Nike</button>
+              </li>
+              <li>
+                <button class="sidebar-btn" data-brand="adidas">Adidas</button>
+              </li>
+              <li>
+                <button class="sidebar-btn" data-brand="puma">Puma</button>
+              </li>
+              <li>
+                <button class="sidebar-btn" data-brand="new-balance">
+                  New Balance
+                </button>
+              </li>
+              <li>
+                <button class="sidebar-btn" data-brand="jordan">Jordan</button>
+              </li>
+            </ul>
+          </div>
+        </aside>
+
+        <div class="products-main">
+          <div class="products-header">
+            <h1 class="page-title">Our Collection</h1>
+
+            <div class="search-filter-group">
+              <button
+                class="btn btn-outline mobile-sidebar-toggle"
+                id="mobileSidebarToggle"
+              >
+                <i class="bi bi-layout-sidebar"></i> Categories
+              </button>
+
+              <div class="search-bar">
+                <i class="bi bi-search search-icon"></i>
+                <input
+                  type="text"
+                  id="product-search"
+                  placeholder="Search products..."
+                />
+              </div>
+
+              <button
+                class="btn btn-outline filter-toggle-btn"
+                id="openFilterModal"
+              >
+                <i class="bi bi-sliders"></i> Filters
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="products-grid featured-products-override"
+            id="product-grid"
+          >
+            <div
+              class="product-card"
+              data-category="men new-arrival"
+              data-brand="nike"
+              data-price="149.99"
+            >
+              <div class="product-image">
+                <div class="badge-container">
+                  <span class="badge-tag">Men</span>
+                  <span class="badge-new">New Arrival</span>
+                </div>
+                <img
+                  src="../../public/images/shoe-1.jpg"
+                  alt="Nike Air Max Fusion"
+                />
+                <div class="product-overlay"></div>
+              </div>
+              <div class="product-content">
+                <div class="product-info">
+                  <div class="product-header">
+                    <h3 class="product-name">Nike Air Max Fusion</h3>
+                    <button
+                      class="action-btn-wishlist"
+                      aria-label="Add to wishlist"
+                      title="Wishlist"
+                    >
+                      <i class="bi bi-heart"></i>
+                    </button>
+                  </div>
+                  <div class="product-stars">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-half"></i>
+                    <span class="review-count">(128)</span>
+                  </div>
+                  <p class="product-price">$149.99</p>
+                </div>
+                <div class="product-actions">
+                  <a
+                    href="checkout.html"
+                    class="action-btn-buy"
+                    aria-label="Buy Now"
+                    title="Buy Now"
+                    >Buy Now</a
+                  >
+                  <button
+                    class="action-btn-cart add-to-cart"
+                    aria-label="Add to cart"
+                    title="Add to Cart"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="product-card"
+              data-category="women"
+              data-brand="adidas"
+              data-price="179.99"
+            >
+              <div class="product-image">
+                <div class="badge-container">
+                  <span class="badge-tag">Women</span>
+                </div>
+                <img
+                  src="../../public/images/shoe-2.jpg"
+                  alt="Adidas Ultraboost 23"
+                />
+                <div class="product-overlay"></div>
+              </div>
+              <div class="product-content">
+                <div class="product-info">
+                  <div class="product-header">
+                    <h3 class="product-name">Adidas Ultraboost 23</h3>
+                    <button
+                      class="action-btn-wishlist"
+                      aria-label="Add to wishlist"
+                      title="Wishlist"
+                    >
+                      <i class="bi bi-heart"></i>
+                    </button>
+                  </div>
+                  <div class="product-stars">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <span class="review-count">(245)</span>
+                  </div>
+                  <p class="product-price">$179.99</p>
+                </div>
+                <div class="product-actions">
+                  <a
+                    href="checkout.html"
+                    class="action-btn-buy"
+                    aria-label="Buy Now"
+                    title="Buy Now"
+                    >Buy Now</a
+                  >
+                  <button
+                    class="action-btn-cart add-to-cart"
+                    aria-label="Add to cart"
+                    title="Add to Cart"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="product-card"
+              data-category="unisex new-arrival"
+              data-brand="jordan"
+              data-price="199.99"
+            >
+              <div class="product-image">
+                <div class="badge-container">
+                  <span class="badge-tag">Unisex</span>
+                  <span class="badge-new">New Arrival</span>
+                </div>
+                <img
+                  src="../../public/images/shoe-3.jpg"
+                  alt="Nike Jordan Legacy"
+                />
+                <div class="product-overlay"></div>
+              </div>
+              <div class="product-content">
+                <div class="product-info">
+                  <div class="product-header">
+                    <h3 class="product-name">Nike Jordan Legacy</h3>
+                    <button
+                      class="action-btn-wishlist"
+                      aria-label="Add to wishlist"
+                      title="Wishlist"
+                    >
+                      <i class="bi bi-heart"></i>
+                    </button>
+                  </div>
+                  <div class="product-stars">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star"></i>
+                    <span class="review-count">(89)</span>
+                  </div>
+                  <p class="product-price">$199.99</p>
+                </div>
+                <div class="product-actions">
+                  <a
+                    href="checkout.html"
+                    class="action-btn-buy"
+                    aria-label="Buy Now"
+                    title="Buy Now"
+                    >Buy Now</a
+                  >
+                  <button
+                    class="action-btn-cart add-to-cart"
+                    aria-label="Add to cart"
+                    title="Add to Cart"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="product-card"
+              data-category="men"
+              data-brand="new-balance"
+              data-price="129.99"
+            >
+              <div class="product-image">
+                <div class="badge-container">
+                  <span class="badge-tag">Men</span>
+                </div>
+                <img
+                  src="../../public/images/shoe-4.jpg"
+                  alt="New Balance 550 Classic"
+                />
+                <div class="product-overlay"></div>
+              </div>
+              <div class="product-content">
+                <div class="product-info">
+                  <div class="product-header">
+                    <h3 class="product-name">New Balance 550 Classic</h3>
+                    <button
+                      class="action-btn-wishlist"
+                      aria-label="Add to wishlist"
+                      title="Wishlist"
+                    >
+                      <i class="bi bi-heart"></i>
+                    </button>
+                  </div>
+                  <div class="product-stars">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-half"></i>
+                    <span class="review-count">(312)</span>
+                  </div>
+                  <p class="product-price">$129.99</p>
+                </div>
+                <div class="product-actions">
+                  <a
+                    href="checkout.html"
+                    class="action-btn-buy"
+                    aria-label="Buy Now"
+                    title="Buy Now"
+                    >Buy Now</a
+                  >
+                  <button
+                    class="action-btn-cart add-to-cart"
+                    aria-label="Add to cart"
+                    title="Add to Cart"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="product-card"
+              data-category="women"
+              data-brand="puma"
+              data-price="119.99"
+            >
+              <div class="product-image">
+                <div class="badge-container">
+                  <span class="badge-tag">Women</span>
+                </div>
+                <img
+                  src="../../public/images/shoe-5.jpg"
+                  alt="Puma RS-X Tech"
+                />
+                <div class="product-overlay"></div>
+              </div>
+              <div class="product-content">
+                <div class="product-info">
+                  <div class="product-header">
+                    <h3 class="product-name">Puma RS-X Tech</h3>
+                    <button
+                      class="action-btn-wishlist"
+                      aria-label="Add to wishlist"
+                      title="Wishlist"
+                    >
+                      <i class="bi bi-heart"></i>
+                    </button>
+                  </div>
+                  <div class="product-stars">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star"></i>
+                    <span class="review-count">(156)</span>
+                  </div>
+                  <p class="product-price">$119.99</p>
+                </div>
+                <div class="product-actions">
+                  <a
+                    href="checkout.html"
+                    class="action-btn-buy"
+                    aria-label="Buy Now"
+                    title="Buy Now"
+                    >Buy Now</a
+                  >
+                  <button
+                    class="action-btn-cart add-to-cart"
+                    aria-label="Add to cart"
+                    title="Add to Cart"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="product-card"
+              data-category="unisex new-arrival"
+              data-brand="nike"
+              data-price="159.99"
+            >
+              <div class="product-image">
+                <div class="badge-container">
+                  <span class="badge-tag">Unisex</span>
+                  <span class="badge-new">New Arrival</span>
+                </div>
+                <img src="../../public/images/shoe-6.jpg" alt="Nike Dunk Low" />
+                <div class="product-overlay"></div>
+              </div>
+              <div class="product-content">
+                <div class="product-info">
+                  <div class="product-header">
+                    <h3 class="product-name">Nike Dunk Low</h3>
+                    <button
+                      class="action-btn-wishlist"
+                      aria-label="Add to wishlist"
+                      title="Wishlist"
+                    >
+                      <i class="bi bi-heart"></i>
+                    </button>
+                  </div>
+                  <div class="product-stars">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <span class="review-count">(892)</span>
+                  </div>
+                  <p class="product-price">$159.99</p>
+                </div>
+                <div class="product-actions">
+                  <a
+                    href="checkout.html"
+                    class="action-btn-buy"
+                    aria-label="Buy Now"
+                    title="Buy Now"
+                    >Buy Now</a
+                  >
+                  <button
+                    class="action-btn-cart add-to-cart"
+                    aria-label="Add to cart"
+                    title="Add to Cart"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="no-results" id="no-results" style="display: none">
+            <i class="bi bi-search"></i>
+            <h2>No products found</h2>
+            <p>Try adjusting your category, brand, or search filters.</p>
+            <button class="btn btn-primary" id="clear-filters">
+              Clear All Filters
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="modal-overlay" id="advancedFilterModal">
+      <div class="modal-content" style="max-width: 500px">
+        <div class="modal-header">
+          <h3>Advanced Filters</h3>
+          <button class="close-modal" id="closeFilterModal" type="button">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+        <form id="applyFiltersForm" class="modal-form">
+          <div class="form-group full-width">
+            <label>Sort By</label>
+            <div
+              class="custom-select-wrapper"
+              id="sortDropdownWrapper"
+              tabindex="0"
+            >
+              <div class="custom-select-display" id="sortDropdownDisplay">
+                <span id="sortDropdownText">Featured</span>
+                <i class="bi bi-chevron-down"></i>
+              </div>
+              <div class="custom-select-options" id="sortDropdownOptions">
+                <div
+                  class="custom-select-option selected"
+                  data-value="featured"
+                >
+                  Featured
+                </div>
+                <div class="custom-select-option" data-value="price-low">
+                  Price: Low to High
+                </div>
+                <div class="custom-select-option" data-value="price-high">
+                  Price: High to Low
+                </div>
+                <div class="custom-select-option" data-value="newest">
+                  Newest Arrivals
+                </div>
+              </div>
+            </div>
+            <input
+              type="hidden"
+              id="sort-value-hidden"
+              name="sort-by"
+              value="featured"
+            />
+          </div>
+
+          <div class="form-group full-width">
+            <label>Price Range</label>
+            <div class="form-row price-row">
+              <input
+                type="number"
+                id="min-price"
+                placeholder="Min $"
+                min="0"
+                step="0.01"
+                class="form-input"
+              />
+              <input
+                type="number"
+                id="max-price"
+                placeholder="Max $"
+                min="0"
+                step="0.01"
+                class="form-input"
+              />
+            </div>
+            <p
+              id="price-error"
+              class="error-msg"
+              style="
+                color: #ef4444;
+                font-size: 0.85rem;
+                margin-top: 0.25rem;
+                display: none;
+              "
+            ></p>
+          </div>
+
+          <div class="form-group full-width">
+            <label>Available Sizes</label>
+            <div class="checkbox-grid">
+              <label class="check-item"
+                ><input type="checkbox" name="filter-size" value="7" /> Size
+                7</label
+              >
+              <label class="check-item"
+                ><input type="checkbox" name="filter-size" value="8" /> Size
+                8</label
+              >
+              <label class="check-item"
+                ><input type="checkbox" name="filter-size" value="9" /> Size
+                9</label
+              >
+              <label class="check-item"
+                ><input type="checkbox" name="filter-size" value="10" /> Size
+                10</label
+              >
+              <label class="check-item"
+                ><input type="checkbox" name="filter-size" value="11" /> Size
+                11</label
+              >
+              <label class="check-item"
+                ><input type="checkbox" name="filter-size" value="12" /> Size
+                12</label
+              >
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary full-width">
+              Apply Filters
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../scripts/main.js"></script>
+    <script src="../scripts/pages/products.js"></script>
+  </body>
+</html>

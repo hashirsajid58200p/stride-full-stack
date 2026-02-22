@@ -135,7 +135,7 @@ html[data-theme="dark"] .logo-for-light-bg {
 }
 
 /* ===================================== */
-/* 3️⃣ BOTTOM SECTION */
+/* 3️⃣ BOTTOM SECTION (Dynamic Year & Heart) */
 /* ===================================== */
 
 .footer-bottom {
@@ -146,6 +146,66 @@ html[data-theme="dark"] .logo-for-light-bg {
 .footer-bottom p {
   font-size: 0.85rem;
   color: var(--color-muted-fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem; /* Perfect spacing between words and icons */
+}
+
+/* Interactive Heart Icon */
+.heart-icon {
+  cursor: pointer;
+  font-size: inherit; /* Matches text size exactly */
+  transition: color 0.3s ease; /* Smooth color transition, no scaling */
+  display: inline-block;
+}
+
+.heart-icon:hover {
+  color: var(--color-accent); /* Subtle hint on hover */
+}
+
+.heart-icon.filled {
+  color: var(--color-accent) !important; /* Guaranteed to apply color */
+}
+
+/* Creator Name with Custom Tooltip and Link styles */
+.creator-name {
+  font-weight: normal; /* Removed bolding */
+  color: inherit; /* Blends completely with the surrounding text */
+  cursor: pointer; /* Makes it clear it's a clickable link */
+  text-decoration: none; /* Removes the default link underline */
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.creator-name:hover {
+  color: var(--color-accent);
+}
+
+/* Tooltip implementation */
+.creator-name::after {
+  content: attr(data-fullname);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background-color: var(--color-accent);
+  color: var(--color-accent-fg);
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(255, 107, 0, 0.2);
+}
+
+.creator-name:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-8px);
 }
 
 /* ===================================== */

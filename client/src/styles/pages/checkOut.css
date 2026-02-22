@@ -1,0 +1,687 @@
+/* =========================================
+   Checkout Page Layout
+   ========================================= */
+.checkout-page {
+  min-height: 100vh;
+  padding-top: 8rem;
+  padding-bottom: 5rem;
+  background-color: var(--color-bg);
+}
+
+.checkout-page .container {
+  max-width: 1200px !important;
+}
+
+.checkout-layout {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 4rem;
+  align-items: flex-start;
+}
+
+/* =========================================
+   Left Column: Progress Tracker
+   ========================================= */
+.checkout-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.progress-tracker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 2;
+  color: var(--color-muted-fg);
+  transition: var(--transition-smooth);
+}
+
+.step-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-secondary);
+  border: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: var(--transition-smooth);
+}
+
+.step-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.step.active {
+  color: var(--color-fg);
+}
+
+.step.active .step-icon {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-fg);
+  box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.2);
+}
+
+.step.completed .step-icon {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-fg);
+}
+
+.progress-line {
+  flex: 1;
+  height: 2px;
+  background-color: var(--color-border);
+  margin: 0 1rem;
+  transform: translateY(-12px);
+  transition: var(--transition-smooth);
+}
+
+.progress-line.completed {
+  background-color: var(--color-accent);
+}
+
+/* =========================================
+   Left Column: Step Contents & Forms
+   ========================================= */
+.checkout-step {
+  display: none;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.checkout-step.active {
+  display: block;
+}
+
+.step-header {
+  margin-bottom: 1.5rem;
+}
+
+.step-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-fg);
+}
+
+.step-header p {
+  color: var(--color-muted-fg);
+  font-size: 0.95rem;
+  margin-top: 0.25rem;
+}
+
+.text-link {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+.text-link:hover {
+  text-decoration: underline;
+}
+
+.checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+.form-group input {
+  padding: 0.9rem 1rem;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-fg);
+  font-family: inherit;
+  font-size: 1rem;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.1);
+}
+
+/* =========================================
+   Custom Dropdown Styles (Fixes Blue Highlight)
+   ========================================= */
+.custom-select-wrapper {
+  position: relative;
+  width: 100%;
+  user-select: none;
+  outline: none;
+}
+
+.custom-select-display {
+  padding: 0.9rem 1rem;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-fg);
+  font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.custom-select-display .text-placeholder {
+  color: var(--color-muted-fg);
+}
+
+.custom-select-display.has-value .text-placeholder {
+  color: var(--color-fg);
+}
+
+.custom-select-wrapper:focus .custom-select-display,
+.custom-select-wrapper.open .custom-select-display {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.1);
+}
+
+.custom-select-display i {
+  color: var(--color-muted-fg);
+  transition: transform 0.3s ease;
+}
+
+.custom-select-wrapper.open .custom-select-display i {
+  transform: rotate(180deg);
+  color: var(--color-accent);
+}
+
+.custom-select-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  margin-top: 0.5rem;
+  overflow: hidden;
+  display: none;
+  z-index: 100;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.2s ease;
+}
+
+.custom-select-wrapper.open .custom-select-options {
+  display: block;
+}
+
+.custom-select-option {
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  color: var(--color-fg);
+  transition: all 0.2s ease;
+}
+
+/* This creates the perfect orange highlight! */
+.custom-select-option:hover,
+.custom-select-option.selected {
+  background-color: var(--color-accent);
+  color: var(--color-accent-fg);
+}
+
+/* ========================================= */
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.back-link {
+  color: var(--color-fg);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.3s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.back-link:hover {
+  color: var(--color-accent);
+}
+
+.btn {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-primary {
+  background-color: var(--color-accent);
+  color: var(--color-accent-fg);
+  border: none;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+}
+
+.btn-large {
+  padding: 1.2rem 3rem;
+  font-size: 1.1rem;
+  width: 100%;
+}
+
+.mt-3 {
+  margin-top: 1.5rem;
+}
+.mt-4 {
+  margin-top: 2rem;
+}
+
+/* =========================================
+   Summary Boxes (Step 2 & 3)
+   ========================================= */
+.summary-box {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1rem;
+  background-color: var(--color-bg);
+}
+
+.summary-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 0.5rem 0;
+}
+
+.summary-label {
+  width: 80px;
+  color: var(--color-muted-fg);
+  font-size: 0.9rem;
+}
+
+.summary-value {
+  flex: 1;
+  color: var(--color-fg);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.edit-btn {
+  background: none;
+  border: none;
+  color: var(--color-accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.edit-btn:hover {
+  text-decoration: underline;
+}
+
+.summary-divider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: 0.5rem 0;
+}
+
+/* =========================================
+   Shipping Options
+   ========================================= */
+.shipping-methods {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.shipping-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1rem;
+  background-color: var(--color-bg);
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.3s ease;
+}
+
+.shipping-option:last-child {
+  border-bottom: none;
+}
+
+.shipping-option:hover {
+  background-color: var(--color-secondary);
+}
+
+.shipping-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.shipping-left input[type="radio"] {
+  accent-color: var(--color-accent);
+  width: 18px;
+  height: 18px;
+}
+
+.shipping-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.shipping-title {
+  font-weight: 600;
+  color: var(--color-fg);
+}
+
+.shipping-desc {
+  font-size: 0.85rem;
+  color: var(--color-muted-fg);
+}
+
+.shipping-price {
+  font-weight: 700;
+  color: var(--color-fg);
+}
+
+/* =========================================
+   Payment Box
+   ========================================= */
+.payment-box {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.payment-header {
+  background-color: var(--color-secondary);
+  padding: 1rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.payment-icons {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  color: var(--color-muted-fg);
+}
+
+.payment-body {
+  padding: 1.5rem;
+  background-color: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* =========================================
+   Right Column: Order Summary
+   ========================================= */
+.checkout-summary {
+  position: sticky;
+  top: 100px;
+  animation: slideUp 0.6s ease-out;
+}
+
+.summary-card {
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.summary-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--color-fg);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1rem;
+}
+
+.order-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+  max-height: 40vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  padding-top: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.item-img-wrapper {
+  position: relative;
+  width: 65px;
+  height: 65px;
+  background-color: var(--color-bg);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.item-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: var(--color-fg);
+  color: var(--color-bg);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  z-index: 5;
+}
+
+.item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.item-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-fg);
+}
+
+.item-brand {
+  font-size: 0.8rem;
+  color: var(--color-muted-fg);
+}
+
+.item-price {
+  font-weight: 600;
+  color: var(--color-fg);
+}
+
+/* Coupon Section */
+.coupon-section {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.coupon-section input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-fg);
+  font-family: inherit;
+}
+.coupon-section input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.btn-outline {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  border-radius: 8px;
+  font-weight: 600;
+  transition: var(--transition-smooth);
+}
+
+.btn-outline:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* Totals Breakdown */
+.price-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  color: var(--color-muted-fg);
+  font-size: 0.95rem;
+}
+
+.price-row.text-accent {
+  color: var(--color-accent);
+}
+
+.price-row span:last-child {
+  color: var(--color-fg);
+  font-weight: 500;
+}
+.price-row.text-accent span:last-child {
+  color: var(--color-accent);
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 1.1rem;
+  color: var(--color-fg);
+}
+
+.total-price {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+/* =========================================
+   Responsive Design
+   ========================================= */
+@media (max-width: 992px) {
+  .checkout-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .checkout-summary {
+    position: static;
+    order: -1;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: 1rem;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 1.2rem;
+  }
+
+  .back-link {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem 0;
+  }
+
+  .step-label {
+    display: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

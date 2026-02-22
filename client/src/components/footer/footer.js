@@ -1,4 +1,40 @@
-// Toast Notification Function
+// Function specifically called by main.js after footer injection
+function initFooter() {
+  // 1. Dynamic Year Logic
+  const yearSpan = document.getElementById("current-year");
+  if (yearSpan) {
+    yearSpan.textContent = new Date().getFullYear();
+  }
+
+  // 2. Interactive Heart Toggle Logic
+  const heartIcon = document.getElementById("love-icon");
+  if (heartIcon) {
+    // We use .onclick to ensure we don't accidentally attach multiple listeners
+    // if initFooter is called more than once by the dynamic loader
+    heartIcon.onclick = function () {
+      // Check if it is currently unfilled
+      if (this.classList.contains("bi-heart")) {
+        this.classList.remove("bi-heart");
+        this.classList.add("bi-heart-fill", "filled");
+      } else {
+        // Otherwise, it is filled, so unfill it
+        this.classList.remove("bi-heart-fill", "filled");
+        this.classList.add("bi-heart");
+      }
+    };
+  }
+}
+
+// Fallback initialization just in case it's loaded standalone
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initFooter);
+} else {
+  initFooter();
+}
+
+// ==========================================
+// Toast Notification Function (Existing)
+// ==========================================
 function showToast(message) {
   // Remove existing toast if any
   const existingToast = document.querySelector(".toast");
@@ -34,7 +70,9 @@ function showToast(message) {
   }, 3000);
 }
 
-// Intersection Observer for Scroll Animations
+// ==========================================
+// Intersection Observer for Scroll Animations (Existing)
+// ==========================================
 const observerOptions = {
   threshold: 0.1,
   rootMargin: "0px 0px -50px 0px",
@@ -49,7 +87,7 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, observerOptions);
 
-// Observe elements for scroll animations
+// Observe elements for scroll animations (Will safely ignore if none exist)
 document.querySelectorAll(".product-card, .brand-card").forEach((el) => {
   observer.observe(el);
 });

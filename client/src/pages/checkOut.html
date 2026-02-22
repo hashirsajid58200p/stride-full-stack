@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout - Stride</title>
+    <meta
+      name="description"
+      content="Complete your purchase securely at Stride."
+    />
+
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../public/images/logos/stride_logo_dark.png"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
+    <link rel="stylesheet" href="../styles/root.css" />
+    <link rel="stylesheet" href="../styles/pages/checkOut.css" />
+  </head>
+  <body>
+    <div id="header-placeholder"></div>
+    <div id="cart-placeholder"></div>
+
+    <main class="checkout-page">
+      <div class="container">
+        <div class="checkout-layout">
+          <div class="checkout-flow">
+            <div class="progress-tracker">
+              <div class="step active" id="indicator-step-1">
+                <div class="step-icon">1</div>
+                <span class="step-label">Information</span>
+              </div>
+              <div class="progress-line"></div>
+              <div class="step" id="indicator-step-2">
+                <div class="step-icon">2</div>
+                <span class="step-label">Shipping</span>
+              </div>
+              <div class="progress-line"></div>
+              <div class="step" id="indicator-step-3">
+                <div class="step-icon">3</div>
+                <span class="step-label">Purchase</span>
+              </div>
+            </div>
+
+            <div class="checkout-step active" id="step-1">
+              <div class="step-header">
+                <h2>Contact Information</h2>
+                <p>
+                  Already have an account?
+                  <a href="login.html" class="text-link">Log in</a>
+                </p>
+              </div>
+              <form class="checkout-form" id="form-step-1">
+                <div class="form-group full-width">
+                  <input
+                    type="email"
+                    id="chk-email"
+                    placeholder="Email address"
+                    required
+                  />
+                </div>
+                <div class="form-group full-width mt-3">
+                  <h2>Shipping Address</h2>
+                </div>
+
+                <div class="form-group full-width">
+                  <div
+                    class="custom-select-wrapper"
+                    id="countryDropdownWrapper"
+                    tabindex="0"
+                  >
+                    <div
+                      class="custom-select-display"
+                      id="countryDropdownDisplay"
+                    >
+                      <span id="countryDropdownText" class="text-placeholder"
+                        >Select Country</span
+                      >
+                      <i class="bi bi-chevron-down"></i>
+                    </div>
+                    <div
+                      class="custom-select-options"
+                      id="countryDropdownOptions"
+                    >
+                      <div
+                        class="custom-select-option"
+                        data-value="United States"
+                      >
+                        United States
+                      </div>
+                      <div
+                        class="custom-select-option"
+                        data-value="United Kingdom"
+                      >
+                        United Kingdom
+                      </div>
+                      <div class="custom-select-option" data-value="Canada">
+                        Canada
+                      </div>
+                      <div class="custom-select-option" data-value="Australia">
+                        Australia
+                      </div>
+                      <div class="custom-select-option" data-value="Pakistan">
+                        Pakistan
+                      </div>
+                    </div>
+                  </div>
+                  <input type="hidden" id="chk-country" value="" required />
+                  <p
+                    id="country-error"
+                    class="error-msg"
+                    style="
+                      color: #ef4444;
+                      font-size: 0.85rem;
+                      margin-top: 0.25rem;
+                      display: none;
+                    "
+                  >
+                    Please select a country.
+                  </p>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      id="chk-fname"
+                      placeholder="First name"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      id="chk-lname"
+                      placeholder="Last name"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form-group full-width">
+                  <input
+                    type="text"
+                    id="chk-address"
+                    placeholder="Address"
+                    required
+                  />
+                </div>
+                <div class="form-group full-width">
+                  <input
+                    type="text"
+                    id="chk-apartment"
+                    placeholder="Apartment, suite, etc. (optional)"
+                  />
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      id="chk-city"
+                      placeholder="City"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      id="chk-postal"
+                      placeholder="Postal code"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <a href="products.html" class="back-link"
+                    ><i class="bi bi-chevron-left"></i> Return to cart</a
+                  >
+                  <button type="submit" class="btn btn-primary">
+                    Continue to Shipping
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div class="checkout-step" id="step-2">
+              <div class="summary-box">
+                <div class="summary-row">
+                  <span class="summary-label">Contact</span>
+                  <span class="summary-value" id="summary-email"
+                    >example@mail.com</span
+                  >
+                  <button class="edit-btn" onclick="goToStep(1)">Change</button>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-row">
+                  <span class="summary-label">Ship to</span>
+                  <span class="summary-value" id="summary-address"
+                    >123 Street, City, Country</span
+                  >
+                  <button class="edit-btn" onclick="goToStep(1)">Change</button>
+                </div>
+              </div>
+
+              <div class="step-header mt-4">
+                <h2>Shipping Method</h2>
+              </div>
+              <form class="checkout-form" id="form-step-2">
+                <div class="shipping-methods">
+                  <label class="shipping-option">
+                    <div class="shipping-left">
+                      <input
+                        type="radio"
+                        name="shipping-rate"
+                        value="0"
+                        checked
+                      />
+                      <div class="shipping-info">
+                        <span class="shipping-title">Standard Shipping</span>
+                        <span class="shipping-desc">4-5 business days</span>
+                      </div>
+                    </div>
+                    <span class="shipping-price">Free</span>
+                  </label>
+                  <label class="shipping-option">
+                    <div class="shipping-left">
+                      <input type="radio" name="shipping-rate" value="15.00" />
+                      <div class="shipping-info">
+                        <span class="shipping-title">Express Shipping</span>
+                        <span class="shipping-desc">1-2 business days</span>
+                      </div>
+                    </div>
+                    <span class="shipping-price">$15.00</span>
+                  </label>
+                </div>
+                <div class="form-actions">
+                  <button type="button" class="back-link" onclick="goToStep(1)">
+                    <i class="bi bi-chevron-left"></i> Return to information
+                  </button>
+                  <button type="submit" class="btn btn-primary">
+                    Continue to Payment
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div class="checkout-step" id="step-3">
+              <div class="summary-box">
+                <div class="summary-row">
+                  <span class="summary-label">Contact</span>
+                  <span class="summary-value" id="summary-email-2"
+                    >example@mail.com</span
+                  >
+                  <button class="edit-btn" onclick="goToStep(1)">Change</button>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-row">
+                  <span class="summary-label">Ship to</span>
+                  <span class="summary-value" id="summary-address-2"
+                    >123 Street, City, Country</span
+                  >
+                  <button class="edit-btn" onclick="goToStep(1)">Change</button>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-row">
+                  <span class="summary-label">Method</span>
+                  <span class="summary-value" id="summary-shipping"
+                    >Standard Shipping - Free</span
+                  >
+                </div>
+              </div>
+
+              <div class="step-header mt-4">
+                <h2>Payment</h2>
+                <p>All transactions are secure and encrypted.</p>
+              </div>
+              <form class="checkout-form" id="form-step-3">
+                <div class="payment-box">
+                  <div class="payment-header">
+                    <span>Credit Card</span>
+                    <div class="payment-icons">
+                      <i class="bi bi-credit-card-fill"></i>
+                    </div>
+                  </div>
+                  <div class="payment-body">
+                    <div class="form-group full-width">
+                      <input type="text" placeholder="Card number" required />
+                    </div>
+                    <div class="form-group full-width">
+                      <input type="text" placeholder="Name on card" required />
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group">
+                        <input
+                          type="text"
+                          placeholder="Expiration date (MM / YY)"
+                          required
+                        />
+                      </div>
+                      <div class="form-group">
+                        <input
+                          type="text"
+                          placeholder="Security code"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-actions mt-4">
+                  <button type="button" class="back-link" onclick="goToStep(2)">
+                    <i class="bi bi-chevron-left"></i> Return to shipping
+                  </button>
+                  <button type="submit" class="btn btn-primary btn-large">
+                    Pay Now
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="checkout-summary">
+            <div class="summary-card">
+              <h3 class="summary-title">Your Order</h3>
+
+              <div class="order-items" id="checkout-order-items"></div>
+
+              <div class="coupon-section">
+                <input
+                  type="text"
+                  id="coupon-code"
+                  placeholder="Discount code"
+                />
+                <button type="button" class="btn-outline" id="apply-coupon">
+                  Apply
+                </button>
+              </div>
+
+              <div class="price-breakdown">
+                <div class="price-row">
+                  <span>Subtotal</span>
+                  <span id="chk-subtotal">$0.00</span>
+                </div>
+                <div class="price-row">
+                  <span>Shipping</span>
+                  <span id="chk-shipping">$0.00</span>
+                </div>
+                <div
+                  class="price-row text-accent"
+                  id="discount-row"
+                  style="display: none"
+                >
+                  <span>Discount</span>
+                  <span id="chk-discount">-$0.00</span>
+                </div>
+              </div>
+
+              <div class="total-row">
+                <span>Total</span>
+                <span class="total-price" id="chk-total">$0.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../scripts/main.js"></script>
+    <script src="../scripts/pages/checkOut.js"></script>
+  </body>
+</html>

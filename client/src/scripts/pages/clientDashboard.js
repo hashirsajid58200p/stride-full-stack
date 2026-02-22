@@ -1,7 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // ==========================================
-  // MOCK DATABASE & STATE
-  // ==========================================
   const db = {
     user: {
       fullName: "John Doe",
@@ -76,14 +73,10 @@ document.addEventListener("DOMContentLoaded", () => {
     ],
   };
 
-  // ==========================================
-  // THEME TOGGLE LOGIC (EXACT REQUESTED LOGIC)
-  // ==========================================
   const themeBtn = document.getElementById("themeToggle");
   const themeIcon = themeBtn.querySelector("i");
   const logoImg = document.getElementById("sidebar-logo");
 
-  // Check saved theme or default to light
   const savedTheme = localStorage.getItem("theme") || "light";
   document.documentElement.setAttribute("data-theme", savedTheme);
   updateThemeIcon(savedTheme);
@@ -111,24 +104,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // ==========================================
-  // RENDER FUNCTIONS (Injecting Data)
-  // ==========================================
-
   function renderDashboard() {
-    // Render user names dynamically
     const firstName = db.user.fullName.split(" ")[0];
-
-    // Dynamically update document title based on User's first name
     document.title = `${firstName}'s Dashboard`;
 
     document.getElementById("header-user-name").textContent = db.user.fullName;
     document.getElementById("banner-user-name").textContent = firstName;
 
-    // Render Avatar if exists
     updateAvatarDisplay(db.user.avatarUrl, db.user.fullName);
 
-    // Render Wishlist Previews & Full Grid
     const wishHtml = db.wishlist
       .map(
         (item) => `
@@ -142,9 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
                 <div class="wish-actions">
                     <a href="checkout.html" class="btn-primary">Buy Now</a>
-                    <button class="btn-outline wishlist-add-to-cart" data-id="${item.id}">
-                        Add to Cart
-                    </button>
+                    <button class="btn-outline wishlist-add-to-cart" data-id="${item.id}">Add to Cart</button>
                 </div>
             </div>
         `,
@@ -154,7 +136,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("dashboard-wishlist-preview").innerHTML = wishHtml;
     document.getElementById("full-wishlist-grid").innerHTML = wishHtml;
 
-    // Render Orders Preview & Full List
     const ordersHtml = db.orders
       .map(
         (order) => `
@@ -178,7 +159,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("dashboard-orders-preview").innerHTML = ordersHtml;
     document.getElementById("full-orders-list").innerHTML = ordersHtml;
 
-    // Render News
     const newsHtml = db.news
       .map(
         (n) => `
@@ -191,7 +171,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .join("");
     document.getElementById("dashboard-news-list").innerHTML = newsHtml;
 
-    // Populate Profile Form
     document.getElementById("prof-fullname").value = db.user.fullName;
     document.getElementById("prof-email").value = db.user.email;
     document.getElementById("prof-phone").value = db.user.phone;
@@ -206,7 +185,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return "";
   }
 
-  // Helper to update avatar in header and profile section
   function updateAvatarDisplay(imageUrl, fullName) {
     const headerAvatar = document.getElementById("header-avatar");
     const profilePreview = document.getElementById("profile-preview");
@@ -227,44 +205,63 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ==========================================
-  // SPA NAVIGATION LOGIC (Tab Switching)
+  // SPA NAVIGATION LOGIC (Reads URLs too!)
   // ==========================================
   const navLinks = document.querySelectorAll(".sidebar-nav .nav-link");
   const viewSections = document.querySelectorAll(".view-section");
 
+  function switchTab(target) {
+    const link = document.querySelector(
+      `.sidebar-nav .nav-link[data-target="${target}"]`,
+    );
+    if (!link) return;
+
+    navLinks.forEach((l) => l.classList.remove("active"));
+    link.classList.add("active");
+
+    viewSections.forEach((section) => section.classList.remove("active"));
+    document.getElementById(`view-${target}`).classList.add("active");
+
+    if (window.innerWidth <= 768) {
+      document.getElementById("sidebar").classList.remove("active");
+    }
+  }
+
   navLinks.forEach((link) => {
     link.addEventListener("click", (e) => {
-      // Allow logout to work natively
       if (link.getAttribute("href") === "index.html") return;
-
       e.preventDefault();
 
       const target = link.getAttribute("data-target");
       if (!target) return;
 
-      // Update Active Link Styling
-      navLinks.forEach((l) => l.classList.remove("active"));
-      link.classList.add("active");
+      const newUrl =
+        window.location.protocol +
+        "//" +
+        window.location.host +
+        window.location.pathname +
+        "?view=" +
+        target;
+      window.history.pushState({ path: newUrl }, "", newUrl);
 
-      // Hide all views, show target view
-      viewSections.forEach((section) => section.classList.remove("active"));
-      document.getElementById(`view-${target}`).classList.add("active");
-
-      // Close mobile sidebar on click
-      if (window.innerWidth <= 768) {
-        document.getElementById("sidebar").classList.remove("active");
-      }
+      switchTab(target);
     });
   });
 
-  // ==========================================
-  // EVENT LISTENERS & INITIALIZATION
-  // ==========================================
+  // Dynamic Sync (Reads Header Wishlist Clicks while already on dashboard)
+  window.addEventListener("viewChanged", (e) => {
+    switchTab(e.detail);
+  });
 
-  // Initialize Data
+  // Check URL on page load
+  const urlParams = new URLSearchParams(window.location.search);
+  const viewParam = urlParams.get("view");
+  if (viewParam) {
+    switchTab(viewParam);
+  }
+
   renderDashboard();
 
-  // Profile Image Upload Logic
   const profileUploadInput = document.getElementById("profile-upload-input");
   if (profileUploadInput) {
     profileUploadInput.addEventListener("change", function (e) {
@@ -278,7 +275,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Wishlist "Add to Cart" Click Handler (Hooks into global cart system)
   document.addEventListener("click", (e) => {
     const addBtn = e.target.closest(".wishlist-add-to-cart");
     if (addBtn) {
@@ -302,27 +298,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         localStorage.setItem("strideCart", JSON.stringify(cartItems));
-
-        // Dispatch event so main.js/cart.js updates the cart UI instantly
         window.dispatchEvent(new Event("cartUpdated"));
         showToast(`${itemToAdd.name} added to cart!`);
       }
     }
   });
 
-  // Profile Form Submission
   const profileForm = document.getElementById("profileForm");
   if (profileForm) {
     profileForm.addEventListener("submit", (e) => {
       e.preventDefault();
-
-      // Save updated user data
       db.user.fullName = document.getElementById("prof-fullname").value;
-
-      // Extract the new first name for the banner and page title
       const newFirstName = db.user.fullName.split(" ")[0];
 
-      // Instantly update the UI elements
       document.getElementById("header-user-name").textContent =
         db.user.fullName;
       document.getElementById("banner-user-name").textContent = newFirstName;
@@ -331,12 +319,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!db.user.avatarUrl) {
         updateAvatarDisplay(null, db.user.fullName);
       }
-
       showToast("Personal Information Saved Successfully!");
     });
   }
 
-  // Password Form Submission
   const passwordForm = document.getElementById("passwordForm");
   if (passwordForm) {
     passwordForm.addEventListener("submit", (e) => {
@@ -346,7 +332,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Mobile Sidebar Toggle
   const sidebar = document.getElementById("sidebar");
   const openBtn = document.getElementById("openSidebar");
   const closeBtn = document.getElementById("closeSidebar");
@@ -358,7 +343,6 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  // Custom Toast Function
   window.showToast = function (message) {
     const toast = document.getElementById("toast");
     if (toast) {
