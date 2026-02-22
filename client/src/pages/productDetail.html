@@ -20,7 +20,6 @@
     />
 
     <link rel="stylesheet" href="../styles/root.css" />
-    <link rel="stylesheet" href="../styles/pages/index.css" />
     <link rel="stylesheet" href="../styles/pages/productDetail.css" />
   </head>
   <body>
@@ -96,10 +95,42 @@
               </p>
             </div>
 
+            <div class="selection-section">
+              <h3>Select Color</h3>
+              <div class="color-grid">
+                <button
+                  class="color-btn active"
+                  style="background-color: #f3f3f3"
+                  data-color="Original White"
+                  data-image="../../public/images/shoe-1.jpg"
+                  title="White"
+                ></button>
+                <button
+                  class="color-btn"
+                  style="background-color: #171717"
+                  data-color="Midnight Black"
+                  data-image="../../public/images/shoe-2.jpg"
+                  title="Black"
+                ></button>
+                <button
+                  class="color-btn"
+                  style="background-color: #ff6b00"
+                  data-color="Stride Orange"
+                  data-image="../../public/images/shoe-3.jpg"
+                  title="Orange"
+                ></button>
+              </div>
+              <p class="selected-label">
+                Color: <span id="colorNameDisplay">Original White</span>
+              </p>
+            </div>
+
             <div class="size-section">
               <div class="size-header">
                 <h3>Select Size</h3>
-                <button class="size-guide-btn">Size Guide</button>
+                <button class="size-guide-btn" id="openSizeChart">
+                  Size Guide
+                </button>
               </div>
               <div class="size-grid" id="sizeGrid">
                 <button class="size-btn" data-size="7">7</button>
@@ -167,10 +198,14 @@
               <div class="product-content">
                 <div class="product-info">
                   <div class="product-header">
-                    <h3 class="product-name">Nike Air Max 270</h3>
+                    <div class="name-container">
+                      <span class="product-brand-tag">Nike</span>
+                      <h3 class="product-card-name">Air Max 270</h3>
+                    </div>
                     <button
-                      class="action-btn-wishlist"
+                      class="action-btn-wishlist-card"
                       aria-label="Add to wishlist"
+                      title="Wishlist"
                     >
                       <i class="bi bi-heart"></i>
                     </button>
@@ -183,13 +218,12 @@
                     <i class="bi bi-star-half"></i>
                     <span class="review-count">(94)</span>
                   </div>
-                  <p class="product-price">$159.00</p>
+                  <p class="product-card-price">$159.00</p>
                 </div>
-                <div class="product-actions">
-                  <a href="checkout.html" class="action-btn-buy">Buy Now</a>
-                  <button class="action-btn-cart add-to-cart">
-                    Add to Cart
-                  </button>
+                <div class="product-actions-card">
+                  <a href="productDetail.html" class="action-btn-view-card"
+                    >View Details</a
+                  >
                 </div>
               </div>
             </div>
@@ -208,10 +242,14 @@
               <div class="product-content">
                 <div class="product-info">
                   <div class="product-header">
-                    <h3 class="product-name">Adidas Ultraboost 22</h3>
+                    <div class="name-container">
+                      <span class="product-brand-tag">Adidas</span>
+                      <h3 class="product-card-name">Ultraboost 22</h3>
+                    </div>
                     <button
-                      class="action-btn-wishlist"
+                      class="action-btn-wishlist-card"
                       aria-label="Add to wishlist"
+                      title="Wishlist"
                     >
                       <i class="bi bi-heart"></i>
                     </button>
@@ -224,13 +262,12 @@
                     <i class="bi bi-star-fill"></i>
                     <span class="review-count">(210)</span>
                   </div>
-                  <p class="product-price">$189.00</p>
+                  <p class="product-card-price">$189.00</p>
                 </div>
-                <div class="product-actions">
-                  <a href="checkout.html" class="action-btn-buy">Buy Now</a>
-                  <button class="action-btn-cart add-to-cart">
-                    Add to Cart
-                  </button>
+                <div class="product-actions-card">
+                  <a href="productDetail.html" class="action-btn-view-card"
+                    >View Details</a
+                  >
                 </div>
               </div>
             </div>
@@ -249,10 +286,14 @@
               <div class="product-content">
                 <div class="product-info">
                   <div class="product-header">
-                    <h3 class="product-name">New Balance Fresh Foam</h3>
+                    <div class="name-container">
+                      <span class="product-brand-tag">New Balance</span>
+                      <h3 class="product-card-name">Fresh Foam</h3>
+                    </div>
                     <button
-                      class="action-btn-wishlist"
+                      class="action-btn-wishlist-card"
                       aria-label="Add to wishlist"
+                      title="Wishlist"
                     >
                       <i class="bi bi-heart"></i>
                     </button>
@@ -265,20 +306,217 @@
                     <i class="bi bi-star"></i>
                     <span class="review-count">(56)</span>
                   </div>
-                  <p class="product-price">$139.00</p>
+                  <p class="product-card-price">$139.00</p>
                 </div>
-                <div class="product-actions">
-                  <a href="checkout.html" class="action-btn-buy">Buy Now</a>
-                  <button class="action-btn-cart add-to-cart">
-                    Add to Cart
-                  </button>
+                <div class="product-actions-card">
+                  <a href="productDetail.html" class="action-btn-view-card"
+                    >View Details</a
+                  >
                 </div>
               </div>
             </div>
           </div>
         </div>
       </section>
+
+      <section class="reviews-section">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">Customer Reviews</h2>
+          </div>
+          <div class="reviews-layout">
+            <div class="review-submission" id="reviewSubmissionArea"></div>
+            <div class="reviews-list" id="reviewsList">
+              <div class="review-item">
+                <div class="review-meta">
+                  <span class="review-author">John Doe</span>
+                  <div class="stars">
+                    <i class="bi bi-star-fill"></i
+                    ><i class="bi bi-star-fill"></i
+                    ><i class="bi bi-star-fill"></i
+                    ><i class="bi bi-star-fill"></i
+                    ><i class="bi bi-star-fill"></i>
+                  </div>
+                </div>
+                <p class="review-text">
+                  I've been wearing these for a month and the comfort is
+                  unmatched. Perfect fit!
+                </p>
+                <span class="review-date">February 20, 2026</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
+
+    <div class="modal-overlay" id="sizeChartModal">
+      <div class="modal-content size-chart-content">
+        <div class="modal-header">
+          <h3>Size Guide</h3>
+          <button class="close-modal" id="closeSizeChart">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+        <div class="modal-body hide-scrollbar">
+          <div class="size-table-container">
+            <h4>Men's Shoe Size Chart</h4>
+            <table class="size-table">
+              <thead>
+                <tr>
+                  <th>US</th>
+                  <th>UK</th>
+                  <th>EU</th>
+                  <th>Length (CM)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>7</td>
+                  <td>6</td>
+                  <td>40</td>
+                  <td>25.0 cm</td>
+                </tr>
+                <tr>
+                  <td>8</td>
+                  <td>7</td>
+                  <td>41</td>
+                  <td>26.0 cm</td>
+                </tr>
+                <tr>
+                  <td>9</td>
+                  <td>8</td>
+                  <td>42</td>
+                  <td>27.0 cm</td>
+                </tr>
+                <tr>
+                  <td>10</td>
+                  <td>9</td>
+                  <td>43</td>
+                  <td>28.0 cm</td>
+                </tr>
+                <tr>
+                  <td>11</td>
+                  <td>10</td>
+                  <td>44</td>
+                  <td>29.0 cm</td>
+                </tr>
+                <tr>
+                  <td>12</td>
+                  <td>11</td>
+                  <td>45 – 46</td>
+                  <td>30.0 cm</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="size-table-container">
+            <h4>Women's Shoe Size Chart</h4>
+            <table class="size-table">
+              <thead>
+                <tr>
+                  <th>US</th>
+                  <th>UK</th>
+                  <th>EU</th>
+                  <th>Length (CM)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>7</td>
+                  <td>5</td>
+                  <td>37 – 38</td>
+                  <td>24.0 cm</td>
+                </tr>
+                <tr>
+                  <td>8</td>
+                  <td>6</td>
+                  <td>38 – 39</td>
+                  <td>25.0 cm</td>
+                </tr>
+                <tr>
+                  <td>9</td>
+                  <td>7</td>
+                  <td>40</td>
+                  <td>26.0 cm</td>
+                </tr>
+                <tr>
+                  <td>10</td>
+                  <td>8</td>
+                  <td>41</td>
+                  <td>27.0 cm</td>
+                </tr>
+                <tr>
+                  <td>11</td>
+                  <td>9</td>
+                  <td>42</td>
+                  <td>28.0 cm</td>
+                </tr>
+                <tr>
+                  <td>12</td>
+                  <td>10</td>
+                  <td>43</td>
+                  <td>29.0 cm</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="size-table-container">
+            <h4>Unisex Shoe Size Chart</h4>
+            <table class="size-table">
+              <thead>
+                <tr>
+                  <th>US</th>
+                  <th>UK</th>
+                  <th>EU</th>
+                  <th>Length (CM)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>7</td>
+                  <td>6</td>
+                  <td>40</td>
+                  <td>25.0 cm</td>
+                </tr>
+                <tr>
+                  <td>8</td>
+                  <td>7</td>
+                  <td>41</td>
+                  <td>26.0 cm</td>
+                </tr>
+                <tr>
+                  <td>9</td>
+                  <td>8</td>
+                  <td>42</td>
+                  <td>27.0 cm</td>
+                </tr>
+                <tr>
+                  <td>10</td>
+                  <td>9</td>
+                  <td>43</td>
+                  <td>28.0 cm</td>
+                </tr>
+                <tr>
+                  <td>11</td>
+                  <td>10</td>
+                  <td>44</td>
+                  <td>29.0 cm</td>
+                </tr>
+                <tr>
+                  <td>12</td>
+                  <td>11</td>
+                  <td>45 – 46</td>
+                  <td>30.0 cm</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div id="footer-placeholder"></div>
 

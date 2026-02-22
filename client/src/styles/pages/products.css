@@ -32,11 +32,10 @@
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-  scrollbar-width: none; /* Hide scrollbar Firefox */
-  -ms-overflow-style: none; /* Hide scrollbar IE/Edge */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-/* Hide scrollbar Webkit */
 .products-sidebar::-webkit-scrollbar {
   display: none;
 }
@@ -128,7 +127,7 @@
 }
 
 .mobile-sidebar-toggle {
-  display: none; /* Hidden on desktop */
+  display: none;
 }
 
 .search-filter-group {
@@ -173,7 +172,6 @@
   color: var(--color-muted-fg);
 }
 
-/* OVERRIDE: Fixes the hardcoded white text from index.css hero buttons */
 .products-page .btn-outline {
   color: var(--color-fg) !important;
   border-color: var(--color-border) !important;
@@ -223,9 +221,50 @@
   animation: fadeIn 0.6s ease-out;
 }
 
+/* Identical structure to Home Featured Cards */
+.name-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.product-brand {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.action-btn-view {
+  flex: 1;
+  background: var(--color-accent);
+  color: var(--color-accent-fg);
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  padding: 0.75rem 0;
+  text-decoration: none;
+}
+
+.action-btn-view:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+}
+
 .product-card.hidden {
   display: none !important;
 }
+
+/* ========================================= */
 
 .no-results {
   text-align: center;
@@ -347,7 +386,7 @@
   position: relative;
   width: 100%;
   user-select: none;
-  outline: none; /* remove default focus ring */
+  outline: none;
 }
 
 .custom-select-display {
@@ -469,7 +508,6 @@
     flex-direction: column;
   }
 
-  /* OFF-CANVAS SIDEBAR DRAWER */
   .sidebar-overlay {
     position: fixed;
     inset: 0;
