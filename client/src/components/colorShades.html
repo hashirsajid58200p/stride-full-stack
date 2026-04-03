@@ -1,0 +1,196 @@
+<style>
+  /* Accurate Standardized Color Map */
+  .color-default {
+    background-color: var(--color-bg) !important;
+    border: 2px solid var(--color-border) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .color-default .def-text {
+    font-size: 0.55rem;
+    font-weight: 800;
+    color: var(--color-fg);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .color-input:checked + .color-default i {
+    display: none; /* Hide standard checkmark on Default circle so text shows */
+  }
+
+  .color-red {
+    background-color: #ff0000;
+  }
+  .color-blue {
+    background-color: #0000ff;
+  }
+  .color-yellow {
+    background-color: #ffff00;
+  }
+  .color-green {
+    background-color: #008000;
+  }
+  .color-orange {
+    background-color: #ffa500;
+  }
+  .color-purple {
+    background-color: #800080;
+  }
+  .color-pink {
+    background-color: #ffc0cb;
+  }
+  .color-brown {
+    background-color: #a52a2a;
+  }
+  .color-black {
+    background-color: #000000;
+  }
+  .color-white {
+    background-color: #ffffff;
+  }
+  .color-gray {
+    background-color: #808080;
+  }
+  .color-maroon {
+    background-color: #800000;
+  }
+  .color-crimson {
+    background-color: #dc143c;
+  }
+  .color-scarlet {
+    background-color: #ff2400;
+  }
+  .color-navy {
+    background-color: #000080;
+  }
+  .color-skyblue {
+    background-color: #87ceeb;
+  }
+  .color-royalblue {
+    background-color: #4169e1;
+  }
+  .color-mustard {
+    background-color: #ffdb58;
+  }
+  .color-gold {
+    background-color: #ffd700;
+  }
+  .color-lemon {
+    background-color: #fff700;
+  }
+  .color-olive {
+    background-color: #808000;
+  }
+  .color-lime {
+    background-color: #00ff00;
+  }
+  .color-emerald {
+    background-color: #50c878;
+  }
+  .color-coral {
+    background-color: #ff7f50;
+  }
+  .color-peach {
+    background-color: #ffdab9;
+  }
+  .color-tangerine {
+    background-color: #f28500;
+  }
+  .color-violet {
+    background-color: #ee82ee;
+  }
+  .color-lavender {
+    background-color: #e6e6fa;
+  }
+  .color-magenta {
+    background-color: #ff00ff;
+  }
+  .color-hotpink {
+    background-color: #ff69b4;
+  }
+  .color-rose {
+    background-color: #ff007f;
+  }
+  .color-fuchsia {
+    background-color: #ff00ff;
+  }
+  .color-chocolate {
+    background-color: #d2691e;
+  }
+  .color-tan {
+    background-color: #d2b48c;
+  }
+  .color-beige {
+    background-color: #f5f5dc;
+  }
+  .color-charcoal {
+    background-color: #36454f;
+  }
+  .color-jetblack {
+    background-color: #0a0a0a;
+  }
+  .color-ivory {
+    background-color: #fffff0;
+  }
+  .color-offwhite {
+    background-color: #faf9f6;
+  }
+  .color-silver {
+    background-color: #c0c0c0;
+  }
+  .color-slate {
+    background-color: #708090;
+  }
+</style>
+
+<script>
+  window.renderColorSwatches = function () {
+    return `
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Default" class="color-input" /><span class="swatch color-default" title="Default"><span class="def-text">DEF</span></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Red" class="color-input" /><span class="swatch color-red" title="Red"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Blue" class="color-input" /><span class="swatch color-blue" title="Blue"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Yellow" class="color-input" /><span class="swatch color-yellow" title="Yellow"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Green" class="color-input" /><span class="swatch color-green" title="Green"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Orange" class="color-input" /><span class="swatch color-orange" title="Orange"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Purple" class="color-input" /><span class="swatch color-purple" title="Purple"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Pink" class="color-input" /><span class="swatch color-pink" title="Pink"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Brown" class="color-input" /><span class="swatch color-brown" title="Brown"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Black" class="color-input" /><span class="swatch color-black" title="Black"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="White" class="color-input" /><span class="swatch color-white" title="White"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Gray" class="color-input" /><span class="swatch color-gray" title="Gray"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Maroon" class="color-input" /><span class="swatch color-maroon" title="Maroon"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Crimson" class="color-input" /><span class="swatch color-crimson" title="Crimson"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Scarlet" class="color-input" /><span class="swatch color-scarlet" title="Scarlet"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Navy" class="color-input" /><span class="swatch color-navy" title="Navy"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Sky Blue" class="color-input" /><span class="swatch color-skyblue" title="Sky Blue"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Royal Blue" class="color-input" /><span class="swatch color-royalblue" title="Royal Blue"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Mustard" class="color-input" /><span class="swatch color-mustard" title="Mustard"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Gold" class="color-input" /><span class="swatch color-gold" title="Gold"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Lemon" class="color-input" /><span class="swatch color-lemon" title="Lemon"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Olive" class="color-input" /><span class="swatch color-olive" title="Olive"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Lime" class="color-input" /><span class="swatch color-lime" title="Lime"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Emerald" class="color-input" /><span class="swatch color-emerald" title="Emerald"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Coral" class="color-input" /><span class="swatch color-coral" title="Coral"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Peach" class="color-input" /><span class="swatch color-peach" title="Peach"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Tangerine" class="color-input" /><span class="swatch color-tangerine" title="Tangerine"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Violet" class="color-input" /><span class="swatch color-violet" title="Violet"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Lavender" class="color-input" /><span class="swatch color-lavender" title="Lavender"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Magenta" class="color-input" /><span class="swatch color-magenta" title="Magenta"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Hot Pink" class="color-input" /><span class="swatch color-hotpink" title="Hot Pink"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Rose" class="color-input" /><span class="swatch color-rose" title="Rose"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Fuchsia" class="color-input" /><span class="swatch color-fuchsia" title="Fuchsia"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Chocolate" class="color-input" /><span class="swatch color-chocolate" title="Chocolate"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Tan" class="color-input" /><span class="swatch color-tan" title="Tan"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Beige" class="color-input" /><span class="swatch color-beige" title="Beige"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Charcoal" class="color-input" /><span class="swatch color-charcoal" title="Charcoal"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Jet Black" class="color-input" /><span class="swatch color-jetblack" title="Jet Black"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Ivory" class="color-input" /><span class="swatch color-ivory" title="Ivory"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Off-White" class="color-input" /><span class="swatch color-offwhite" title="Off-White"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Silver" class="color-input" /><span class="swatch color-silver" title="Silver"><i class="bi bi-check"></i></span></label>
+    <label class="color-swatch-item"><input type="checkbox" name="color" value="Slate" class="color-input" /><span class="swatch color-slate" title="Slate"><i class="bi bi-check"></i></span></label>
+  `;
+  };
+</script>

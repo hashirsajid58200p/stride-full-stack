@@ -31,6 +31,19 @@
     <link rel="stylesheet" href="../styles/pages/index.css" />
   </head>
   <body>
+    <script>
+      if (!sessionStorage.getItem("strideFirstLoadDone")) {
+        // NEW FIX: Inject a style tag to instantly hide the scrollbar
+        document.write(
+          '<style id="loader-scroll-lock">body { overflow: hidden !important; }</style>',
+        );
+        document.write(
+          '<div id="anti-flash-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #ffffff; z-index: 9999999;"></div>',
+        );
+      }
+    </script>
+
+    <div id="loader-placeholder"></div>
     <div id="header-placeholder"></div>
     <div id="cart-placeholder"></div>
 
@@ -81,292 +94,7 @@
           </p>
         </div>
 
-        <div class="products-grid">
-          <div class="product-card" style="animation-delay: 0ms">
-            <div class="product-image">
-              <div class="badge-container">
-                <span class="badge-tag">Men</span>
-                <span class="badge-new">New Arrival</span>
-              </div>
-              <img
-                src="../../public/images/shoe-1.jpg"
-                alt="Nike Air Max Fusion"
-              />
-              <div class="product-overlay"></div>
-            </div>
-            <div class="product-content">
-              <div class="product-info">
-                <div class="product-header">
-                  <div class="name-container">
-                    <span class="product-brand">Nike</span>
-                    <h3 class="product-name">Air Max Fusion</h3>
-                  </div>
-                  <button
-                    class="action-btn-wishlist"
-                    aria-label="Add to wishlist"
-                    title="Wishlist"
-                  >
-                    <i class="bi bi-heart"></i>
-                  </button>
-                </div>
-                <div class="product-stars">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-half"></i>
-                  <span class="review-count">(128)</span>
-                </div>
-                <p class="product-price">$149.99</p>
-              </div>
-              <div class="product-actions">
-                <a
-                  href="productDetail.html"
-                  class="action-btn-view"
-                  title="View Details"
-                >
-                  View Details
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div class="product-card" style="animation-delay: 100ms">
-            <div class="product-image">
-              <div class="badge-container">
-                <span class="badge-tag">Women</span>
-              </div>
-              <img
-                src="../../public/images/shoe-2.jpg"
-                alt="Adidas Ultraboost 23"
-              />
-              <div class="product-overlay"></div>
-            </div>
-            <div class="product-content">
-              <div class="product-info">
-                <div class="product-header">
-                  <div class="name-container">
-                    <span class="product-brand">Adidas</span>
-                    <h3 class="product-name">Ultraboost 23</h3>
-                  </div>
-                  <button
-                    class="action-btn-wishlist"
-                    aria-label="Add to wishlist"
-                    title="Wishlist"
-                  >
-                    <i class="bi bi-heart"></i>
-                  </button>
-                </div>
-                <div class="product-stars">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <span class="review-count">(245)</span>
-                </div>
-                <p class="product-price">$179.99</p>
-              </div>
-              <div class="product-actions">
-                <a
-                  href="productDetail.html"
-                  class="action-btn-view"
-                  title="View Details"
-                >
-                  View Details
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div class="product-card" style="animation-delay: 200ms">
-            <div class="product-image">
-              <div class="badge-container">
-                <span class="badge-tag">Unisex</span>
-                <span class="badge-new">New Arrival</span>
-              </div>
-              <img
-                src="../../public/images/shoe-3.jpg"
-                alt="Nike Jordan Legacy"
-              />
-              <div class="product-overlay"></div>
-            </div>
-            <div class="product-content">
-              <div class="product-info">
-                <div class="product-header">
-                  <div class="name-container">
-                    <span class="product-brand">Nike</span>
-                    <h3 class="product-name">Jordan Legacy</h3>
-                  </div>
-                  <button
-                    class="action-btn-wishlist"
-                    aria-label="Add to wishlist"
-                    title="Wishlist"
-                  >
-                    <i class="bi bi-heart"></i>
-                  </button>
-                </div>
-                <div class="product-stars">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star"></i>
-                  <span class="review-count">(89)</span>
-                </div>
-                <p class="product-price">$199.99</p>
-              </div>
-              <div class="product-actions">
-                <a
-                  href="productDetail.html"
-                  class="action-btn-view"
-                  title="View Details"
-                >
-                  View Details
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div class="product-card" style="animation-delay: 300ms">
-            <div class="product-image">
-              <div class="badge-container">
-                <span class="badge-tag">Men</span>
-              </div>
-              <img
-                src="../../public/images/shoe-4.jpg"
-                alt="New Balance 550 Classic"
-              />
-              <div class="product-overlay"></div>
-            </div>
-            <div class="product-content">
-              <div class="product-info">
-                <div class="product-header">
-                  <div class="name-container">
-                    <span class="product-brand">New Balance</span>
-                    <h3 class="product-name">550 Classic</h3>
-                  </div>
-                  <button
-                    class="action-btn-wishlist"
-                    aria-label="Add to wishlist"
-                    title="Wishlist"
-                  >
-                    <i class="bi bi-heart"></i>
-                  </button>
-                </div>
-                <div class="product-stars">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-half"></i>
-                  <span class="review-count">(312)</span>
-                </div>
-                <p class="product-price">$129.99</p>
-              </div>
-              <div class="product-actions">
-                <a
-                  href="productDetail.html"
-                  class="action-btn-view"
-                  title="View Details"
-                >
-                  View Details
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div class="product-card" style="animation-delay: 400ms">
-            <div class="product-image">
-              <div class="badge-container">
-                <span class="badge-tag">Women</span>
-              </div>
-              <img src="../../public/images/shoe-5.jpg" alt="Puma RS-X Tech" />
-              <div class="product-overlay"></div>
-            </div>
-            <div class="product-content">
-              <div class="product-info">
-                <div class="product-header">
-                  <div class="name-container">
-                    <span class="product-brand">Puma</span>
-                    <h3 class="product-name">RS-X Tech</h3>
-                  </div>
-                  <button
-                    class="action-btn-wishlist"
-                    aria-label="Add to wishlist"
-                    title="Wishlist"
-                  >
-                    <i class="bi bi-heart"></i>
-                  </button>
-                </div>
-                <div class="product-stars">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star"></i>
-                  <span class="review-count">(156)</span>
-                </div>
-                <p class="product-price">$119.99</p>
-              </div>
-              <div class="product-actions">
-                <a
-                  href="productDetail.html"
-                  class="action-btn-view"
-                  title="View Details"
-                >
-                  View Details
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div class="product-card" style="animation-delay: 500ms">
-            <div class="product-image">
-              <div class="badge-container">
-                <span class="badge-tag">Unisex</span>
-                <span class="badge-new">New Arrival</span>
-              </div>
-              <img src="../../public/images/shoe-6.jpg" alt="Nike Dunk Low" />
-              <div class="product-overlay"></div>
-            </div>
-            <div class="product-content">
-              <div class="product-info">
-                <div class="product-header">
-                  <div class="name-container">
-                    <span class="product-brand">Nike</span>
-                    <h3 class="product-name">Dunk Low</h3>
-                  </div>
-                  <button
-                    class="action-btn-wishlist"
-                    aria-label="Add to wishlist"
-                    title="Wishlist"
-                  >
-                    <i class="bi bi-heart"></i>
-                  </button>
-                </div>
-                <div class="product-stars">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <span class="review-count">(892)</span>
-                </div>
-                <p class="product-price">$159.99</p>
-              </div>
-              <div class="product-actions">
-                <a
-                  href="productDetail.html"
-                  class="action-btn-view"
-                  title="View Details"
-                >
-                  View Details
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div class="products-grid" id="featured-products-grid"></div>
 
         <div class="view-all-container">
           <a href="products.html" class="btn-view-all">View All Products</a>
@@ -761,27 +489,10 @@
       </div>
     </section>
 
-    <section class="newsletter">
-      <div class="container">
-        <div class="newsletter-content">
-          <p class="newsletter-intro">Keep me updated</p>
-          <h2 class="newsletter-title">Newsletter</h2>
-          <p class="newsletter-text">
-            Receive exclusive promotions, private sales and news
-          </p>
-          <div class="newsletter-form">
-            <input
-              type="email"
-              placeholder="E-mail"
-              class="newsletter-input"
-              aria-label="Email Address"
-            />
-            <button class="btn btn-primary">SUBSCRIBE</button>
-          </div>
-        </div>
-      </div>
-      <div class="newsletter-overlay"></div>
-    </section>
+    <div
+      id="newsletter-placeholder"
+      data-bg="../../public/images/backgrounds/newsletter_background.jpeg"
+    ></div>
 
     <section class="features-strip">
       <div class="container">
@@ -806,9 +517,11 @@
       </div>
     </section>
 
+    <div id="support-widget-placeholder"></div>
+
     <div id="footer-placeholder"></div>
 
-    <script src="../scripts/main.js"></script>
-    <script src="../scripts/pages/index.js"></script>
+    <script type="module" src="../scripts/main.js"></script>
+    <script type="module" src="../scripts/pages/index.js"></script>
   </body>
 </html>

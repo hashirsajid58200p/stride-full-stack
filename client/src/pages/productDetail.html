@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Air Jordan 1 Retro High - Premium Footwear</title>
+    <title>Premium Footwear - Stride</title>
     <meta
       name="description"
-      content="Shop the Air Jordan 1 Retro High. Premium sneakers with classic design and modern comfort. Free shipping and returns."
+      content="Shop the latest Premium sneakers with classic design and modern comfort. Free shipping and returns."
     />
     <link
       rel="icon"
@@ -28,48 +28,36 @@
 
     <main class="product-page">
       <div class="container">
-        <div class="product-layout">
+        <div class="product-layout" id="main-product-layout">
           <div class="product-gallery">
-            <div class="main-image">
+            <div class="main-image skeleton-box" id="main-image-container">
               <img
                 id="mainProductImage"
-                src="../../public/images/shoe-1.jpg"
-                alt="Air Jordan 1 Retro High"
+                src=""
+                alt="Product Image"
+                style="opacity: 0"
               />
             </div>
-            <div class="thumbnail-grid">
-              <button
-                class="thumbnail active"
-                data-image="../../public/images/shoe-1.jpg"
-              >
-                <img src="../../public/images/shoe-1.jpg" alt="View 1" />
-              </button>
-              <button
-                class="thumbnail"
-                data-image="../../public/images/shoe-2.jpg"
-              >
-                <img src="../../public/images/shoe-2.jpg" alt="View 2" />
-              </button>
-              <button
-                class="thumbnail"
-                data-image="../../public/images/shoe-3.jpg"
-              >
-                <img src="../../public/images/shoe-3.jpg" alt="View 3" />
-              </button>
-              <button
-                class="thumbnail"
-                data-image="../../public/images/shoe-4.jpg"
-              >
-                <img src="../../public/images/shoe-4.jpg" alt="View 4" />
-              </button>
+
+            <div class="thumbnail-grid" id="thumbnailGrid">
+              <div class="thumbnail skeleton-box" style="border: none"></div>
+              <div class="thumbnail skeleton-box" style="border: none"></div>
+              <div class="thumbnail skeleton-box" style="border: none"></div>
+              <div class="thumbnail skeleton-box" style="border: none"></div>
             </div>
           </div>
 
           <div class="product-info">
             <div class="product-header-main">
-              <p class="product-brand">Nike</p>
+              <p
+                class="product-brand skeleton-box skeleton-text"
+                style="width: 80px"
+              ></p>
               <div class="title-wishlist-row">
-                <h1 class="product-title">Air Jordan 1 Retro High</h1>
+                <h1
+                  class="product-title skeleton-box skeleton-text"
+                  style="width: 250px; height: 32px"
+                ></h1>
                 <button
                   class="action-btn-wishlist big-wishlist"
                   aria-label="Add to wishlist"
@@ -77,51 +65,25 @@
                   <i class="bi bi-heart"></i>
                 </button>
               </div>
-              <div class="product-rating">
-                <div class="stars">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                </div>
-                <span class="review-count">(128 reviews)</span>
-              </div>
-              <p class="product-price-large">$179</p>
-              <p class="product-description">
-                The Air Jordan 1 Retro High remakes the classic sneaker, giving
-                you a fresh look with a familiar feel. Premium materials and
-                accents give modern expression to an all-time favorite.
-              </p>
+              <div
+                class="product-rating skeleton-box skeleton-text"
+                style="width: 120px; height: 20px"
+              ></div>
+              <p
+                class="product-price-large skeleton-box skeleton-text"
+                style="width: 100px; height: 32px; margin-top: 0.5rem"
+              ></p>
+              <p
+                class="product-description skeleton-box skeleton-text"
+                style="width: 100%; height: 80px; margin-top: 1rem"
+              ></p>
             </div>
 
             <div class="selection-section">
               <h3>Select Color</h3>
-              <div class="color-grid">
-                <button
-                  class="color-btn active"
-                  style="background-color: #f3f3f3"
-                  data-color="Original White"
-                  data-image="../../public/images/shoe-1.jpg"
-                  title="White"
-                ></button>
-                <button
-                  class="color-btn"
-                  style="background-color: #171717"
-                  data-color="Midnight Black"
-                  data-image="../../public/images/shoe-2.jpg"
-                  title="Black"
-                ></button>
-                <button
-                  class="color-btn"
-                  style="background-color: #ff6b00"
-                  data-color="Stride Orange"
-                  data-image="../../public/images/shoe-3.jpg"
-                  title="Orange"
-                ></button>
-              </div>
+              <div class="color-grid" id="colorGrid"></div>
               <p class="selected-label">
-                Color: <span id="colorNameDisplay">Original White</span>
+                Color: <span id="colorNameDisplay"></span>
               </p>
             </div>
 
@@ -132,14 +94,7 @@
                   Size Guide
                 </button>
               </div>
-              <div class="size-grid" id="sizeGrid">
-                <button class="size-btn" data-size="7">7</button>
-                <button class="size-btn" data-size="8">8</button>
-                <button class="size-btn active" data-size="9">9</button>
-                <button class="size-btn" data-size="10">10</button>
-                <button class="size-btn" data-size="11">11</button>
-                <button class="size-btn" data-size="12">12</button>
-              </div>
+              <div class="size-grid" id="sizeGrid"></div>
             </div>
 
             <div class="quantity-section">
@@ -152,12 +107,8 @@
             </div>
 
             <div class="action-buttons">
-              <a href="checkout.html" class="btn btn-primary btn-buy-now"
-                >Buy Now</a
-              >
-              <button class="btn btn-outline btn-add-to-cart-page">
-                Add to Cart
-              </button>
+              <button class="btn-buy-now">Buy Now</button>
+              <button class="btn-add-to-cart-page">Add to Cart</button>
             </div>
 
             <div class="product-features">
@@ -183,171 +134,14 @@
           <div class="section-header">
             <h2 class="section-title">You May Also Like</h2>
           </div>
-          <div class="products-grid">
-            <div class="product-card">
-              <div class="product-image">
-                <div class="badge-container">
-                  <span class="badge-tag">Men</span>
-                </div>
-                <img
-                  src="../../public/images/shoe-2.jpg"
-                  alt="Nike Air Max 270"
-                />
-                <div class="product-overlay"></div>
-              </div>
-              <div class="product-content">
-                <div class="product-info">
-                  <div class="product-header">
-                    <div class="name-container">
-                      <span class="product-brand-tag">Nike</span>
-                      <h3 class="product-card-name">Air Max 270</h3>
-                    </div>
-                    <button
-                      class="action-btn-wishlist-card"
-                      aria-label="Add to wishlist"
-                      title="Wishlist"
-                    >
-                      <i class="bi bi-heart"></i>
-                    </button>
-                  </div>
-                  <div class="product-stars">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-half"></i>
-                    <span class="review-count">(94)</span>
-                  </div>
-                  <p class="product-card-price">$159.00</p>
-                </div>
-                <div class="product-actions-card">
-                  <a href="productDetail.html" class="action-btn-view-card"
-                    >View Details</a
-                  >
-                </div>
-              </div>
-            </div>
-
-            <div class="product-card">
-              <div class="product-image">
-                <div class="badge-container">
-                  <span class="badge-tag">Performance</span>
-                </div>
-                <img
-                  src="../../public/images/shoe-3.jpg"
-                  alt="Adidas Ultraboost 22"
-                />
-                <div class="product-overlay"></div>
-              </div>
-              <div class="product-content">
-                <div class="product-info">
-                  <div class="product-header">
-                    <div class="name-container">
-                      <span class="product-brand-tag">Adidas</span>
-                      <h3 class="product-card-name">Ultraboost 22</h3>
-                    </div>
-                    <button
-                      class="action-btn-wishlist-card"
-                      aria-label="Add to wishlist"
-                      title="Wishlist"
-                    >
-                      <i class="bi bi-heart"></i>
-                    </button>
-                  </div>
-                  <div class="product-stars">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <span class="review-count">(210)</span>
-                  </div>
-                  <p class="product-card-price">$189.00</p>
-                </div>
-                <div class="product-actions-card">
-                  <a href="productDetail.html" class="action-btn-view-card"
-                    >View Details</a
-                  >
-                </div>
-              </div>
-            </div>
-
-            <div class="product-card">
-              <div class="product-image">
-                <div class="badge-container">
-                  <span class="badge-tag">Daily</span>
-                </div>
-                <img
-                  src="../../public/images/shoe-4.jpg"
-                  alt="New Balance Fresh Foam"
-                />
-                <div class="product-overlay"></div>
-              </div>
-              <div class="product-content">
-                <div class="product-info">
-                  <div class="product-header">
-                    <div class="name-container">
-                      <span class="product-brand-tag">New Balance</span>
-                      <h3 class="product-card-name">Fresh Foam</h3>
-                    </div>
-                    <button
-                      class="action-btn-wishlist-card"
-                      aria-label="Add to wishlist"
-                      title="Wishlist"
-                    >
-                      <i class="bi bi-heart"></i>
-                    </button>
-                  </div>
-                  <div class="product-stars">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star"></i>
-                    <span class="review-count">(56)</span>
-                  </div>
-                  <p class="product-card-price">$139.00</p>
-                </div>
-                <div class="product-actions-card">
-                  <a href="productDetail.html" class="action-btn-view-card"
-                    >View Details</a
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
+          <div
+            class="products-grid featured-products-override"
+            id="related-products-grid"
+          ></div>
         </div>
       </section>
 
-      <section class="reviews-section">
-        <div class="container">
-          <div class="section-header">
-            <h2 class="section-title">Customer Reviews</h2>
-          </div>
-          <div class="reviews-layout">
-            <div class="review-submission" id="reviewSubmissionArea"></div>
-            <div class="reviews-list" id="reviewsList">
-              <div class="review-item">
-                <div class="review-meta">
-                  <span class="review-author">John Doe</span>
-                  <div class="stars">
-                    <i class="bi bi-star-fill"></i
-                    ><i class="bi bi-star-fill"></i
-                    ><i class="bi bi-star-fill"></i
-                    ><i class="bi bi-star-fill"></i
-                    ><i class="bi bi-star-fill"></i>
-                  </div>
-                </div>
-                <p class="review-text">
-                  I've been wearing these for a month and the comfort is
-                  unmatched. Perfect fit!
-                </p>
-                <span class="review-date">February 20, 2026</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <div id="reviews-placeholder"></div>
     </main>
 
     <div class="modal-overlay" id="sizeChartModal">
@@ -464,7 +258,7 @@
           </div>
 
           <div class="size-table-container">
-            <h4>Unisex Shoe Size Chart</h4>
+            <h4>Universal Shoe Size Chart</h4>
             <table class="size-table">
               <thead>
                 <tr>
@@ -520,8 +314,8 @@
 
     <div id="footer-placeholder"></div>
 
-    <script src="../scripts/main.js"></script>
-    <script src="../scripts/pages/productDetail.js"></script>
+    <script type="module" src="../scripts/main.js"></script>
+    <script type="module" src="../scripts/pages/productDetail.js"></script>
     <div id="toast" class="toast"></div>
   </body>
 </html>

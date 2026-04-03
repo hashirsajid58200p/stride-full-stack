@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Client Dashboard</title>
+    <title></title>
 
     <link
       rel="icon"
@@ -17,12 +17,12 @@
     />
 
     <link rel="stylesheet" href="../styles/root.css" />
-    <link rel="stylesheet" href="../styles/pages/clientDashboard.css" />
+    <link rel="stylesheet" href="../styles/pages/userDashboard.css" />
   </head>
   <body>
     <div id="cart-placeholder"></div>
 
-    <div class="client-layout">
+    <div class="user-layout">
       <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
           <a href="index.html" class="sidebar-logo">
@@ -69,7 +69,12 @@
           <div class="nav-bottom">
             <ul class="nav-list">
               <li class="nav-item">
-                <a href="index.html" class="nav-link text-danger-hover">
+                <a
+                  href="#"
+                  class="nav-link text-danger-hover"
+                  id="sidebar-logout-btn"
+                  data-target="logout"
+                >
                   <i class="bi bi-box-arrow-right"></i>
                   <span>Logout</span>
                 </a>
@@ -110,11 +115,28 @@
               <span class="notification-badge">3</span>
             </button>
 
-            <div class="user-profile-header">
-              <div class="user-avatar" id="header-avatar">JD</div>
+            <div class="header-divider"></div>
+
+            <div class="user-profile-header-wrapper">
+              <div
+                class="header-avatar-wrapper"
+                id="header-avatar-btn"
+                title="Click to upload new profile image"
+              >
+                <div class="user-avatar" id="header-avatar-content"></div>
+                <div class="profile-avatar-overlay">
+                  <i class="bi bi-camera-fill"></i>
+                </div>
+                <div
+                  class="profile-loader-placeholder header-loader-scale-wrapper"
+                ></div>
+              </div>
               <div class="user-info">
-                <span class="user-name" id="header-user-name">John Doe</span>
-                <span class="user-role">Stride Member</span>
+                <span
+                  class="user-name static-text"
+                  id="header-user-name"
+                ></span>
+                <span class="user-role static-text">Stride Member</span>
               </div>
             </div>
           </div>
@@ -123,9 +145,9 @@
         <div class="dashboard-content view-section active" id="view-dashboard">
           <div class="welcome-banner">
             <div class="banner-content">
-              <p class="banner-date" id="current-date">July 25, 2025</p>
+              <p class="banner-date" id="current-date"></p>
               <h1 class="banner-title">
-                Welcome back, <span id="banner-user-name">John</span>!
+                Welcome back, <span id="banner-user-name"></span>!
               </h1>
               <p class="banner-subtitle">
                 Always stay updated with your latest orders and drops.
@@ -248,20 +270,32 @@
 
           <div class="profile-card">
             <h3 class="card-section-title">Profile Image</h3>
+
             <div class="profile-upload-section">
-              <div class="profile-preview" id="profile-preview">
-                <span id="preview-initials">JD</span>
+              <div class="profile-preview-wrapper" id="profile-preview-wrapper">
+                <div class="profile-preview" id="profile-avatar-content">
+                  <span id="preview-initials"></span>
+                </div>
+
+                <div class="profile-loader-placeholder"></div>
               </div>
               <div class="upload-actions">
-                <label for="profile-upload-input" class="btn-outline">
-                  <i class="bi bi-upload"></i> Upload New Image
-                </label>
-                <input
-                  type="file"
-                  id="profile-upload-input"
-                  accept="image/*"
-                  hidden
-                />
+                <button
+                  type="button"
+                  class="btn-outline"
+                  id="personal-upload-btn"
+                >
+                  <i class="bi bi-upload"></i> Upload Image
+                </button>
+
+                <button
+                  type="button"
+                  class="btn-outline mt-2"
+                  id="remove-profile-pic-btn"
+                  style="border-color: #ef4444; color: #ef4444; display: none"
+                >
+                  <i class="bi bi-trash"></i> Remove Image
+                </button>
                 <p class="text-muted mt-2" style="font-size: 0.85rem">
                   Recommended size: 200x200px. Max size 2MB.
                 </p>
@@ -307,14 +341,40 @@
 
             <hr class="section-divider" />
 
-            <h3 class="card-section-title">Update Password</h3>
+            <h3 class="card-section-title">Linked Accounts</h3>
+            <div class="linked-account-box">
+              <div style="display: flex; align-items: center; gap: 1rem">
+                <i
+                  class="bi bi-google"
+                  style="font-size: 1.5rem; color: var(--color-accent)"
+                ></i>
+                <div style="display: flex; flex-direction: column">
+                  <span style="font-weight: 600; color: var(--color-fg)"
+                    >Google</span
+                  >
+                  <span style="font-size: 0.8rem; color: var(--color-muted-fg)"
+                    >Use Google to sign in</span
+                  >
+                </div>
+              </div>
+              <button class="btn-outline" id="google-connect-btn">
+                Connect to Google
+              </button>
+              <span id="google-connect-status" class="connected-status"></span>
+            </div>
+
+            <hr class="section-divider" />
+
+            <h3 class="card-section-title" id="password-section-title">
+              Update Password
+            </h3>
             <form class="profile-form" id="passwordForm">
-              <div class="form-row">
-                <div class="form-group">
+              <div class="form-row" id="password-form-row">
+                <div class="form-group" id="current-password-group">
                   <label>Current Password</label>
                   <input
                     type="password"
-                    required
+                    id="current-password"
                     placeholder="Enter current password"
                   />
                 </div>
@@ -322,15 +382,26 @@
                   <label>New Password</label>
                   <input
                     type="password"
+                    id="new-password"
                     required
                     placeholder="Enter new password"
                   />
                 </div>
               </div>
-              <div class="form-actions">
-                <button type="submit" class="btn-outline mt-2">
+              <div class="form-actions password-actions">
+                <button
+                  type="submit"
+                  class="btn-outline mt-2"
+                  id="password-submit-btn"
+                >
                   Change Password
                 </button>
+                <a
+                  href="#"
+                  class="forgot-link mt-2"
+                  id="dashboard-forgot-password"
+                  >Forgot Password?</a
+                >
               </div>
             </form>
 
@@ -341,17 +412,7 @@
               Once you delete your account, there is no going back. Please be
               certain.
             </p>
-            <button
-              class="btn-danger"
-              onclick="
-                if (
-                  confirm(
-                    'Are you sure you want to permanently delete your account?',
-                  )
-                )
-                  showToast('Account deletion requested.');
-              "
-            >
+            <button class="btn-danger" id="trigger-delete-btn" type="button">
               <i class="bi bi-trash"></i> Delete Account
             </button>
           </div>
@@ -359,9 +420,60 @@
       </main>
     </div>
 
+    <div class="modal-overlay" id="delete-modal">
+      <div class="modal-content">
+        <h3 class="modal-title">Delete Account?</h3>
+        <p class="modal-text">
+          Once you delete your account, there is no going back. Please be
+          certain.
+        </p>
+        <div class="modal-actions">
+          <button class="btn-outline" id="cancel-delete-btn">No, Cancel</button>
+          <button class="btn-danger" id="confirm-delete-btn">
+            Yes, Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="logout-modal">
+      <div class="modal-content">
+        <h3 class="modal-title">Logout?</h3>
+        <p class="modal-text">
+          Are you sure you want to log out of your account?
+        </p>
+        <div class="modal-actions">
+          <button class="btn-outline" id="cancel-logout-btn">No, Cancel</button>
+          <button class="btn-danger" id="confirm-logout-btn">
+            Yes, Logout
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="upload-image-modal">
+      <div class="modal-content upload-modal-content">
+        <button class="modal-close-btn" id="close-upload-modal">
+          <i class="bi bi-x-lg"></i>
+        </button>
+        <div class="upload-modal-body">
+          <div class="upload-area">
+            <i class="bi bi-cloud-arrow-up-fill upload-icon"></i>
+            <p class="upload-text-main">Drag and Drop assets here</p>
+            <p class="upload-text-secondary">Or</p>
+            <button type="button" class="btn-primary" id="popup-browse-btn">
+              Browse
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="toast" class="toast"></div>
 
-    <script src="../scripts/main.js"></script>
-    <script src="../scripts/pages/clientDashboard.js"></script>
+    <input type="file" id="stride-file-input" accept="image/*" hidden />
+
+    <script type="module" src="../scripts/main.js"></script>
+    <script type="module" src="../scripts/pages/userDashboard.js"></script>
   </body>
 </html>

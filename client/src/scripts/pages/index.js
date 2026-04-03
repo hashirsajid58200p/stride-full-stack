@@ -1,8 +1,219 @@
+// client/src/scripts/pages/index.js
+
 document.addEventListener("DOMContentLoaded", () => {
+  // ==========================================
+  // COMPONENT LOADER: Fetch Preloader (First Visit Only)
+  // ==========================================
+  async function loadPreloaderComponent() {
+    // Check if the user has already loaded the site in this tab session
+    if (sessionStorage.getItem("strideFirstLoadDone")) return;
+
+    const placeholder = document.getElementById("loader-placeholder");
+    if (!placeholder) return;
+
+    try {
+      const response = await fetch("../components/loader.html");
+      const html = await response.text();
+      placeholder.innerHTML = html;
+
+      // Remove the temporary anti-flash white screen now that the
+      // real video loader component is successfully injected!
+      const antiFlash = document.getElementById("anti-flash-overlay");
+      if (antiFlash) {
+        antiFlash.remove();
+      }
+      // Note: We DO NOT remove the loader-scroll-lock style here.
+      // The loader.html script will naturally remove it when it fades out!
+
+      // Execute scripts from the component
+      const scripts = placeholder.querySelectorAll("script");
+      scripts.forEach((oldScript) => {
+        const newScript = document.createElement("script");
+        newScript.textContent = oldScript.textContent;
+        document.body.appendChild(newScript);
+      });
+
+      // Initialize the loader animation
+      if (typeof window.initLoader === "function") {
+        window.initLoader();
+      }
+
+      // Save to sessionStorage so it skips the loader on future page refreshes
+      sessionStorage.setItem("strideFirstLoadDone", "true");
+    } catch (err) {
+      console.error("Failed to load preloader component:", err);
+    }
+  }
+
+  // ==========================================
+  // COMPONENT LOADER: Fetch Skeleton Animation
+  // ==========================================
+  async function loadSkeletonComponent() {
+    if (!window.renderSkeletonCardTemplate) {
+      try {
+        const response = await fetch("../components/skeletonAnimation.html");
+        const html = await response.text();
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = html;
+        document.body.appendChild(wrapper);
+
+        const scripts = wrapper.querySelectorAll("script");
+        scripts.forEach((script) => {
+          const newScript = document.createElement("script");
+          newScript.textContent = script.textContent;
+          document.body.appendChild(newScript);
+        });
+      } catch (err) {
+        console.error("Failed to load skeleton component:", err);
+      }
+    }
+  }
+
+  // ==========================================
+  // COMPONENT LOADER: Fetch Product Cards
+  // ==========================================
+  async function loadProductCardsComponent() {
+    if (!window.renderProductCardTemplate) {
+      try {
+        const response = await fetch("../components/productCards.html");
+        const html = await response.text();
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = html;
+        document.body.appendChild(wrapper);
+
+        const scripts = wrapper.querySelectorAll("script");
+        scripts.forEach((script) => {
+          const newScript = document.createElement("script");
+          newScript.textContent = script.textContent;
+          document.body.appendChild(newScript);
+        });
+      } catch (err) {
+        console.error("Failed to load productCards component:", err);
+      }
+    }
+  }
+
+  // ==========================================
+  // COMPONENT LOADER: Fetch Newsletter
+  // ==========================================
+  async function loadNewsletterComponent() {
+    const placeholder = document.getElementById("newsletter-placeholder");
+    if (!placeholder) return;
+
+    try {
+      const response = await fetch("../components/newsletter.html");
+      const html = await response.text();
+      placeholder.innerHTML = html;
+
+      // Extract the data attribute and apply the image dynamically
+      const bgImage = placeholder.getAttribute("data-bg");
+      if (bgImage) {
+        const newsletterSection = placeholder.querySelector(".newsletter");
+        if (newsletterSection) {
+          newsletterSection.style.backgroundImage = `url('${bgImage}')`;
+        }
+      }
+
+      // Execute scripts from the component
+      const scripts = placeholder.querySelectorAll("script");
+      scripts.forEach((oldScript) => {
+        const newScript = document.createElement("script");
+        newScript.textContent = oldScript.textContent;
+        document.body.appendChild(newScript);
+      });
+    } catch (err) {
+      console.error("Failed to load newsletter component:", err);
+    }
+  }
+
+  // ==========================================
+  // FETCH FEATURED PRODUCTS FROM SUPABASE
+  // ==========================================
+  async function fetchFeaturedProducts() {
+    const grid = document.getElementById("featured-products-grid");
+    if (!grid) return;
+
+    try {
+      if (!window.supabase) {
+        window.addEventListener("supabaseInitialized", fetchFeaturedProducts);
+        return;
+      }
+
+      // Load the skeleton component dynamically
+      await loadSkeletonComponent();
+
+      // UX OPTIMIZATION: Inject 6 Skeleton Cards immediately while loading
+      grid.innerHTML = window.renderSkeletonCardTemplate(6);
+
+      // Load component HTML/CSS/JS First
+      await loadProductCardsComponent();
+
+      // OPTIMIZATION: Fetch products, sizes, AND reviews all at once
+      const { data: products, error } = await window.supabase
+        .from("products")
+        .select(`*, product_sizes ( size ), reviews( rating )`);
+
+      if (error) throw error;
+
+      if (products && products.length > 0) {
+        // Shuffle array to randomize cards every time the page loads
+        const shuffled = products.sort(() => 0.5 - Math.random());
+        // Grab exactly 6 cards to perfectly fill two rows of 3
+        const selected = shuffled.slice(0, 6);
+
+        // Render using the component
+        const cardsHTML = selected
+          .map((p, index) =>
+            window.renderProductCardTemplate
+              ? window.renderProductCardTemplate(p, index)
+              : "",
+          )
+          .join("");
+
+        grid.innerHTML = cardsHTML;
+        attachWishlistListeners();
+      } else {
+        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color:var(--color-muted-fg);">No products found.</div>`;
+      }
+    } catch (error) {
+      console.error("Error fetching featured products:", error);
+      grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color:#ef4444;">Failed to load featured products.</div>`;
+    }
+  }
+
+  function attachWishlistListeners() {
+    const wishlistBtns = document.querySelectorAll(".action-btn-wishlist");
+    wishlistBtns.forEach((btn) => {
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+
+      newBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        newBtn.classList.toggle("active");
+        const icon = newBtn.querySelector("i");
+        if (newBtn.classList.contains("active")) {
+          icon.classList.remove("bi-heart");
+          icon.classList.add("bi-heart-fill");
+          if (typeof window.showToast === "function")
+            window.showToast("Added to wishlist!");
+        } else {
+          icon.classList.remove("bi-heart-fill");
+          icon.classList.add("bi-heart");
+          if (typeof window.showToast === "function")
+            window.showToast("Removed from wishlist");
+        }
+      });
+    });
+  }
+
+  // Trigger fetches on load
+  loadPreloaderComponent(); // NEW: Triggers the splash screen (only on first visit)
+  fetchFeaturedProducts();
+  loadNewsletterComponent();
+
   // ==========================================
   // TEXT MARQUEE OPTIMIZATION (CSS Based)
   // ==========================================
-
   const textContents = document.querySelectorAll(
     ".hero-marquee-content, .text-marquee-content",
   );

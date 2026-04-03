@@ -1,17 +1,17 @@
+// client/src/scripts/pages/products.js
+
 document.addEventListener("DOMContentLoaded", () => {
-  const productCards = document.querySelectorAll(".product-card");
+  const productGrid = document.getElementById("product-grid");
   const noResultsDiv = document.getElementById("no-results");
   const clearFiltersBtn = document.getElementById("clear-filters");
   const searchInput = document.getElementById("product-search");
 
-  const categoryBtns = document.querySelectorAll(
-    "#category-filter .sidebar-btn",
-  );
-  const brandBtns = document.querySelectorAll("#brand-filter .sidebar-btn");
   const sidebar = document.getElementById("productsSidebar");
   const sidebarToggleBtn = document.getElementById("mobileSidebarToggle");
   const closeSidebarBtn = document.getElementById("closeSidebarBtn");
   const sidebarOverlay = document.getElementById("sidebarOverlay");
+  const categoryFilterUl = document.getElementById("category-filter");
+  const brandFilterUl = document.getElementById("brand-filter");
 
   const filterModal = document.getElementById("advancedFilterModal");
   const openFilterBtn = document.getElementById("openFilterModal");
@@ -30,36 +30,224 @@ document.addEventListener("DOMContentLoaded", () => {
   const maxPriceInput = document.getElementById("max-price");
   const priceErrorMsg = document.getElementById("price-error");
 
-  let activeCategory = "all";
+  let rawCategory =
+    new URLSearchParams(window.location.search).get("category") || "all";
+  let activeCategory = rawCategory.toLowerCase().replace(/\s+/g, "-");
   let activeBrand = "all";
   let searchQuery = "";
+  let allProductsData = [];
 
   // ==========================================
-  // URL Parameter Logic (Reads Header Clicks on Load)
+  // CURRENCY UI UPDATER
   // ==========================================
-  const urlParams = new URLSearchParams(window.location.search);
-  const categoryParam = urlParams.get("category");
+  function updatePricePlaceholders() {
+    const currency = localStorage.getItem("strideCurrency") || "USD";
+    const symbol =
+      currency === "PKR" ? "Rs" : currency === "USD" ? "$" : currency;
 
-  if (categoryParam) {
-    activeCategory = categoryParam;
-    categoryBtns.forEach((b) => b.classList.remove("active"));
-    const activeBtn = document.querySelector(
-      `#category-filter .sidebar-btn[data-filter="${categoryParam}"]`,
-    );
-    if (activeBtn) activeBtn.classList.add("active");
+    if (minPriceInput) minPriceInput.placeholder = `Min ${symbol}`;
+    if (maxPriceInput) maxPriceInput.placeholder = `Max ${symbol}`;
+  }
+
+  // Listen for currency being initialized or changed
+  window.addEventListener("currencyUpdated", updatePricePlaceholders);
+  updatePricePlaceholders(); // Initial call
+
+  // ==========================================
+  // COMPONENT LOADER: Fetch Skeleton Animation
+  // ==========================================
+  async function loadSkeletonComponent() {
+    if (!window.renderSkeletonCardTemplate) {
+      try {
+        const response = await fetch("../components/skeletonAnimation.html");
+        const html = await response.text();
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = html;
+        document.body.appendChild(wrapper);
+
+        const scripts = wrapper.querySelectorAll("script");
+        scripts.forEach((script) => {
+          const newScript = document.createElement("script");
+          newScript.textContent = script.textContent;
+          document.body.appendChild(newScript);
+        });
+      } catch (err) {
+        console.error("Failed to load skeleton component:", err);
+      }
+    }
   }
 
   // ==========================================
-  // Dynamic Sync (Reads Header Clicks while already on page)
+  // COMPONENT LOADER: Fetch Product Cards
   // ==========================================
+  async function loadProductCardsComponent() {
+    if (!window.renderProductCardTemplate) {
+      try {
+        const response = await fetch("../components/productCards.html");
+        const html = await response.text();
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = html;
+        document.body.appendChild(wrapper);
+
+        const scripts = wrapper.querySelectorAll("script");
+        scripts.forEach((script) => {
+          const newScript = document.createElement("script");
+          newScript.textContent = script.textContent;
+          document.body.appendChild(newScript);
+        });
+      } catch (err) {
+        console.error("Failed to load productCards component:", err);
+      }
+    }
+  }
+
+  // ==========================================
+  // FETCH PRODUCTS FROM SUPABASE
+  // ==========================================
+  async function fetchProducts() {
+    try {
+      if (!window.supabase) {
+        console.warn("Waiting for Supabase...");
+        window.addEventListener("supabaseInitialized", fetchProducts);
+        return;
+      }
+
+      // Load the skeleton component dynamically
+      await loadSkeletonComponent();
+
+      // UX OPTIMIZATION: Inject 6 Skeleton Cards immediately while loading
+      productGrid.innerHTML = window.renderSkeletonCardTemplate(6);
+
+      await loadProductCardsComponent();
+
+      // OPTIMIZATION: Fetch products, sizes, AND reviews all at once
+      const { data, error } = await window.supabase
+        .from("products")
+        .select(
+          `
+            *,
+            product_sizes ( size ),
+            reviews ( rating )
+        `,
+        )
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      allProductsData = data;
+      generateSidebar();
+      renderProducts(allProductsData);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      productGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #ef4444; padding: 2rem;">Failed to load products.</div>`;
+    }
+  }
+
+  function generateSidebar() {
+    let sidebarConfig = JSON.parse(
+      localStorage.getItem("stride_sidebar_filters"),
+    );
+
+    if (!sidebarConfig) {
+      sidebarConfig = {
+        categories: ["Men", "Women", "Universal", "New Arrival"],
+        brands: ["Nike", "Adidas", "Puma", "New Balance", "Jordan"],
+      };
+    }
+
+    let categoryHTML = `<li><button class="sidebar-btn ${activeCategory === "all" ? "active" : ""}" data-filter="all">All Products</button></li>`;
+    sidebarConfig.categories.forEach((cat) => {
+      const filterValue = cat.toLowerCase().replace(/\s+/g, "-");
+      const isActive = activeCategory === filterValue ? "active" : "";
+      categoryHTML += `<li><button class="sidebar-btn ${isActive}" data-filter="${filterValue}">${cat}</button></li>`;
+    });
+    categoryFilterUl.innerHTML = categoryHTML;
+
+    let brandHTML = `<li><button class="sidebar-btn ${activeBrand === "all" ? "active" : ""}" data-brand="all">All Brands</button></li>`;
+    sidebarConfig.brands.forEach((brand) => {
+      const filterValue = brand.toLowerCase().replace(/\s+/g, "-");
+      const isActive = activeBrand === filterValue ? "active" : "";
+      brandHTML += `<li><button class="sidebar-btn ${isActive}" data-brand="${filterValue}">${brand}</button></li>`;
+    });
+    brandFilterUl.innerHTML = brandHTML;
+  }
+
+  function renderProducts(productsToRender) {
+    productGrid.innerHTML = "";
+
+    if (productsToRender.length === 0) {
+      noResultsDiv.style.display = "block";
+      return;
+    }
+
+    noResultsDiv.style.display = "none";
+
+    const productsHTML = productsToRender
+      .map((p, index) =>
+        window.renderProductCardTemplate
+          ? window.renderProductCardTemplate(p, index)
+          : "",
+      )
+      .join("");
+
+    productGrid.innerHTML = productsHTML;
+
+    attachWishlistListeners();
+    applyFilters();
+  }
+
+  fetchProducts();
+
+  // ==========================================
+  // SIDEBAR EVENT DELEGATION
+  // ==========================================
+
+  categoryFilterUl.addEventListener("click", (e) => {
+    if (e.target.classList.contains("sidebar-btn")) {
+      document
+        .querySelectorAll("#category-filter .sidebar-btn")
+        .forEach((b) => b.classList.remove("active"));
+      e.target.classList.add("active");
+      activeCategory = e.target.getAttribute("data-filter");
+
+      const newUrl = new URL(window.location.href);
+      if (activeCategory === "all") {
+        newUrl.searchParams.delete("category");
+      } else {
+        newUrl.searchParams.set("category", activeCategory);
+      }
+      window.history.pushState({ path: newUrl.href }, "", newUrl.href);
+
+      applyFilters();
+      if (window.innerWidth <= 768) closeSidebar();
+    }
+  });
+
+  brandFilterUl.addEventListener("click", (e) => {
+    if (e.target.classList.contains("sidebar-btn")) {
+      document
+        .querySelectorAll("#brand-filter .sidebar-btn")
+        .forEach((b) => b.classList.remove("active"));
+      e.target.classList.add("active");
+      activeBrand = e.target.getAttribute("data-brand");
+
+      applyFilters();
+      if (window.innerWidth <= 768) closeSidebar();
+    }
+  });
+
   window.addEventListener("categoryChanged", (e) => {
     activeCategory = e.detail;
-    categoryBtns.forEach((b) => b.classList.remove("active"));
     const activeBtn = document.querySelector(
       `#category-filter .sidebar-btn[data-filter="${activeCategory}"]`,
     );
-    if (activeBtn) activeBtn.classList.add("active");
-    filterProducts();
+    if (activeBtn) {
+      document
+        .querySelectorAll("#category-filter .sidebar-btn")
+        .forEach((b) => b.classList.remove("active"));
+      activeBtn.classList.add("active");
+    }
+    applyFilters();
   });
 
   function openSidebar() {
@@ -78,40 +266,10 @@ document.addEventListener("DOMContentLoaded", () => {
   if (closeSidebarBtn) closeSidebarBtn.addEventListener("click", closeSidebar);
   if (sidebarOverlay) sidebarOverlay.addEventListener("click", closeSidebar);
 
-  categoryBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      categoryBtns.forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      activeCategory = btn.getAttribute("data-filter");
-
-      const newUrl =
-        window.location.protocol +
-        "//" +
-        window.location.host +
-        window.location.pathname +
-        "?category=" +
-        activeCategory;
-      window.history.pushState({ path: newUrl }, "", newUrl);
-
-      filterProducts();
-      if (window.innerWidth <= 768) closeSidebar();
-    });
-  });
-
-  brandBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      brandBtns.forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      activeBrand = btn.getAttribute("data-brand");
-      filterProducts();
-      if (window.innerWidth <= 768) closeSidebar();
-    });
-  });
-
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
       searchQuery = e.target.value.toLowerCase().trim();
-      filterProducts();
+      applyFilters();
     });
   }
 
@@ -158,10 +316,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function validatePriceRange() {
-    if (minPriceInput.value && minPriceInput.value < 0)
-      minPriceInput.value = Math.abs(minPriceInput.value);
-    if (maxPriceInput.value && maxPriceInput.value < 0)
-      maxPriceInput.value = Math.abs(maxPriceInput.value);
+    if (minPriceInput.value && parseInt(minPriceInput.value, 10) < 0)
+      minPriceInput.value = Math.abs(parseInt(minPriceInput.value, 10));
+    if (maxPriceInput.value && parseInt(maxPriceInput.value, 10) < 0)
+      maxPriceInput.value = Math.abs(parseInt(maxPriceInput.value, 10));
 
     const min = minPriceInput.value;
     const max = maxPriceInput.value;
@@ -182,7 +340,11 @@ document.addEventListener("DOMContentLoaded", () => {
       priceErrorMsg.style.display = "block";
       minPriceInput.style.borderColor = "#ef4444";
       isValid = false;
-    } else if (min !== "" && max !== "" && parseFloat(min) > parseFloat(max)) {
+    } else if (
+      min !== "" &&
+      max !== "" &&
+      parseInt(min, 10) > parseInt(max, 10)
+    ) {
       priceErrorMsg.textContent =
         "Minimum price cannot be greater than Maximum price.";
       priceErrorMsg.style.display = "block";
@@ -197,12 +359,12 @@ document.addEventListener("DOMContentLoaded", () => {
   if (minPriceInput && maxPriceInput) {
     minPriceInput.addEventListener("input", () => {
       if (minPriceInput.value < 0)
-        minPriceInput.value = Math.abs(minPriceInput.value);
+        minPriceInput.value = Math.abs(parseInt(minPriceInput.value, 10));
       if (priceErrorMsg.style.display === "block") validatePriceRange();
     });
     maxPriceInput.addEventListener("input", () => {
       if (maxPriceInput.value < 0)
-        maxPriceInput.value = Math.abs(maxPriceInput.value);
+        maxPriceInput.value = Math.abs(parseInt(maxPriceInput.value, 10));
       if (priceErrorMsg.style.display === "block") validatePriceRange();
     });
   }
@@ -216,7 +378,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (typeof window.showToast === "function")
         window.showToast("Advanced Filters Applied");
       filterModal.classList.remove("active");
-      filterProducts();
+
+      applyFilters();
     });
   }
 
@@ -227,6 +390,20 @@ document.addEventListener("DOMContentLoaded", () => {
       searchQuery = "";
       if (searchInput) searchInput.value = "";
 
+      if (minPriceInput) minPriceInput.value = "";
+      if (maxPriceInput) maxPriceInput.value = "";
+      document
+        .querySelectorAll('input[name="filter-size"]')
+        .forEach((cb) => (cb.checked = false));
+
+      if (sortValueHidden) sortValueHidden.value = "default";
+      if (customSelectText) customSelectText.textContent = "Default";
+      customSelectOptions.forEach((opt) => opt.classList.remove("selected"));
+      const defaultSortOpt = document.querySelector(
+        '.custom-select-option[data-value="default"]',
+      );
+      if (defaultSortOpt) defaultSortOpt.classList.add("selected");
+
       const newUrl =
         window.location.protocol +
         "//" +
@@ -234,43 +411,142 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.pathname;
       window.history.pushState({ path: newUrl }, "", newUrl);
 
-      categoryBtns.forEach((b) => b.classList.remove("active"));
       document
-        .querySelector('#category-filter .sidebar-btn[data-filter="all"]')
-        .classList.add("active");
+        .querySelectorAll("#category-filter .sidebar-btn")
+        .forEach((b) => b.classList.remove("active"));
+      const allCat = document.querySelector(
+        '#category-filter .sidebar-btn[data-filter="all"]',
+      );
+      if (allCat) allCat.classList.add("active");
 
-      brandBtns.forEach((b) => b.classList.remove("active"));
       document
-        .querySelector('#brand-filter .sidebar-btn[data-brand="all"]')
-        .classList.add("active");
+        .querySelectorAll("#brand-filter .sidebar-btn")
+        .forEach((b) => b.classList.remove("active"));
+      const allBrand = document.querySelector(
+        '#brand-filter .sidebar-btn[data-brand="all"]',
+      );
+      if (allBrand) allBrand.classList.add("active");
 
-      filterProducts();
+      applyFilters();
     });
   }
 
-  function filterProducts() {
+  function applyFilters() {
+    const currentCards = document.querySelectorAll(".product-card");
     let visibleCount = 0;
 
-    productCards.forEach((card) => {
-      const cardCategories = card.getAttribute("data-category").split(" ");
-      const cardBrand = card.getAttribute("data-brand");
+    // NEW LOGIC: Get current exchange rate to convert user input back to USD
+    const rate = parseFloat(localStorage.getItem("strideExchangeRate")) || 1;
+
+    // Convert local price input (e.g. PKR) back to USD for comparison
+    const minPriceUSD =
+      minPriceInput && minPriceInput.value
+        ? parseFloat(minPriceInput.value) / rate
+        : 0;
+    const maxPriceUSD =
+      maxPriceInput && maxPriceInput.value
+        ? parseFloat(maxPriceInput.value) / rate
+        : Infinity;
+
+    const sortValue = sortValueHidden ? sortValueHidden.value : "default";
+
+    const selectedSizes = Array.from(
+      document.querySelectorAll('input[name="filter-size"]:checked'),
+    ).map((cb) => cb.value);
+
+    const cardsArray = Array.from(currentCards);
+
+    cardsArray.forEach((card) => {
+      const cardCategories = card.getAttribute("data-category") || "";
+      const cardCategoryArray = cardCategories.split(" ");
+
+      const cardBrand = card.getAttribute("data-brand") || "";
+      const cardPrice = parseFloat(card.getAttribute("data-price") || 0);
+      const cardSizes = card.getAttribute("data-sizes") || "";
+      const cardSizeArray = cardSizes.split(",");
+
       const cardName = card
         .querySelector(".product-name")
         .textContent.toLowerCase();
 
       const matchesCategory =
-        activeCategory === "all" || cardCategories.includes(activeCategory);
+        activeCategory === "all" || cardCategoryArray.includes(activeCategory);
       const matchesBrand = activeBrand === "all" || cardBrand === activeBrand;
-      const matchesSearch =
-        searchQuery === "" || cardName.includes(searchQuery);
 
-      if (matchesCategory && matchesBrand && matchesSearch) {
+      const matchesSearch =
+        searchQuery === "" ||
+        cardName.includes(searchQuery) ||
+        cardBrand.includes(searchQuery);
+
+      // Comparison now happens correctly in USD
+      const matchesPrice = cardPrice >= minPriceUSD && cardPrice <= maxPriceUSD;
+
+      let matchesSize = true;
+      if (selectedSizes.length > 0) {
+        matchesSize = selectedSizes.some((size) =>
+          cardSizeArray.includes(size),
+        );
+      }
+
+      if (
+        matchesCategory &&
+        matchesBrand &&
+        matchesSearch &&
+        matchesPrice &&
+        matchesSize
+      ) {
         card.classList.remove("hidden");
         visibleCount++;
       } else {
         card.classList.add("hidden");
       }
     });
+
+    cardsArray.sort((a, b) => {
+      const priceA = parseFloat(a.getAttribute("data-price"));
+      const priceB = parseFloat(b.getAttribute("data-price"));
+      const nameA = a.querySelector(".product-name").textContent.toLowerCase();
+      const nameB = b.querySelector(".product-name").textContent.toLowerCase();
+
+      if (sortValue === "price-low") {
+        return priceA - priceB;
+      } else if (sortValue === "price-high") {
+        return priceB - priceA;
+      } else if (sortValue === "name-desc") {
+        return nameB.localeCompare(nameA);
+      } else if (sortValue === "name-asc") {
+        return nameA.localeCompare(nameB);
+      } else {
+        return (
+          parseInt(a.getAttribute("data-index"), 10) -
+          parseInt(b.getAttribute("data-index"), 10)
+        );
+      }
+    });
+
+    cardsArray.sort((a, b) => {
+      const priceA = parseFloat(a.getAttribute("data-price"));
+      const priceB = parseFloat(b.getAttribute("data-price"));
+      const nameA = a.querySelector(".product-name").textContent.toLowerCase();
+      const nameB = b.querySelector(".product-name").textContent.toLowerCase();
+
+      if (sortValue === "price-low") {
+        return priceA - priceB;
+      } else if (sortValue === "price-high") {
+        return priceB - priceA;
+      } else if (sortValue === "name-desc") {
+        return nameB.localeCompare(nameA);
+      } else if (sortValue === "name-asc") {
+        return nameA.localeCompare(nameB);
+      } else {
+        return (
+          parseInt(a.getAttribute("data-index"), 10) -
+          parseInt(b.getAttribute("data-index"), 10)
+        );
+      }
+    });
+
+    cardsArray.forEach((card) => productGrid.appendChild(card));
 
     const resultsCount = document.getElementById("results-count");
     if (resultsCount) {
@@ -284,25 +560,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  filterProducts();
+  function attachWishlistListeners() {
+    const wishlistBtns = document.querySelectorAll(".action-btn-wishlist");
+    wishlistBtns.forEach((btn) => {
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
 
-  const wishlistBtns = document.querySelectorAll(".action-btn-wishlist");
-  wishlistBtns.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      btn.classList.toggle("active");
-      const icon = btn.querySelector("i");
-      if (btn.classList.contains("active")) {
-        icon.classList.remove("bi-heart");
-        icon.classList.add("bi-heart-fill");
-        if (typeof window.showToast === "function")
-          window.showToast("Added to wishlist!");
-      } else {
-        icon.classList.remove("bi-heart-fill");
-        icon.classList.add("bi-heart");
-        if (typeof window.showToast === "function")
-          window.showToast("Removed from wishlist");
-      }
+      newBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        newBtn.classList.toggle("active");
+        const icon = newBtn.querySelector("i");
+        if (newBtn.classList.contains("active")) {
+          icon.classList.remove("bi-heart");
+          icon.classList.add("bi-heart-fill");
+          if (typeof window.showToast === "function")
+            window.showToast("Added to wishlist!");
+        } else {
+          icon.classList.remove("bi-heart-fill");
+          icon.classList.add("bi-heart");
+          if (typeof window.showToast === "function")
+            window.showToast("Removed from wishlist");
+        }
+      });
     });
-  });
+  }
 });

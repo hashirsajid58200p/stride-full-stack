@@ -45,56 +45,60 @@
         <div class="cart-page-filled" id="cartPageFilled">
           <div class="cart-table-header">
             <div class="col-product">PRODUCT</div>
-            <div class="col-price">PRICE</div>
-            <div class="col-qty">QUANTITY</div>
-            <div class="col-total">TOTAL</div>
+            <div class="col-price text-center">PRICE</div>
+            <div class="col-qty text-center">QUANTITY</div>
+            <div class="col-total text-center">TOTAL</div>
           </div>
 
           <div class="cart-page-items" id="cartPageItemsContainer"></div>
 
           <div class="cart-bottom-section">
-            <div class="cart-notes-coupon">
-              <div class="order-note">
-                <label for="orderNote">Add Order Note</label>
-                <textarea
-                  id="orderNote"
-                  placeholder="How can we help you?"
-                ></textarea>
-              </div>
-              <div class="coupon-section">
-                <label for="pageCouponCode">Coupon:</label>
-                <p class="coupon-hint">
-                  Coupon code will work on checkout page (Try "STRIDE10")
-                </p>
-                <div class="coupon-input-group">
-                  <input
-                    type="text"
-                    id="pageCouponCode"
-                    placeholder="Coupon code"
-                  />
-                  <button id="applyPageCouponBtn" class="btn-apply">
-                    Apply
-                  </button>
-                </div>
-                <p id="pageCouponMessage" class="coupon-message"></p>
-              </div>
-            </div>
+            <div
+              class="cart-notes-spacer"
+              id="shopping-cart-coupon-placeholder"
+            ></div>
 
             <div class="cart-totals">
+              <div
+                class="subtotal-row cart-discount-row"
+                id="shoppingCartDiscountRow"
+                style="display: none"
+              >
+                <span class="label">DISCOUNT:</span>
+                <span class="value" id="shoppingCartDiscountValue">-$0.00</span>
+              </div>
               <div class="subtotal-row">
                 <span class="label">SUBTOTAL:</span>
-                <span class="value" id="pageSubtotalValue">Rs.0.00 PKR</span>
+                <span class="value" id="pageSubtotalValue">$0.00</span>
               </div>
-              <button class="btn btn-primary checkout-btn">Check Out</button>
+              <a href="checkOut.html" class="btn btn-primary checkout-btn"
+                >Check Out</a
+              >
             </div>
           </div>
         </div>
       </div>
+
+      <section
+        class="related-products-section"
+        id="cartRecommendationsSection"
+        style="display: none"
+      >
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">You May Also Like</h2>
+          </div>
+          <div
+            class="products-grid featured-products-override"
+            id="related-products-grid"
+          ></div>
+        </div>
+      </section>
     </main>
 
     <div id="footer-placeholder"></div>
 
-    <script src="../scripts/main.js"></script>
-    <script src="../scripts/pages/shoppingCart.js"></script>
+    <script type="module" src="../scripts/main.js"></script>
+    <script type="module" src="../scripts/pages/shoppingCart.js"></script>
   </body>
 </html>

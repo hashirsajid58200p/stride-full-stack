@@ -1,12 +1,12 @@
+// client/src/scripts/pages/checkOut.js
+
 document.addEventListener("DOMContentLoaded", () => {
   // ==========================================
   // Step Navigation Logic
   // ==========================================
   const form1 = document.getElementById("form-step-1");
   const form2 = document.getElementById("form-step-2");
-  const form3 = document.getElementById("form-step-3");
 
-  // Custom Dropdown Elements
   const customSelectWrapper = document.getElementById("countryDropdownWrapper");
   const customSelectDisplay = document.getElementById("countryDropdownDisplay");
   const customSelectText = document.getElementById("countryDropdownText");
@@ -16,7 +16,37 @@ document.addEventListener("DOMContentLoaded", () => {
   const countryInputHidden = document.getElementById("chk-country");
   const countryErrorMsg = document.getElementById("country-error");
 
-  // --- Custom Dropdown Logic (Country) ---
+  // FIX: Load the globally saved offer if the user applied it in shoppingCart.html
+  let appliedOffer = null;
+  const savedOfferStr = localStorage.getItem("strideAppliedOffer");
+  if (savedOfferStr) {
+    try {
+      appliedOffer = JSON.parse(savedOfferStr);
+    } catch (e) {
+      console.error("Failed to parse saved offer in checkout");
+    }
+  }
+
+  // ==========================================
+  // CURRENCY ENGINE INTEGRATION
+  // ==========================================
+  const expressShippingDisplay = document.getElementById(
+    "express-shipping-display",
+  );
+
+  // Format the Express Shipping display on load
+  if (expressShippingDisplay && typeof window.formatPrice === "function") {
+    expressShippingDisplay.textContent = window.formatPrice(15.0);
+  }
+
+  // Listen for the global currency engine finishing its background load
+  window.addEventListener("currencyUpdated", () => {
+    if (expressShippingDisplay) {
+      expressShippingDisplay.textContent = window.formatPrice(15.0);
+    }
+    loadCartItems(); // Re-render the cart items and totals with the new currency
+  });
+
   if (customSelectWrapper) {
     customSelectDisplay.addEventListener("click", () => {
       customSelectWrapper.classList.toggle("open");
@@ -31,9 +61,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const text = this.textContent;
 
         customSelectText.textContent = text;
-        customSelectDisplay.classList.add("has-value"); // Changes color to normal text
+        customSelectDisplay.classList.add("has-value");
         countryInputHidden.value = value;
-        countryErrorMsg.style.display = "none"; // Hide error if user fixed it
+        countryErrorMsg.style.display = "none";
 
         customSelectWrapper.classList.remove("open");
       });
@@ -46,21 +76,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Step 1 to Step 2
   if (form1) {
     form1.addEventListener("submit", (e) => {
       e.preventDefault();
 
-      // Validate Custom Country Dropdown before proceeding
       if (countryInputHidden.value === "") {
         countryErrorMsg.style.display = "block";
         customSelectDisplay.style.borderColor = "#ef4444";
-        return; // Stop form submission
+        return;
       } else {
         customSelectDisplay.style.borderColor = "";
       }
 
-      // Transfer data to Step 2 summary
       const email = document.getElementById("chk-email").value;
       const address = document.getElementById("chk-address").value;
       const city = document.getElementById("chk-city").value;
@@ -77,7 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Step 2 to Step 3
   if (form2) {
     form2.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -91,37 +117,90 @@ document.addEventListener("DOMContentLoaded", () => {
         selectedShipping.nextElementSibling.querySelector(
           ".shipping-title",
         ).textContent;
+
+      // FIX: Use formatPrice instead of hardcoded $ logic
       const shippingCost =
         selectedShipping.value === "0"
           ? "Free"
-          : `$${parseFloat(selectedShipping.value).toFixed(2)}`;
+          : window.formatPrice(parseFloat(selectedShipping.value));
 
       document.getElementById("summary-shipping").textContent =
         `${shippingTitle} - ${shippingCost}`;
 
       goToStep(3);
+      initiateStripeCheckout();
     });
   }
 
-  // Step 3 (Final Purchase)
-  if (form3) {
-    form3.addEventListener("submit", (e) => {
-      e.preventDefault();
+  async function initiateStripeCheckout() {
+    const cartItems = JSON.parse(localStorage.getItem("strideCart")) || [];
+    const userEmail = document.getElementById("chk-email").value;
 
-      if (typeof window.showToast === "function") {
-        window.showToast("Payment Successful! Processing your order...");
-      } else {
-        alert("Payment Successful! Processing your order...");
+    if (cartItems.length === 0) {
+      if (typeof window.showToast === "function")
+        window.showToast("Your cart is empty!", "error");
+      setTimeout(() => goToStep(1), 2000);
+      return;
+    }
+
+    // MAP OVER CART TO APPLY THE VERIFIED DISCOUNT BEFORE SENDING TO STRIPE!
+    const checkoutItems = cartItems.map((item) => {
+      let finalPrice = item.price; // Stripe base price MUST remain in USD
+
+      if (appliedOffer) {
+        if (appliedOffer.type === "coupon") {
+          finalPrice =
+            item.price - item.price * (appliedOffer.discount_percentage / 100);
+        } else if (
+          appliedOffer.type === "product" &&
+          item.id === appliedOffer.target_product_id
+        ) {
+          finalPrice =
+            item.price - item.price * (appliedOffer.discount_percentage / 100);
+        }
       }
 
-      setTimeout(() => {
-        localStorage.removeItem("strideCart");
-        window.location.href = "clientDashboard.html?view=orders";
-      }, 2000);
+      return {
+        ...item,
+        price: finalPrice, // Stripe will now receive the discounted price per unit in USD
+      };
     });
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/payments/create-checkout-session",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            items: checkoutItems,
+            customerEmail: userEmail,
+          }),
+        },
+      );
+
+      const session = await response.json();
+
+      if (!response.ok)
+        throw new Error(session.error || "Failed to create payment session");
+
+      const stripe = Stripe(window.stripePublishableKey);
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.id,
+      });
+
+      if (result.error) throw new Error(result.error.message);
+    } catch (error) {
+      console.error("Stripe Checkout Error:", error);
+      if (typeof window.showToast === "function") {
+        window.showToast("Payment Error: " + error.message, "error");
+      } else {
+        alert("Payment Error: " + error.message);
+      }
+      setTimeout(() => goToStep(2), 2500);
+    }
   }
 
-  // Handle Radio Button changes on Step 2 to live-update totals
   const shippingRadios = document.querySelectorAll(
     'input[name="shipping-rate"]',
   );
@@ -129,35 +208,32 @@ document.addEventListener("DOMContentLoaded", () => {
     radio.addEventListener("change", updateTotals);
   });
 
-  // Global Step Navigation Function
   window.goToStep = function (stepNumber) {
     document.querySelectorAll(".checkout-step").forEach((step) => {
       step.classList.remove("active");
     });
 
-    document.querySelectorAll(".step").forEach((indicator) => {
-      indicator.classList.remove("active", "completed");
+    document.getElementById(`step-${stepNumber}`).classList.add("active");
+
+    document.querySelectorAll(".step").forEach((ind) => {
+      ind.classList.remove("active", "completed");
     });
     document.querySelectorAll(".progress-line").forEach((line) => {
       line.classList.remove("completed");
     });
 
-    document.getElementById(`step-${stepNumber}`).classList.add("active");
-    document
-      .getElementById(`indicator-step-${stepNumber}`)
-      .classList.add("active");
-
-    if (stepNumber >= 2) {
-      document
-        .getElementById("indicator-step-1")
-        .classList.replace("active", "completed");
+    if (stepNumber === 1) {
+      document.getElementById("indicator-step-1").classList.add("active");
+    } else if (stepNumber === 2) {
+      document.getElementById("indicator-step-1").classList.add("completed");
       document.querySelectorAll(".progress-line")[0].classList.add("completed");
-    }
-    if (stepNumber >= 3) {
-      document
-        .getElementById("indicator-step-2")
-        .classList.replace("active", "completed");
+      document.getElementById("indicator-step-2").classList.add("active");
+    } else if (stepNumber === 3) {
+      document.getElementById("indicator-step-1").classList.add("completed");
+      document.querySelectorAll(".progress-line")[0].classList.add("completed");
+      document.getElementById("indicator-step-2").classList.add("completed");
       document.querySelectorAll(".progress-line")[1].classList.add("completed");
+      document.getElementById("indicator-step-3").classList.add("active");
     }
 
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -174,33 +250,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const totalEl = document.getElementById("chk-total");
 
   let currentSubtotal = 0;
-  let currentDiscount = 0;
+  let currentDiscount = parseFloat(localStorage.getItem("strideDiscount")) || 0;
+  let cartItems = [];
 
   function loadCartItems() {
-    let cartItems = JSON.parse(localStorage.getItem("strideCart")) || [];
-
-    // Provide Dummy Data if cart is empty for demonstration purposes
-    if (cartItems.length === 0) {
-      cartItems = [
-        {
-          name: "Nike Air Max Fusion",
-          brand: "Nike",
-          price: 149.99,
-          quantity: 1,
-          img: "../../public/images/shoe-1.jpg",
-        },
-        {
-          name: "Adidas Ultraboost 23",
-          brand: "Adidas",
-          price: 179.99,
-          quantity: 1,
-          img: "../../public/images/shoe-2.jpg",
-        },
-      ];
-    }
+    cartItems = JSON.parse(localStorage.getItem("strideCart")) || [];
 
     orderItemsContainer.innerHTML = "";
     currentSubtotal = 0;
+
+    if (cartItems.length === 0) {
+      orderItemsContainer.innerHTML = `<p style="color: var(--color-muted-fg); text-align: center; padding: 1rem 0;">Your cart is empty.</p>`;
+      updateTotals();
+      return;
+    }
 
     cartItems.forEach((item) => {
       currentSubtotal += item.price * item.quantity;
@@ -215,7 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <span class="item-name">${item.name}</span>
             <span class="item-brand">${item.brand}</span>
           </div>
-          <span class="item-price">$${(item.price * item.quantity).toFixed(2)}</span>
+          <span class="item-price">${window.formatPrice(item.price * item.quantity)}</span>
         </div>
       `;
       orderItemsContainer.insertAdjacentHTML("beforeend", itemHTML);
@@ -232,47 +295,109 @@ document.addEventListener("DOMContentLoaded", () => {
       ? parseFloat(selectedShipping.value)
       : 0;
 
-    const finalTotal = currentSubtotal + shippingCost - currentDiscount;
+    const finalTotal = Math.max(
+      0,
+      currentSubtotal + shippingCost - currentDiscount,
+    );
 
-    subtotalEl.textContent = `$${currentSubtotal.toFixed(2)}`;
+    // FIX: Using formatPrice for subtotal, shipping, and total!
+    subtotalEl.textContent = window.formatPrice(currentSubtotal);
     shippingEl.textContent =
-      shippingCost === 0 ? "Free" : `$${shippingCost.toFixed(2)}`;
-    totalEl.textContent = `$${finalTotal.toFixed(2)}`;
+      shippingCost === 0 ? "Free" : window.formatPrice(shippingCost);
+    totalEl.textContent = window.formatPrice(finalTotal);
+
+    if (currentDiscount > 0) {
+      discountRow.style.display = "flex";
+      discountEl.textContent = "-" + window.formatPrice(currentDiscount);
+    } else {
+      discountRow.style.display = "none";
+    }
   }
 
   // ==========================================
-  // Coupon Logic
+  // COMPONENT LOADER: Coupon
   // ==========================================
-  const applyCouponBtn = document.getElementById("apply-coupon");
-  const couponInput = document.getElementById("coupon-code");
+  async function loadCouponComponent() {
+    try {
+      const response = await fetch("../components/coupon.html");
+      const html = await response.text();
+      const wrapper = document.createElement("div");
+      wrapper.innerHTML = html;
 
-  if (applyCouponBtn && couponInput) {
-    applyCouponBtn.addEventListener("click", () => {
-      const code = couponInput.value.trim().toUpperCase();
+      const placeholder = document.getElementById("coupon-placeholder");
+      if (placeholder) {
+        const scripts = wrapper.querySelectorAll("script");
 
-      if (code === "STRIDE10") {
-        currentDiscount = currentSubtotal * 0.1;
-        discountRow.style.display = "flex";
-        discountEl.textContent = `-$${currentDiscount.toFixed(2)}`;
-        couponInput.value = "";
-        couponInput.placeholder = "Code STRIDE10 Applied!";
-        couponInput.disabled = true;
-        applyCouponBtn.disabled = true;
-
-        updateTotals();
-
-        if (typeof window.showToast === "function")
-          window.showToast("10% Discount Applied!");
-      } else if (code !== "") {
-        if (typeof window.showToast === "function") {
-          window.showToast("Invalid discount code.");
-        } else {
-          alert("Invalid discount code.");
+        while (wrapper.firstChild) {
+          if (wrapper.firstChild.tagName !== "SCRIPT") {
+            placeholder.appendChild(wrapper.firstChild);
+          } else {
+            wrapper.removeChild(wrapper.firstChild);
+          }
         }
+
+        scripts.forEach((script) => {
+          const newScript = document.createElement("script");
+          newScript.textContent = script.textContent;
+          document.body.appendChild(newScript);
+        });
+
+        setTimeout(() => {
+          if (typeof window.initCouponComponent === "function") {
+            window.initCouponComponent();
+          }
+        }, 50);
       }
-    });
+    } catch (err) {
+      console.error("Failed to load coupon component", err);
+    }
   }
 
-  // Initialize page
+  window.addEventListener("couponApplied", (e) => {
+    const offer = e.detail.offer;
+    appliedOffer = offer; // Save object locally for Stripe mapping
+
+    let calculatedDiscount = 0;
+    let successMessage = "";
+
+    if (offer.type === "coupon") {
+      calculatedDiscount = currentSubtotal * (offer.discount_percentage / 100);
+      successMessage = `${offer.discount_percentage}% General Discount Applied!`;
+    } else if (offer.type === "product") {
+      let targetItemTotal = 0;
+      cartItems.forEach((item) => {
+        if (item.id === offer.target_product_id) {
+          targetItemTotal += item.price * item.quantity;
+        }
+      });
+
+      if (targetItemTotal > 0) {
+        calculatedDiscount =
+          targetItemTotal * (offer.discount_percentage / 100);
+        successMessage = `${offer.discount_percentage}% Product Discount Applied!`;
+      } else {
+        if (typeof window.resetCouponComponent === "function")
+          window.resetCouponComponent();
+        if (typeof window.showToast === "function")
+          window.showToast(
+            "This discount code does not apply to any items in your cart.",
+            "error",
+          );
+        appliedOffer = null;
+        return;
+      }
+    }
+
+    currentDiscount = calculatedDiscount;
+    localStorage.setItem("strideDiscount", currentDiscount);
+
+    updateTotals();
+
+    if (typeof window.showToast === "function") {
+      window.showToast(successMessage, "success");
+    }
+  });
+
   loadCartItems();
+  loadCouponComponent();
 });

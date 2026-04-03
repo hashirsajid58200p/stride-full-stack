@@ -44,7 +44,7 @@
               <div class="progress-line"></div>
               <div class="step" id="indicator-step-3">
                 <div class="step-icon">3</div>
-                <span class="step-label">Purchase</span>
+                <span class="step-label">Payment</span>
               </div>
             </div>
 
@@ -178,7 +178,7 @@
                   </div>
                 </div>
                 <div class="form-actions">
-                  <a href="products.html" class="back-link"
+                  <a href="shoppingCart.html" class="back-link"
                     ><i class="bi bi-chevron-left"></i> Return to cart</a
                   >
                   <button type="submit" class="btn btn-primary">
@@ -192,18 +192,18 @@
               <div class="summary-box">
                 <div class="summary-row">
                   <span class="summary-label">Contact</span>
-                  <span class="summary-value" id="summary-email"
-                    >example@mail.com</span
-                  >
-                  <button class="edit-btn" onclick="goToStep(1)">Change</button>
+                  <span class="summary-value" id="summary-email"></span>
+                  <button type="button" class="edit-btn" onclick="goToStep(1)">
+                    Change
+                  </button>
                 </div>
                 <div class="summary-divider"></div>
                 <div class="summary-row">
                   <span class="summary-label">Ship to</span>
-                  <span class="summary-value" id="summary-address"
-                    >123 Street, City, Country</span
-                  >
-                  <button class="edit-btn" onclick="goToStep(1)">Change</button>
+                  <span class="summary-value" id="summary-address"></span>
+                  <button type="button" class="edit-btn" onclick="goToStep(1)">
+                    Change
+                  </button>
                 </div>
               </div>
 
@@ -235,14 +235,16 @@
                         <span class="shipping-desc">1-2 business days</span>
                       </div>
                     </div>
-                    <span class="shipping-price">$15.00</span>
+                    <span class="shipping-price" id="express-shipping-display"
+                      >$15.00</span
+                    >
                   </label>
                 </div>
-                <div class="form-actions">
+                <div class="form-actions mt-4">
                   <button type="button" class="back-link" onclick="goToStep(1)">
                     <i class="bi bi-chevron-left"></i> Return to information
                   </button>
-                  <button type="submit" class="btn btn-primary">
+                  <button type="submit" class="btn btn-primary btn-large">
                     Continue to Payment
                   </button>
                 </div>
@@ -253,75 +255,36 @@
               <div class="summary-box">
                 <div class="summary-row">
                   <span class="summary-label">Contact</span>
-                  <span class="summary-value" id="summary-email-2"
-                    >example@mail.com</span
-                  >
-                  <button class="edit-btn" onclick="goToStep(1)">Change</button>
+                  <span class="summary-value" id="summary-email-2"></span>
+                  <button type="button" class="edit-btn" onclick="goToStep(1)">
+                    Change
+                  </button>
                 </div>
                 <div class="summary-divider"></div>
                 <div class="summary-row">
                   <span class="summary-label">Ship to</span>
-                  <span class="summary-value" id="summary-address-2"
-                    >123 Street, City, Country</span
-                  >
-                  <button class="edit-btn" onclick="goToStep(1)">Change</button>
+                  <span class="summary-value" id="summary-address-2"></span>
+                  <button type="button" class="edit-btn" onclick="goToStep(1)">
+                    Change
+                  </button>
                 </div>
                 <div class="summary-divider"></div>
                 <div class="summary-row">
                   <span class="summary-label">Method</span>
-                  <span class="summary-value" id="summary-shipping"
-                    >Standard Shipping - Free</span
-                  >
+                  <span class="summary-value" id="summary-shipping"></span>
+                  <button type="button" class="edit-btn" onclick="goToStep(2)">
+                    Change
+                  </button>
                 </div>
               </div>
 
-              <div class="step-header mt-4">
-                <h2>Payment</h2>
-                <p>All transactions are secure and encrypted.</p>
+              <div class="payment-loader">
+                <div class="spinner"></div>
+                <h2>Redirecting to Secure Payment...</h2>
+                <p class="text-muted">
+                  Please do not close or refresh this window.
+                </p>
               </div>
-              <form class="checkout-form" id="form-step-3">
-                <div class="payment-box">
-                  <div class="payment-header">
-                    <span>Credit Card</span>
-                    <div class="payment-icons">
-                      <i class="bi bi-credit-card-fill"></i>
-                    </div>
-                  </div>
-                  <div class="payment-body">
-                    <div class="form-group full-width">
-                      <input type="text" placeholder="Card number" required />
-                    </div>
-                    <div class="form-group full-width">
-                      <input type="text" placeholder="Name on card" required />
-                    </div>
-                    <div class="form-row">
-                      <div class="form-group">
-                        <input
-                          type="text"
-                          placeholder="Expiration date (MM / YY)"
-                          required
-                        />
-                      </div>
-                      <div class="form-group">
-                        <input
-                          type="text"
-                          placeholder="Security code"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="form-actions mt-4">
-                  <button type="button" class="back-link" onclick="goToStep(2)">
-                    <i class="bi bi-chevron-left"></i> Return to shipping
-                  </button>
-                  <button type="submit" class="btn btn-primary btn-large">
-                    Pay Now
-                  </button>
-                </div>
-              </form>
             </div>
           </div>
 
@@ -331,16 +294,7 @@
 
               <div class="order-items" id="checkout-order-items"></div>
 
-              <div class="coupon-section">
-                <input
-                  type="text"
-                  id="coupon-code"
-                  placeholder="Discount code"
-                />
-                <button type="button" class="btn-outline" id="apply-coupon">
-                  Apply
-                </button>
-              </div>
+              <div class="coupon-section" id="coupon-placeholder"></div>
 
               <div class="price-breakdown">
                 <div class="price-row">
@@ -373,7 +327,7 @@
 
     <div id="footer-placeholder"></div>
 
-    <script src="../scripts/main.js"></script>
-    <script src="../scripts/pages/checkOut.js"></script>
+    <script type="module" src="../scripts/main.js"></script>
+    <script type="module" src="../scripts/pages/checkOut.js"></script>
   </body>
 </html>

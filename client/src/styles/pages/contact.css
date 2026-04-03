@@ -163,6 +163,13 @@
   opacity: 0.9;
 }
 
+.submit-message-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 .submit-message-btn i {
   font-size: 1.3rem;
 }
@@ -237,30 +244,6 @@
   font-weight: 400;
   line-height: 1.6;
   opacity: 0.85;
-}
-
-/* =========================================
-   Toast Notification 
-   ========================================= */
-.toast {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  background: var(--color-accent);
-  color: var(--color-accent-fg);
-  padding: 1rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-  transform: translateY(150px);
-  opacity: 0;
-  transition: var(--transition-smooth);
-  z-index: 2000;
-}
-
-.toast.show {
-  transform: translateY(0);
-  opacity: 1;
 }
 
 /* =========================================

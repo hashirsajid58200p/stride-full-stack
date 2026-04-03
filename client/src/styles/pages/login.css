@@ -42,14 +42,14 @@
 }
 
 .title {
-  font-size: 2.3rem; /* Updated as per your changes */
+  font-size: 2.3rem;
   font-weight: 700;
   color: var(--color-fg);
   margin-bottom: 0.5rem;
 }
 
 .subtitle {
-  font-size: 1.1rem; /* Updated as per your changes */
+  font-size: 1.1rem;
   color: var(--color-muted-fg);
   display: flex;
   align-items: center;
@@ -57,8 +57,8 @@
 }
 
 .welcome-icon {
-  width: 33px; /* Updated as per your changes */
-  height: 33px; /* Updated as per your changes */
+  width: 33px;
+  height: 33px;
   object-fit: contain;
 }
 
@@ -96,6 +96,46 @@
   outline: none;
   border-color: var(--color-accent);
   box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+}
+
+/* Inline Error Styles */
+.form-group input.invalid {
+  border-color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+.form-group input.invalid:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.input-error {
+  color: #ef4444;
+  font-size: 0.8rem;
+  margin-top: -0.25rem;
+  display: none;
+  font-weight: 500;
+}
+
+.input-error.show {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+.form-error {
+  color: #ef4444;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: -0.5rem;
+  display: none;
+  font-weight: 500;
+  background-color: rgba(239, 68, 68, 0.1);
+  padding: 0.5rem;
+  border-radius: 6px;
+}
+
+.form-error.show {
+  display: block;
+  animation: fadeIn 0.3s ease;
 }
 
 /* Options (Remember me / Forgot password) */
@@ -246,7 +286,7 @@
   min-height: 650px;
 }
 
-/* Toast Notification */
+/* Toast Notification (Kept only for success messages) */
 .toast {
   position: fixed;
   bottom: 2rem;

@@ -1,0 +1,507 @@
+<style>
+  /* =========================================
+     Floating Support Widget Styles
+     ========================================= */
+  .support-widget-wrapper {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-end; /* Keep it aligned to the right edge */
+    gap: 1rem;
+    font-family: var(--font-sans);
+  }
+
+  /* Main Toggle Button */
+  .support-toggle-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--color-accent);
+    color: var(--color-accent-fg);
+    border: none;
+    box-shadow: 0 8px 20px rgba(255, 107, 0, 0.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    transition:
+      transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+      background-color 0.3s;
+    position: relative;
+    z-index: 10000;
+  }
+
+  .support-toggle-btn:hover {
+    transform: scale(1.08);
+  }
+
+  /* Menu Options */
+  .support-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px) scale(0.9);
+    transform-origin: bottom center;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: absolute;
+    bottom: 75px;
+    right: 5px; /* Ensures the menu perfectly aligns over the button without pushing right */
+  }
+
+  .support-widget-wrapper.open .support-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+  }
+
+  /* Circular Option Buttons */
+  .support-option-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background-color: var(--nav-bg-solid);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--color-fg);
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: var(--nav-shadow);
+    transition: var(--transition-smooth);
+    text-decoration: none;
+    position: relative; /* Needed for the tooltip */
+  }
+
+  .support-option-btn:hover {
+    background-color: var(--color-secondary);
+    border-color: var(--color-accent);
+    transform: scale(1.1);
+  }
+
+  .support-option-btn i {
+    font-size: 1.4rem;
+    transition: color 0.2s ease;
+  }
+
+  /* Hover Tooltips for the circular buttons */
+  .support-option-btn::before {
+    content: attr(aria-label);
+    position: absolute;
+    right: 100%;
+    margin-right: 12px;
+    background: var(--color-fg);
+    color: var(--color-bg);
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+    transform: translateX(10px);
+    pointer-events: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .support-option-btn:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+  }
+
+  /* Specific Icon Colors */
+  .icon-whatsapp {
+    color: #25d366;
+  }
+
+  .icon-ai {
+    color: var(--color-accent);
+  }
+
+  /* =========================================
+     AI Chatbox Interface
+     ========================================= */
+  .ai-chatbox {
+    position: fixed;
+    bottom: 100px;
+    right: 2rem;
+    width: calc(100% - 4rem); /* Prevents overflow naturally */
+    max-width: 350px;
+    height: 500px;
+    max-height: calc(100vh - 120px);
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px) scale(0.95);
+    transform-origin: bottom right;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 10001;
+  }
+
+  .ai-chatbox.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+  }
+
+  .chatbox-header {
+    background-color: var(--color-accent);
+    color: var(--color-accent-fg);
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .chatbox-title-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .chatbox-title-container i {
+    font-size: 1.5rem;
+  }
+
+  .chatbox-title {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chatbox-title strong {
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+
+  .chatbox-title span {
+    font-size: 0.75rem;
+    opacity: 0.9;
+  }
+
+  .chatbox-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-accent-fg);
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .chatbox-close-btn:hover {
+    transform: scale(1.1);
+  }
+
+  .chatbox-body {
+    flex: 1;
+    padding: 1.25rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background-color: var(--color-secondary);
+  }
+
+  /* Chat Messages */
+  .chat-msg {
+    max-width: 80%;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .msg-ai {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    border: 1px solid var(--color-border);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  }
+
+  .msg-user {
+    background-color: var(--color-fg);
+    color: var(--color-bg);
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+  }
+
+  .chatbox-input-area {
+    padding: 1rem;
+    background-color: var(--color-bg);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .chatbox-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background-color: var(--color-secondary);
+    color: var(--color-fg);
+    font-family: inherit;
+    font-size: 16px; /* 16px perfectly prevents iOS Safari auto-zoom */
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .chatbox-input:focus {
+    border-color: var(--color-accent);
+  }
+
+  .chatbox-send-btn {
+    background-color: var(--color-accent);
+    color: var(--color-accent-fg);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .chatbox-send-btn:hover {
+    transform: scale(1.1);
+  }
+
+  /* =========================================
+     MOBILE RESPONSIVENESS FIX
+     ========================================= */
+  @media (max-width: 768px) {
+    /* Hide tooltips on mobile because there is no mouse to hover */
+    .support-option-btn::before {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .support-widget-wrapper {
+      bottom: 1rem;
+      right: 1rem;
+    }
+
+    /* FIX: Replaced 100vw/100vh with 100% and strict absolute pinning (top/bottom/left/right).
+      This mathematically stops the browser from ever generating a horizontal scrollbar.
+    */
+    .ai-chatbox {
+      width: 100%;
+      height: 100%;
+      max-height: 100%;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border-radius: 0;
+      z-index: 100000;
+      transform: translateY(20px) scale(0.95);
+    }
+
+    .ai-chatbox.active {
+      transform: translateY(0) scale(1);
+    }
+  }
+</style>
+
+<div class="support-widget-wrapper" id="supportWidgetWrapper">
+  <button class="support-toggle-btn" id="supportToggleBtn" aria-label="Support">
+    <i class="bi bi-chat-dots-fill" id="supportToggleIcon"></i>
+  </button>
+
+  <div class="support-menu" id="supportMenu">
+    <button
+      class="support-option-btn"
+      id="openAiChatBtn"
+      aria-label="AI Assistant"
+    >
+      <i class="bi bi-robot icon-ai"></i>
+    </button>
+    <a
+      href="https://wa.me/1234567890"
+      target="_blank"
+      class="support-option-btn"
+      aria-label="WhatsApp Us"
+    >
+      <i class="bi bi-whatsapp icon-whatsapp"></i>
+    </a>
+  </div>
+</div>
+
+<div class="ai-chatbox" id="aiChatbox">
+  <div class="chatbox-header">
+    <div class="chatbox-title-container">
+      <i class="bi bi-robot"></i>
+      <div class="chatbox-title">
+        <strong>Stride AI</strong>
+        <span>Typically replies instantly</span>
+      </div>
+    </div>
+    <button class="chatbox-close-btn" id="closeAiChatBtn">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <div class="chatbox-body" id="chatboxBody">
+    <div class="chat-msg msg-ai">
+      Hi buddy! 👋 Welcome to Stride. How can I help you find the perfect pair
+      of sneakers today?
+    </div>
+  </div>
+
+  <div class="chatbox-input-area">
+    <input
+      type="text"
+      class="chatbox-input"
+      id="chatboxInput"
+      placeholder="Type your message..."
+      autocomplete="off"
+    />
+    <button class="chatbox-send-btn" id="chatboxSendBtn">
+      <i class="bi bi-send-fill"></i>
+    </button>
+  </div>
+</div>
+
+<script>
+  window.initSupportWidget = function () {
+    const wrapper = document.getElementById("supportWidgetWrapper");
+    const toggleBtn = document.getElementById("supportToggleBtn");
+    const toggleIcon = document.getElementById("supportToggleIcon");
+    const supportMenu = document.getElementById("supportMenu");
+
+    const openAiChatBtn = document.getElementById("openAiChatBtn");
+    const closeAiChatBtn = document.getElementById("closeAiChatBtn");
+    const aiChatbox = document.getElementById("aiChatbox");
+
+    // Chat functionality elements
+    const chatInput = document.getElementById("chatboxInput");
+    const chatSendBtn = document.getElementById("chatboxSendBtn");
+    const chatBody = document.getElementById("chatboxBody");
+
+    // Toggle the floating menu
+    if (toggleBtn && wrapper) {
+      toggleBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+
+        // If chatbox is open, close it instead of opening the menu
+        if (aiChatbox.classList.contains("active")) {
+          aiChatbox.classList.remove("active");
+          toggleIcon.classList.replace("bi-x-lg", "bi-chat-dots-fill");
+          wrapper.style.display = "flex"; // Ensure wrapper is visible
+          return;
+        }
+
+        wrapper.classList.toggle("open");
+        if (wrapper.classList.contains("open")) {
+          toggleIcon.classList.replace("bi-chat-dots-fill", "bi-x-lg");
+        } else {
+          toggleIcon.classList.replace("bi-x-lg", "bi-chat-dots-fill");
+        }
+      });
+    }
+
+    // Close menu when clicking outside
+    document.addEventListener("click", (e) => {
+      if (wrapper && wrapper.classList.contains("open")) {
+        if (!wrapper.contains(e.target) && !supportMenu.contains(e.target)) {
+          wrapper.classList.remove("open");
+          toggleIcon.classList.replace("bi-x-lg", "bi-chat-dots-fill");
+        }
+      }
+    });
+
+    // Open AI Chatbox
+    if (openAiChatBtn && aiChatbox) {
+      openAiChatBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        wrapper.classList.remove("open"); // Hide the menu
+        aiChatbox.classList.add("active"); // Show the chat
+        toggleIcon.classList.replace("bi-chat-dots-fill", "bi-x-lg"); // Keep X icon
+
+        // Hide the floating button entirely on mobile so it doesn't block the input
+        if (window.innerWidth <= 576) {
+          wrapper.style.display = "none";
+        }
+
+        // Focus input after animation
+        setTimeout(() => {
+          chatInput.focus();
+        }, 300);
+      });
+    }
+
+    // Close AI Chatbox
+    if (closeAiChatBtn && aiChatbox) {
+      closeAiChatBtn.addEventListener("click", () => {
+        aiChatbox.classList.remove("active");
+        toggleIcon.classList.replace("bi-x-lg", "bi-chat-dots-fill");
+        wrapper.style.display = "flex"; // Bring the floating button back
+      });
+    }
+
+    // ==========================================
+    // Placeholder Chat Logic (Ready for API integration)
+    // ==========================================
+    function appendMessage(text, sender) {
+      const msgDiv = document.createElement("div");
+      msgDiv.className = `chat-msg ${sender === "user" ? "msg-user" : "msg-ai"}`;
+      msgDiv.textContent = text;
+      chatBody.appendChild(msgDiv);
+
+      // Auto-scroll to bottom
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function handleSendMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      // 1. Append User Message
+      appendMessage(text, "user");
+      chatInput.value = "";
+
+      // 2. Placeholder for AI Response (Simulating delay)
+      // LATER: Connect this to your backend /api/ai-chat route
+      setTimeout(() => {
+        appendMessage(
+          "I am an AI assistant. My brain is currently being wired to the backend API! I'll be able to help you properly very soon.",
+          "ai",
+        );
+      }, 1000);
+    }
+
+    if (chatSendBtn) {
+      chatSendBtn.addEventListener("click", handleSendMessage);
+    }
+
+    if (chatInput) {
+      chatInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          handleSendMessage();
+        }
+      });
+    }
+  };
+</script>

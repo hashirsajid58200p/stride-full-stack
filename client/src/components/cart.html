@@ -1,0 +1,1046 @@
+<style>
+  /* =========================================
+   Slide-out Cart Panel Styles
+   ========================================= */
+  .cart-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1050;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.3s ease,
+      visibility 0.3s ease;
+    backdrop-filter: blur(4px);
+  }
+
+  .cart-overlay.open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .cart-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 100%;
+    max-width: 400px;
+    background-color: var(--color-bg);
+    z-index: 1051;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .cart-panel.open {
+    transform: translateX(0);
+  }
+
+  .cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .cart-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--color-fg);
+  }
+
+  .cart-close-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--color-fg);
+    cursor: pointer;
+    transition:
+      color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .cart-close-btn:hover {
+    color: var(--color-accent);
+    transform: scale(1.1);
+  }
+
+  /* Empty State */
+  .cart-empty-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .empty-icon {
+    font-size: 4rem;
+    color: var(--color-muted-fg);
+    opacity: 0.5;
+  }
+
+  .continue-shopping-btn {
+    padding: 0.8rem 2rem;
+    background-color: var(--color-accent);
+    color: var(--color-accent-fg);
+    border: none;
+    border-radius: 999px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+  }
+
+  .continue-shopping-btn:hover {
+    opacity: 0.9;
+  }
+
+  /* Filled State */
+  .cart-filled-state {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .cart-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .cart-item {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .cart-item-image {
+    flex: 0 0 100px;
+    height: 120px;
+    background-color: var(--color-secondary);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .cart-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cart-item-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .item-brand {
+    color: var(--color-accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+  }
+
+  .item-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 0.4rem;
+  }
+
+  .item-size {
+    font-size: 0.8rem;
+    color: var(--color-muted-fg);
+    margin-bottom: 0.5rem;
+  }
+
+  .item-pricing {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .price-original {
+    font-size: 0.85rem;
+    color: var(--color-muted-fg);
+    text-decoration: line-through;
+  }
+
+  .price-discount {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #e53935;
+  }
+
+  .item-actions-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    margin-top: auto;
+  }
+
+  .quantity-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid var(--color-border);
+    border-radius: 9999px;
+    width: 110px;
+    height: 36px;
+    padding: 0 0.5rem;
+  }
+
+  .qty-btn {
+    background: transparent;
+    color: var(--color-fg);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+
+  .qty-btn:hover {
+    color: var(--color-accent);
+  }
+
+  .qty-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-fg);
+  }
+
+  .item-actions-extra {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .action-btn {
+    background: transparent;
+    color: var(--color-muted-fg);
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+
+  .action-btn:hover {
+    color: var(--color-accent);
+  }
+
+  /* Recommendations & Slider */
+  .cart-recommendations {
+    margin-top: 1rem;
+    background: var(--color-secondary);
+    border-radius: 12px;
+    padding: 1rem;
+    display: none; /* Hidden by default until products load */
+  }
+
+  .recommendation-header {
+    text-align: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .recommendation-header h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-fg);
+  }
+
+  .rec-carousel-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0 40px;
+  }
+
+  .rec-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    gap: 1rem;
+    scrollbar-width: none;
+    flex: 1;
+    scroll-snap-type: x mandatory;
+  }
+
+  .rec-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .recommendation-item {
+    flex: 0 0 100%;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    scroll-snap-align: start;
+  }
+
+  .recommendation-item img {
+    width: 55px;
+    height: 55px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .slider-arrow {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    color: var(--color-fg);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    position: absolute;
+    transition: var(--transition-smooth);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .slider-arrow.left-arrow {
+    left: 0;
+  }
+  .slider-arrow.right-arrow {
+    right: 0;
+  }
+  .slider-arrow:hover {
+    background: var(--color-accent);
+    color: #fff;
+    border-color: var(--color-accent);
+  }
+
+  .rec-details {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .rec-brand {
+    color: var(--color-accent);
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.15rem;
+  }
+
+  .rec-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 0.15rem;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .rec-price {
+    font-size: 0.85rem;
+    color: var(--color-muted-fg);
+  }
+
+  .rec-add-btn {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-fg);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    flex-shrink: 0;
+  }
+
+  .rec-add-btn:hover {
+    background: var(--color-accent);
+    color: var(--color-accent-fg);
+    border-color: var(--color-accent);
+  }
+
+  /* Cart Footer & Mini Coupon */
+  .cart-footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--color-border);
+    background-color: var(--color-bg);
+  }
+
+  .cart-mini-coupon {
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 1rem;
+  }
+
+  /* Add some margin to the injected component */
+  #side-coupon-placeholder .coupon-component-wrapper {
+    margin-bottom: 0;
+  }
+
+  .cart-subtotal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .subtotal-label,
+  .subtotal-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-fg);
+  }
+
+  /* Added specifically for coupon display */
+  .cart-discount-row {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    color: var(--color-accent);
+  }
+
+  .discount-label,
+  .discount-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .cart-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .cart-btn-secondary {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 999px;
+    font-weight: 600;
+    text-decoration: none;
+    background-color: var(--color-secondary);
+    color: var(--color-fg);
+    border: 1px solid var(--color-border);
+    transition: var(--transition-smooth);
+  }
+
+  .cart-btn-secondary:hover {
+    background: var(--color-border);
+  }
+
+  .cart-btn-primary {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 999px;
+    font-weight: 600;
+    text-decoration: none;
+    background-color: var(--color-primary);
+    color: var(--color-primary-fg);
+    border: 1px solid var(--color-primary);
+    transition: var(--transition-smooth);
+  }
+
+  .cart-btn-primary:hover {
+    opacity: 0.9;
+  }
+</style>
+
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-header">
+    <h3 class="cart-title">SHOPPING CART</h3>
+    <button class="cart-close-btn" id="closeCartBtn" aria-label="Close Cart">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <div class="cart-empty-state" id="cartEmptyState" style="display: none">
+    <i class="bi bi-cart-x empty-icon"></i>
+    <p>Your cart is currently empty.</p>
+    <button
+      class="btn btn-primary continue-shopping-btn"
+      id="continueShoppingBtn"
+    >
+      Continue Shopping
+    </button>
+  </div>
+
+  <div class="cart-filled-state" id="cartFilledState">
+    <div class="cart-body">
+      <div
+        id="cartItemsContainer"
+        style="display: flex; flex-direction: column; gap: 1.5rem"
+      ></div>
+
+      <div class="cart-recommendations" id="sideCartRecommendations">
+        <div class="recommendation-header">
+          <h4>You may also like</h4>
+        </div>
+
+        <div class="rec-carousel-wrapper">
+          <button
+            class="slider-arrow left-arrow"
+            id="recPrevBtn"
+            style="display: none"
+          >
+            <i class="bi bi-chevron-left"></i>
+          </button>
+
+          <div class="rec-track" id="recTrack"></div>
+
+          <button
+            class="slider-arrow right-arrow"
+            id="recNextBtn"
+            style="display: none"
+          >
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cart-footer">
+      <div class="cart-mini-coupon" id="side-coupon-placeholder"></div>
+
+      <div class="cart-discount-row" id="sideCartDiscountRow">
+        <span class="discount-label">Discount:</span>
+        <span class="discount-value" id="sideCartDiscountValue">-$0.00</span>
+      </div>
+
+      <div class="cart-subtotal">
+        <span class="subtotal-label">Subtotal:</span>
+        <span class="subtotal-value" id="cartSubtotalValue">$0.00</span>
+      </div>
+
+      <div class="cart-buttons">
+        <a href="shoppingCart.html" class="btn cart-btn-secondary">VIEW CART</a>
+        <a href="checkOut.html" class="btn cart-btn-primary">CHECK OUT</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.initCart = function () {
+    const cartPanel = document.getElementById("cartPanel");
+    const cartOverlay = document.getElementById("cartOverlay");
+    const emptyState = document.getElementById("cartEmptyState");
+    const filledState = document.getElementById("cartFilledState");
+    const cartItemsContainer = document.getElementById("cartItemsContainer");
+    const subtotalValue = document.getElementById("cartSubtotalValue");
+    const discountRow = document.getElementById("sideCartDiscountRow");
+    const discountValue = document.getElementById("sideCartDiscountValue");
+
+    const recTrack = document.getElementById("recTrack");
+    const recContainer = document.getElementById("sideCartRecommendations");
+    const recPrevBtn = document.getElementById("recPrevBtn");
+    const recNextBtn = document.getElementById("recNextBtn");
+
+    let cartItems = JSON.parse(localStorage.getItem("strideCart")) || [];
+    let currentSubtotal = 0;
+    let currentDiscount = 0;
+
+    // Listen for currency updates from main.js
+    window.addEventListener("currencyUpdated", () => {
+      updateCartUI();
+      fetchSideCartRecommendations();
+    });
+
+    // Component Loader for Coupon
+    async function loadCouponComponent() {
+      try {
+        const response = await fetch("../components/coupon.html");
+        const html = await response.text();
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = html;
+
+        const placeholder = document.getElementById("side-coupon-placeholder");
+        if (placeholder) {
+          const scripts = wrapper.querySelectorAll("script");
+
+          while (wrapper.firstChild) {
+            if (wrapper.firstChild.tagName !== "SCRIPT") {
+              placeholder.appendChild(wrapper.firstChild);
+            } else {
+              wrapper.removeChild(wrapper.firstChild);
+            }
+          }
+
+          scripts.forEach((script) => {
+            const newScript = document.createElement("script");
+            newScript.textContent = script.textContent;
+            document.body.appendChild(newScript);
+          });
+
+          // Give DOM a tiny tick to attach elements before init
+          setTimeout(() => {
+            if (typeof window.initCouponComponent === "function") {
+              window.initCouponComponent();
+            }
+          }, 50);
+        }
+      } catch (err) {
+        console.error("Failed to load side cart coupon component", err);
+      }
+    }
+    loadCouponComponent();
+
+    // Listen for Coupon Validation from the Component
+    window.addEventListener("couponApplied", (e) => {
+      const offer = e.detail.offer;
+
+      let calculatedDiscount = 0;
+      let successMessage = "";
+
+      if (offer.type === "coupon") {
+        calculatedDiscount =
+          currentSubtotal * (offer.discount_percentage / 100);
+        successMessage = `${offer.discount_percentage}% General Discount Applied!`;
+      } else if (offer.type === "product") {
+        let targetItemTotal = 0;
+        cartItems.forEach((item) => {
+          if (item.id === offer.target_product_id) {
+            targetItemTotal += item.price * item.quantity;
+          }
+        });
+
+        if (targetItemTotal > 0) {
+          calculatedDiscount =
+            targetItemTotal * (offer.discount_percentage / 100);
+          successMessage = `${offer.discount_percentage}% Product Discount Applied!`;
+        } else {
+          // Validation Failed Contextually - Reset the component!
+          if (typeof window.resetCouponComponent === "function")
+            window.resetCouponComponent();
+          if (typeof window.showToast === "function")
+            window.showToast(
+              "This discount code does not apply to any items in your cart.",
+              "error",
+            );
+          return;
+        }
+      }
+
+      currentDiscount = calculatedDiscount;
+
+      // Save global discount so it persists across page navigations
+      localStorage.setItem("strideDiscount", currentDiscount);
+
+      updateCartUI();
+
+      if (typeof window.showToast === "function") {
+        window.showToast(successMessage, "success");
+      }
+    });
+
+    function saveCart() {
+      localStorage.setItem("strideCart", JSON.stringify(cartItems));
+      // Re-evaluate discount if quantities change
+      updateCartUI();
+      window.dispatchEvent(new Event("cartUpdated"));
+    }
+
+    function updateCartUI() {
+      const cartBadgeCount = document.querySelector(".cart-badge");
+
+      const totalCount = cartItems.reduce(
+        (sum, item) => sum + (item.quantity || 1),
+        0,
+      );
+
+      if (cartItems.length === 0) {
+        if (emptyState) emptyState.style.display = "flex";
+        if (filledState) filledState.style.display = "none";
+        if (cartBadgeCount) cartBadgeCount.style.display = "none";
+
+        // Reset discount if cart is emptied
+        currentDiscount = 0;
+        localStorage.removeItem("strideDiscount");
+        if (typeof window.resetCouponComponent === "function")
+          window.resetCouponComponent();
+      } else {
+        if (emptyState) emptyState.style.display = "none";
+        if (filledState) filledState.style.display = "flex";
+        if (cartBadgeCount) {
+          cartBadgeCount.style.display = "flex";
+          cartBadgeCount.textContent = totalCount;
+        }
+        renderCartItems();
+      }
+    }
+
+    function renderCartItems() {
+      if (!cartItemsContainer) return;
+      cartItemsContainer.innerHTML = "";
+      currentSubtotal = 0;
+
+      cartItems.forEach((item, index) => {
+        const qty = item.quantity || 1;
+        currentSubtotal += item.price * qty;
+
+        const itemSize = item.size || "Standard";
+        const itemColor = item.color || "Default";
+
+        const itemEl = document.createElement("div");
+        itemEl.className = "cart-item";
+        // FIX: Replaced hardcoded $ with window.formatPrice()
+        itemEl.innerHTML = `
+        <div class="cart-item-image">
+          <img src="${item.img}" alt="${item.name}" />
+        </div>
+        <div class="cart-item-details">
+          <p class="item-brand">${item.brand}</p>
+          <h4 class="item-title">${item.name}</h4>
+          <p class="item-size">Size: ${itemSize} | Color: ${itemColor}</p>
+          <div class="item-pricing">
+            <span class="price-discount">${window.formatPrice(item.price)}</span>
+          </div>
+          <div class="item-actions-wrapper">
+            <div class="quantity-control">
+              <button class="qty-btn side-minus" data-index="${index}"><i class="bi bi-dash"></i></button>
+              <span class="qty-value">${qty}</span>
+              <button class="qty-btn side-plus" data-index="${index}"><i class="bi bi-plus"></i></button>
+            </div>
+            <div class="item-actions-extra">
+              <button class="action-btn side-remove" data-index="${index}"><i class="bi bi-trash"></i></button>
+            </div>
+          </div>
+        </div>
+      `;
+        cartItemsContainer.appendChild(itemEl);
+      });
+
+      // Fetch saved discount if user navigates back
+      const savedDiscount =
+        parseFloat(localStorage.getItem("strideDiscount")) || 0;
+      if (savedDiscount > 0 && currentDiscount === 0) {
+        currentDiscount = savedDiscount;
+      }
+
+      if (currentDiscount > 0) {
+        if (discountRow) discountRow.style.display = "flex";
+        if (discountValue)
+          discountValue.textContent = "-" + window.formatPrice(currentDiscount);
+      } else {
+        if (discountRow) discountRow.style.display = "none";
+      }
+
+      if (subtotalValue) {
+        const finalTotal = Math.max(0, currentSubtotal - currentDiscount);
+        subtotalValue.textContent = window.formatPrice(finalTotal);
+      }
+    }
+
+    // ==========================================
+    // DYNAMIC CONTEXTUAL RECOMMENDATIONS FETCH
+    // ==========================================
+    async function fetchSideCartRecommendations() {
+      if (!recTrack || !recContainer) return;
+
+      try {
+        if (!window.supabase) {
+          window.addEventListener(
+            "supabaseInitialized",
+            fetchSideCartRecommendations,
+          );
+          return;
+        }
+
+        recContainer.style.display = "block";
+        recTrack.innerHTML = `<div style="padding: 1rem; width: 100%; text-align: center;"><div class="spinner-border text-accent" style="width: 1.5rem; height: 1.5rem;" role="status"></div></div>`;
+        if (recPrevBtn) recPrevBtn.style.display = "none";
+        if (recNextBtn) recNextBtn.style.display = "none";
+
+        let query = window.supabase.from("products").select("*");
+        if (cartItems.length > 0) {
+          const currentBrand = cartItems[cartItems.length - 1].brand;
+          query = query.eq("brand", currentBrand);
+        }
+
+        const { data: products, error } = await query.limit(10);
+
+        if (error) throw error;
+
+        if (products && products.length > 0) {
+          const cartItemNames = cartItems.map((item) => item.name);
+          const filteredProducts = products.filter(
+            (p) => !cartItemNames.includes(p.name),
+          );
+
+          const shuffled = filteredProducts.sort(() => 0.5 - Math.random());
+          const selected = shuffled.slice(0, 4);
+
+          if (selected.length === 0) {
+            recContainer.style.display = "none";
+            return;
+          }
+
+          // FIX: Replaced hardcoded $ with window.formatPrice()
+          recTrack.innerHTML = selected
+            .map(
+              (p) => `
+            <div class="recommendation-item">
+              <img src="${p.main_image_url}" alt="${p.name}" />
+              <div class="rec-details">
+                <p class="rec-brand">${p.brand}</p>
+                <p class="rec-title">${p.name}</p>
+                <p class="rec-price">${window.formatPrice(p.price)}</p>
+              </div>
+              <button class="rec-add-btn" 
+                data-id="${p.id}" 
+                data-name="${p.name}" 
+                data-brand="${p.brand}" 
+                data-price="${p.price}" 
+                data-img="${p.main_image_url}">
+                <i class="bi bi-cart-plus"></i>
+              </button>
+            </div>
+          `,
+            )
+            .join("");
+
+          updateArrowState();
+        } else {
+          recContainer.style.display = "none";
+        }
+      } catch (err) {
+        console.error("Error fetching side cart recommendations:", err);
+        recContainer.style.display = "none";
+      }
+    }
+
+    function updateArrowState() {
+      if (!recTrack) return;
+      const maxScroll = recTrack.scrollWidth - recTrack.clientWidth;
+
+      if (maxScroll > 0) {
+        if (recPrevBtn) {
+          recPrevBtn.style.display = "flex";
+          recPrevBtn.style.opacity = recTrack.scrollLeft <= 5 ? "0.3" : "1";
+          recPrevBtn.style.pointerEvents =
+            recTrack.scrollLeft <= 5 ? "none" : "auto";
+        }
+        if (recNextBtn) {
+          recNextBtn.style.display = "flex";
+          recNextBtn.style.opacity =
+            recTrack.scrollLeft >= maxScroll - 5 ? "0.3" : "1";
+          recNextBtn.style.pointerEvents =
+            recTrack.scrollLeft >= maxScroll - 5 ? "none" : "auto";
+        }
+      } else {
+        if (recPrevBtn) recPrevBtn.style.display = "none";
+        if (recNextBtn) recNextBtn.style.display = "none";
+      }
+    }
+
+    function openCart() {
+      cartItems = JSON.parse(localStorage.getItem("strideCart")) || [];
+      updateCartUI();
+
+      fetchSideCartRecommendations();
+
+      if (cartPanel) cartPanel.classList.add("open");
+      if (cartOverlay) cartOverlay.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeCart() {
+      if (cartPanel) cartPanel.classList.remove("open");
+      if (cartOverlay) cartOverlay.classList.remove("open");
+      document.body.style.overflow = "";
+    }
+
+    // --- Recommendation Slider Logic with Bounds Checking ---
+    if (recPrevBtn && recNextBtn && recTrack) {
+      recNextBtn.addEventListener("click", () => {
+        const item = recTrack.querySelector(".recommendation-item");
+        if (item) {
+          const scrollAmt = item.offsetWidth + 16;
+          recTrack.scrollBy({ left: scrollAmt, behavior: "smooth" });
+        }
+      });
+
+      recPrevBtn.addEventListener("click", () => {
+        const item = recTrack.querySelector(".recommendation-item");
+        if (item) {
+          const scrollAmt = item.offsetWidth + 16;
+          recTrack.scrollBy({ left: -scrollAmt, behavior: "smooth" });
+        }
+      });
+
+      recTrack.addEventListener("scroll", updateArrowState);
+    }
+
+    // --- Global Listeners ---
+    document.addEventListener("click", (e) => {
+      if (e.target.closest(".cart-btn") && !e.target.closest(".add-to-cart")) {
+        e.preventDefault();
+        openCart();
+      }
+
+      if (
+        e.target.closest("#closeCartBtn") ||
+        e.target.id === "cartOverlay" ||
+        e.target.closest("#continueShoppingBtn")
+      ) {
+        e.preventDefault();
+        closeCart();
+      }
+
+      // Add to cart from Main Store
+      const addToCartBtn = e.target.closest(".add-to-cart");
+      if (addToCartBtn) {
+        e.preventDefault();
+        const productCard = addToCartBtn.closest(".product-card");
+        if (productCard) {
+          const name = productCard.querySelector(".product-name").textContent;
+          const brand = productCard.querySelector(".product-brand").textContent;
+          const priceText =
+            productCard.querySelector(".product-price").textContent;
+          const price = parseFloat(priceText.replace(/[^0-9.-]+/g, ""));
+          const img = productCard.querySelector("img").src;
+          const id =
+            productCard.dataset.id || name.replace(/\s+/g, "-").toLowerCase(); // Fallback ID if not provided
+
+          // FIX BUG 1: Differentiate cart items by BOTH ID and Size (assuming standard size if adding directly from a basic product card without a size selector)
+          const itemSize = "Standard";
+
+          const existingItem = cartItems.find(
+            (i) => i.id === id && i.size === itemSize,
+          );
+          if (existingItem) {
+            existingItem.quantity = (existingItem.quantity || 1) + 1;
+          } else {
+            cartItems.push({
+              id,
+              name,
+              brand,
+              price,
+              img,
+              quantity: 1,
+              size: itemSize,
+              color: "Default",
+            });
+          }
+
+          saveCart();
+          if (typeof window.showToast === "function")
+            window.showToast(`${name} added to cart!`);
+        }
+      }
+
+      // Add to cart from Side Cart Recommendations
+      const recAddBtn = e.target.closest(".rec-add-btn");
+      if (recAddBtn) {
+        e.preventDefault();
+
+        const name = recAddBtn.dataset.name;
+        const brand = recAddBtn.dataset.brand;
+        const price = parseFloat(recAddBtn.dataset.price);
+        const img = recAddBtn.dataset.img;
+        const id = recAddBtn.dataset.id;
+
+        // FIX BUG 2: Determine preferred size based on the last added item in the cart, default to "10" if cart is empty
+        let preferredSize = "10";
+        if (cartItems.length > 0) {
+          const lastItem = cartItems[cartItems.length - 1];
+          if (lastItem.size && lastItem.size !== "Standard") {
+            preferredSize = lastItem.size;
+          }
+        }
+
+        // FIX BUG 1 (Applied here too): Check against both ID and the preferred Size
+        const existingItem = cartItems.find(
+          (i) => i.id === id && i.size === preferredSize,
+        );
+        if (existingItem) {
+          existingItem.quantity = (existingItem.quantity || 1) + 1;
+        } else {
+          cartItems.push({
+            id,
+            name,
+            brand,
+            price,
+            img,
+            quantity: 1,
+            size: preferredSize, // Using the dynamically chosen size
+            color: "Default",
+          });
+        }
+
+        saveCart();
+        if (typeof window.showToast === "function") {
+          window.showToast(`${name} (Size ${preferredSize}) added to cart!`);
+        }
+
+        fetchSideCartRecommendations();
+      }
+
+      // Control Quantity & Remove inside Side Cart
+      const plusBtn = e.target.closest(".side-plus");
+      const minusBtn = e.target.closest(".side-minus");
+      const removeBtn = e.target.closest(".side-remove");
+
+      if (plusBtn) {
+        const index = plusBtn.dataset.index;
+        cartItems[index].quantity = (cartItems[index].quantity || 1) + 1;
+        saveCart();
+      } else if (minusBtn) {
+        const index = minusBtn.dataset.index;
+        if (cartItems[index].quantity > 1) {
+          cartItems[index].quantity -= 1;
+          saveCart();
+        }
+      } else if (removeBtn) {
+        const index = removeBtn.dataset.index;
+        cartItems.splice(index, 1);
+        saveCart();
+        fetchSideCartRecommendations();
+      }
+    });
+
+    // Keep synced if modified from Shopping Cart Page
+    window.addEventListener("cartUpdated", () => {
+      cartItems = JSON.parse(localStorage.getItem("strideCart")) || [];
+      // Note: Discount sync is handled automatically because the Checkout page stores it in localStorage now!
+      updateCartUI();
+    });
+
+    updateCartUI();
+  };
+</script>

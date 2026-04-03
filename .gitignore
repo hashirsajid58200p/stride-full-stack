@@ -1,0 +1,33 @@
+# Dependency directories
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Environment variables (Sensitive Data)
+.env
+server/.env
+
+# Firebase/Google Cloud admin keys (CRITICAL)
+serviceAccountKey.json
+server/serviceAccountKey.json
+
+# IDE / Editor folders
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Build/Dist folders (if you eventually use a bundler like Vite/Webpack)
+dist/
+build/
+client/build/
+client/dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
