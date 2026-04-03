@@ -21,7 +21,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         // Send data to your new Node.js backend route
-        const response = await fetch("http://localhost:5000/api/contact", {
+        // Deployment Version
+        const response = await fetch("/api/contact", {
+          // Local Version
+          // const response = await fetch("http://localhost:5000/api/contact", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -168,7 +168,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/payments/create-checkout-session",
+        // Deployment Version
+        "/api/payments/create-checkout-session",
+        //       Local Version
+        // "http://localhost:5000/api/payments/create-checkout-session",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

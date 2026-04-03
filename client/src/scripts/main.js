@@ -18,9 +18,14 @@ async function initApp() {
   try {
     // 1. Fetch ALL configs simultaneously for maximum speed
     const [firebaseRes, supabaseRes, stripeRes] = await Promise.all([
-      fetch("http://localhost:5000/api/config/firebase"),
-      fetch("http://localhost:5000/api/config/supabase"),
-      fetch("http://localhost:5000/api/config/stripe"),
+      // Deployment Version
+      fetch("/api/config/firebase"),
+      fetch("/api/config/supabase"),
+      fetch("/api/config/stripe"),
+      // Local Version
+      // fetch("http://localhost:5000/api/config/firebase"),
+      // fetch("http://localhost:5000/api/config/supabase"),
+      // fetch("http://localhost:5000/api/config/stripe"),
     ]);
 
     if (!firebaseRes.ok) throw new Error("Failed to fetch Firebase config");
@@ -227,7 +232,10 @@ async function initCurrencySystem() {
 
     // Step B: Ask our Node.js backend for the conversion rate
     const rateRes = await fetch(
-      `http://localhost:5000/api/currency?target=${targetCurrency}`,
+      // Deployment Version
+      `/api/currency?target=${targetCurrency}`,
+      // Local Version
+      // `http://localhost:5000/api/currency?target=${targetCurrency}`,
     );
     const rateData = await rateRes.json();
 

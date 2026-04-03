@@ -88,7 +88,10 @@ window.addEventListener("firebaseInitialized", () => {
         const idToken = await user.getIdToken();
 
         // 4. Send the token to your Node.js Server
-        const response = await fetch("http://localhost:5000/api/auth/verify", {
+        // Deployment Version
+        const response = await fetch("/api/auth/verify", {
+          // Local Version
+          // const response = await fetch("http://localhost:5000/api/auth/verify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ idToken }),
@@ -163,8 +166,10 @@ window.addEventListener("firebaseInitialized", () => {
         const user = userCredential.user;
 
         const idToken = await user.getIdToken();
-
-        const response = await fetch("http://localhost:5000/api/auth/verify", {
+        // Deployment Version
+        const response = await fetch("/api/auth/verify", {
+          // Local Version
+          // const response = await fetch("http://localhost:5000/api/auth/verify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ idToken }),

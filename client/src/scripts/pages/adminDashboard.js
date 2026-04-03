@@ -553,7 +553,10 @@ window.addEventListener("firebaseInitialized", async () => {
       const publicId = getCloudinaryPublicId(url);
       if (!publicId) return;
       try {
-        await fetch("http://localhost:5000/api/images/delete", {
+        // Deployment Version
+        await fetch("/api/images/delete", {
+          // Local Version
+          // await fetch("http://localhost:5000/api/images/delete", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ public_id: publicId }),

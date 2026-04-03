@@ -157,7 +157,10 @@
 
       try {
         const response = await fetch(
-          "http://localhost:5000/api/newsletter/subscribe",
+          // Deployment Version
+          "/api/newsletter/subscribe",
+          // Local Version
+          // "http://localhost:5000/api/newsletter/subscribe",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
