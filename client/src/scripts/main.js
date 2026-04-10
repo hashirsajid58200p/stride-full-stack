@@ -161,102 +161,18 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==========================================
-// GLOBAL CURRENCY SYSTEM
+// GLOBAL CURRENCY SYSTEM (Simplified for Instant Load)
 // ==========================================
 
-// 1. Global Price Formatter (Use this anywhere you display a price!)
+// Global Price Formatter locked to USD for max speed
 window.formatPrice = function (usdPrice) {
-  const rate = parseFloat(localStorage.getItem("strideExchangeRate")) || 1;
-  const currency = localStorage.getItem("strideCurrency") || "USD";
-  const converted = usdPrice * rate;
-
-  // Currencies like PKR usually don't show decimals
-  const noDecimals = ["PKR", "JPY", "KRW", "INR"].includes(currency);
-
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: currency,
-    maximumFractionDigits: noDecimals ? 0 : 2,
-    minimumFractionDigits: noDecimals ? 0 : 2,
-  }).format(converted);
+    currency: "USD",
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+  }).format(usdPrice);
 };
 
-// 2. Initialize Currency based on IP (Adblocker-Proof)
-async function initCurrencySystem() {
-  const cacheTime = localStorage.getItem("strideCurrencyTime");
-  const now = new Date().getTime();
-
-  // Cache the exchange rate for 12 hours (43,200,000 ms) to save API calls
-  if (cacheTime && now - parseInt(cacheTime) < 43200000) {
-    console.log(
-      "Using cached currency:",
-      localStorage.getItem("strideCurrency"),
-    );
-    window.dispatchEvent(new Event("currencyUpdated"));
-    return;
-  }
-
-  let targetCurrency = "USD"; // Default
-
-  try {
-    // Step A: Robust Currency Detection with Fallbacks
-    try {
-      // Attempt 1: Primary API
-      const res1 = await fetch("https://ipapi.co/json/");
-      const data1 = await res1.json();
-      targetCurrency = data1.currency || "USD";
-    } catch (err1) {
-      console.warn("Primary IP API blocked by browser. Trying fallback...");
-      try {
-        // Attempt 2: Fallback API
-        const res2 = await fetch("https://freeipapi.com/api/json");
-        const data2 = await res2.json();
-        targetCurrency = data2.currency?.code || "USD";
-      } catch (err2) {
-        console.warn(
-          "Fallback API also blocked. Using native browser timezone detection...",
-        );
-        // Attempt 3: Ad-blocker proof native timezone check
-        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
-        if (tz.includes("Karachi")) targetCurrency = "PKR";
-        else if (tz.includes("Kolkata") || tz.includes("Calcutta"))
-          targetCurrency = "INR";
-        else if (tz.includes("London")) targetCurrency = "GBP";
-        else if (tz.includes("Europe")) targetCurrency = "EUR";
-        else if (tz.includes("Dubai")) targetCurrency = "AED";
-        else if (tz.includes("Riyadh")) targetCurrency = "SAR";
-      }
-    }
-
-    console.log("Detected Currency:", targetCurrency);
-
-    // Step B: Ask our Node.js backend for the conversion rate
-    const rateRes = await fetch(
-      // Deployment Version
-      `/api/currency?target=${targetCurrency}`,
-      // Local Version
-      // `http://localhost:5000/api/currency?target=${targetCurrency}`,
-    );
-    const rateData = await rateRes.json();
-
-    if (rateData.rate) {
-      localStorage.setItem("strideCurrency", targetCurrency);
-      localStorage.setItem("strideExchangeRate", rateData.rate);
-      localStorage.setItem("strideCurrencyTime", now.toString());
-
-      // Tell the rest of the app to re-render prices
-      window.dispatchEvent(new Event("currencyUpdated"));
-      console.log(`Currency set to ${targetCurrency} at rate ${rateData.rate}`);
-    }
-  } catch (error) {
-    console.error(
-      "Failed to initialize currency system, defaulting to USD.",
-      error,
-    );
-    localStorage.setItem("strideCurrency", "USD");
-    localStorage.setItem("strideExchangeRate", "1");
-  }
-}
-
-// Start the currency system when the app loads
-initCurrencySystem();
+// Dispatch the event immediately so components render instantly without waiting for an API
+window.dispatchEvent(new Event("currencyUpdated"));

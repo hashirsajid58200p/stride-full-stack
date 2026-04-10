@@ -13,8 +13,6 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 // Now we can safely import routes that depend on process.env
 const authRoutes = require("./routes/authRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
-// FIX: Added the "s" to currencyRoutes to match your exact file name!
-const currencyRoutes = require("./routes/currencyRoutes");
 
 const app = express();
 
@@ -40,8 +38,6 @@ cloudinary.config({
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/payments", paymentRoutes);
-// Mount Currency Route
-app.use("/api/currency", currencyRoutes);
 
 // ==========================================
 // NEW: Newsletter Subscription Route
