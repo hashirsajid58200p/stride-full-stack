@@ -123,30 +123,33 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-// --- Serve Firebase Frontend Config ---
-app.get("/api/config/firebase", (req, res) => {
-  res.json({
-    apiKey: process.env.FIREBASE_API_KEY,
-    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.FIREBASE_APP_ID,
-  });
-});
+// ==========================================
+// UNIFIED & CACHED CONFIG ROUTE (The Speed Fix)
+// ==========================================
+app.get("/api/config", (req, res) => {
+  // Enterprise Speed Hack: Cache this response in Vercel's global CDN for 24 hours.
+  // It serves instantly (0ms) from the Edge Network, completely bypassing the cold start!
+  res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=86400, stale-while-revalidate=43200",
+  );
 
-// --- Serve Supabase Frontend Config ---
-app.get("/api/config/supabase", (req, res) => {
   res.json({
-    supabaseUrl: process.env.SUPABASE_URL,
-    supabaseKey: process.env.SUPABASE_ANON_KEY,
-  });
-});
-
-// --- Serve Stripe Frontend Config ---
-app.get("/api/config/stripe", (req, res) => {
-  res.json({
-    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+    firebase: {
+      apiKey: process.env.FIREBASE_API_KEY,
+      authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+      appId: process.env.FIREBASE_APP_ID,
+    },
+    supabase: {
+      supabaseUrl: process.env.SUPABASE_URL,
+      supabaseKey: process.env.SUPABASE_ANON_KEY,
+    },
+    stripe: {
+      publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+    },
   });
 });
 

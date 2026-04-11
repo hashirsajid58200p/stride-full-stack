@@ -44,7 +44,7 @@
     const loader = document.getElementById("stride-global-loader");
     if (!loader) return;
 
-    const minimumLoadTime = 1500; // Show the premium logo for at least 1.5s
+    const minimumLoadTime = 1000; // Dropped to 1 second
     const startTime = Date.now();
 
     function hideLoader() {
@@ -69,12 +69,18 @@
       }, timeRemaining);
     }
 
-    // window.onload guarantees the loader waits until ALL images, videos,
-    // and external resources are 100% downloaded from your live server!
-    if (document.readyState === "complete") {
+    // SPEED FIX: Do NOT wait for window.onload (which waits for heavy video files)
+    // Drop the loader when the DOM is ready, or force drop it after 2.5 seconds max.
+    if (
+      document.readyState === "complete" ||
+      document.readyState === "interactive"
+    ) {
       hideLoader();
     } else {
-      window.addEventListener("load", hideLoader);
+      window.addEventListener("DOMContentLoaded", hideLoader);
     }
+
+    // Ultimate Safety Net: Never trap the user for more than 2.5 seconds!
+    setTimeout(hideLoader, 2500);
   };
 </script>

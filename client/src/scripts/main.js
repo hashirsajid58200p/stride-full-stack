@@ -16,32 +16,21 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 // --- FETCH CONFIG & INITIALIZE BACKENDS DYNAMICALLY ---
 async function initApp() {
   try {
-    // 1. Fetch ALL configs simultaneously for maximum speed
-    const [firebaseRes, supabaseRes, stripeRes] = await Promise.all([
-      // Deployment Version
-      fetch("/api/config/firebase"),
-      fetch("/api/config/supabase"),
-      fetch("/api/config/stripe"),
-      // Local Version
-      // fetch("http://localhost:5000/api/config/firebase"),
-      // fetch("http://localhost:5000/api/config/supabase"),
-      // fetch("http://localhost:5000/api/config/stripe"),
-    ]);
+    // SPEED FIX: Fetching 1 combined, cached API route instead of 3
+    // Deployment Version
+    const response = await fetch("/api/config");
+    // Local Version
+    // const response = await fetch("http://localhost:5000/api/config");
 
-    if (!firebaseRes.ok) throw new Error("Failed to fetch Firebase config");
-    if (!supabaseRes.ok) throw new Error("Failed to fetch Supabase config");
-    if (!stripeRes.ok) throw new Error("Failed to fetch Stripe config");
+    if (!response.ok) throw new Error("Failed to fetch app config");
+    const config = await response.json();
 
-    const firebaseConfig = await firebaseRes.json();
-    const supabaseConfig = await supabaseRes.json();
-    const stripeConfig = await stripeRes.json();
-
-    // 2. Initialize Firebase with the fetched config
-    const app = initializeApp(firebaseConfig);
+    // Initialize Firebase
+    const app = initializeApp(config.firebase);
     const auth = getAuth(app);
     const googleProvider = new GoogleAuthProvider();
 
-    // 3. Attach to window so signup.js and login.js can see them
+    // Attach to window so signup.js and login.js can see them
     window.auth = auth;
     window.googleProvider = googleProvider;
     window.signInWithEmailAndPassword = signInWithEmailAndPassword;
@@ -49,25 +38,25 @@ async function initApp() {
     window.signInWithPopup = signInWithPopup;
     window.onAuthStateChanged = onAuthStateChanged;
 
-    // 4. Initialize Supabase
+    // Initialize Supabase
     const supabase = createClient(
-      supabaseConfig.supabaseUrl,
-      supabaseConfig.supabaseKey,
+      config.supabase.supabaseUrl,
+      config.supabase.supabaseKey,
     );
     window.supabase = supabase; // Attach globally so your dashboards can use it
 
-    // 5. Initialize Stripe SDK
-    window.stripePublishableKey = stripeConfig.publishableKey;
+    // Initialize Stripe SDK
+    window.stripePublishableKey = config.stripe.publishableKey;
     const stripeScript = document.createElement("script");
     stripeScript.src = "https://js.stripe.com/v3/";
     document.head.appendChild(stripeScript);
 
-    // 6. Dispatch events so other scripts know the backends are ready
+    // Dispatch events so other scripts know the backends are ready
     window.dispatchEvent(new Event("firebaseInitialized"));
     window.dispatchEvent(new Event("supabaseInitialized"));
     window.dispatchEvent(new Event("stripeInitialized"));
 
-    console.log("Firebase, Supabase, and Stripe dynamically initialized.");
+    console.log("Backends dynamically initialized with unified config.");
   } catch (error) {
     console.error("Error initializing backends:", error);
   }
