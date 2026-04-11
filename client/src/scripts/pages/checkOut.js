@@ -136,9 +136,9 @@ document.addEventListener("DOMContentLoaded", () => {
           optionDiv.className = "custom-select-option";
           optionDiv.setAttribute("data-value", country.name.common);
 
-          // Add a visual indicator if it's their auto-detected home country
+          // Show the name. We keep it bold if it's the tracked one, but completely removed the "(Detected)" text.
           if (index === 0 && userCountryName) {
-            optionDiv.innerHTML = `<strong>${country.name.common} (Detected)</strong>`;
+            optionDiv.innerHTML = `<strong>${country.name.common}</strong>`;
           } else {
             optionDiv.textContent = country.name.common;
           }
@@ -203,8 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
           option.classList.add("selected");
 
           const value = option.getAttribute("data-value");
-          // Clean the "(Detected)" text out if they click their own country
-          const text = option.textContent.replace("(Detected)", "").trim();
+          const text = option.textContent.trim();
 
           customSelectText.textContent = text;
           customSelectDisplay.classList.add("has-value");

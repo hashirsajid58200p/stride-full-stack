@@ -1,19 +1,34 @@
 /* =========================================
    Checkout Page Layout
    ========================================= */
+
+/* The Ultimate Lock: Prevents horizontal blowout */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
 .checkout-page {
   min-height: 100vh;
   padding-top: 8rem;
   padding-bottom: 5rem;
   background-color: var(--color-bg);
-  /* FIX: Prevent horizontal scrolling on mobile */
-  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
 }
 
 .checkout-page .container {
   max-width: 1200px !important;
-  /* FIX: Ensure container never exceeds screen width */
   width: 100%;
+  margin: 0 auto;
 }
 
 .checkout-layout {
@@ -21,8 +36,8 @@
   grid-template-columns: 1fr 420px;
   gap: 4rem;
   align-items: flex-start;
-  /* FIX: Ensure grid doesn't cause overflow */
   width: 100%;
+  max-width: 100%;
 }
 
 /* =========================================
@@ -33,8 +48,9 @@
   flex-direction: column;
   gap: 2rem;
   animation: fadeIn 0.6s ease-out;
-  /* FIX: Ensure flow stays within bounds */
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .progress-tracker {
@@ -42,6 +58,7 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1rem;
+  width: 100%;
 }
 
 .step {
@@ -98,6 +115,7 @@
   height: 2px;
   background-color: var(--color-border);
   margin: 0 1rem;
+  /* Push the line up on desktop to align with the circle above the label */
   transform: translateY(-12px);
   transition: var(--transition-smooth);
 }
@@ -113,6 +131,7 @@
   display: none;
   animation: fadeIn 0.4s ease-out;
   width: 100%;
+  max-width: 100%;
 }
 
 .checkout-step.active {
@@ -139,9 +158,7 @@
   color: var(--color-accent);
   text-decoration: none;
   font-weight: 600;
-}
-.text-link:hover {
-  text-decoration: underline;
+  transition: opacity 0.2s ease;
 }
 
 .checkout-form {
@@ -149,17 +166,21 @@
   flex-direction: column;
   gap: 1rem;
   width: 100%;
+  max-width: 100%;
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
+  width: 100%;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  min-width: 0;
 }
 
 .full-width {
@@ -175,7 +196,7 @@
   font-family: inherit;
   font-size: 1rem;
   width: 100%;
-  box-sizing: border-box;
+  max-width: 100%;
   transition:
     border-color 0.3s ease,
     box-shadow 0.3s ease;
@@ -252,6 +273,7 @@
   z-index: 100;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   animation: fadeIn 0.2s ease;
+  width: 100%;
 
   /* Hide scrollbar completely but keep scrollable */
   scrollbar-width: none; /* Firefox */
@@ -273,7 +295,7 @@
   transition: all 0.2s ease;
 }
 
-.custom-select-option:hover,
+/* Base selected state */
 .custom-select-option.selected {
   background-color: var(--color-accent);
   color: var(--color-accent-fg);
@@ -283,7 +305,7 @@
   width: 100%;
   padding: 0.85rem 1rem;
   margin: 0 !important;
-  /* FIX: Makes the input look perfectly flush and square with the dropdown bounds */
+  /* Makes the input look perfectly flush and square with the dropdown bounds */
   border-bottom: 1px solid var(--color-border) !important;
   border-top: none !important;
   border-left: none !important;
@@ -292,7 +314,6 @@
   font-size: 1rem;
   color: var(--color-fg);
   outline: none;
-  box-sizing: border-box;
   border-radius: 0 !important; /* Forces strict sharp edges */
 }
 
@@ -322,14 +343,12 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  transition: color 0.3s ease;
+  transition:
+    opacity 0.2s ease,
+    color 0.3s ease;
   background: none;
   border: none;
   cursor: pointer;
-}
-
-.back-link:hover {
-  color: var(--color-accent);
 }
 
 .btn {
@@ -345,11 +364,6 @@
   background-color: var(--color-accent);
   color: var(--color-accent-fg);
   border: none;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
 }
 
 .btn-large {
@@ -385,6 +399,7 @@
   width: 80px;
   color: var(--color-muted-fg);
   font-size: 0.9rem;
+  flex-shrink: 0;
 }
 
 .summary-value {
@@ -392,6 +407,8 @@
   color: var(--color-fg);
   font-size: 0.95rem;
   font-weight: 500;
+  word-wrap: break-word;
+  min-width: 0;
 }
 
 .edit-btn {
@@ -401,10 +418,9 @@
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-}
-
-.edit-btn:hover {
-  text-decoration: underline;
+  flex-shrink: 0;
+  margin-left: 10px;
+  transition: opacity 0.2s ease;
 }
 
 .summary-divider {
@@ -437,25 +453,25 @@
   border-bottom: none;
 }
 
-.shipping-option:hover {
-  background-color: var(--color-secondary);
-}
-
 .shipping-left {
   display: flex;
   align-items: center;
   gap: 1rem;
+  min-width: 0;
+  flex: 1;
 }
 
 .shipping-left input[type="radio"] {
   accent-color: var(--color-accent);
   width: 18px;
   height: 18px;
+  flex-shrink: 0;
 }
 
 .shipping-info {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .shipping-title {
@@ -471,6 +487,8 @@
 .shipping-price {
   font-weight: 700;
   color: var(--color-fg);
+  margin-left: 10px;
+  flex-shrink: 0;
 }
 
 /* =========================================
@@ -519,6 +537,7 @@
   top: 100px;
   animation: slideUp 0.6s ease-out;
   width: 100%;
+  min-width: 0;
 }
 
 .summary-card {
@@ -527,7 +546,6 @@
   border-radius: 12px;
   padding: 2rem;
   width: 100%;
-  box-sizing: border-box;
 }
 
 .summary-title {
@@ -568,6 +586,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .item-img-wrapper img {
@@ -598,12 +617,16 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .item-name {
   font-weight: 600;
   font-size: 0.95rem;
   color: var(--color-fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .item-brand {
@@ -614,18 +637,23 @@
 .item-price {
   font-weight: 600;
   color: var(--color-fg);
+  flex-shrink: 0;
 }
 
-/* Coupon Section (Component Wrapper) */
 .coupon-section {
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1.5rem;
   padding-top: 1.5rem;
   border-top: 1px solid var(--color-border);
+  width: 100%;
 }
 
-/* Totals Breakdown */
+.coupon-section input {
+  flex: 1;
+  min-width: 0;
+}
+
 .price-breakdown {
   display: flex;
   flex-direction: column;
@@ -670,6 +698,57 @@
 }
 
 /* =========================================
+   HOVER & ACTIVE STATES (Mobile Fixes)
+   ========================================= */
+
+/* Only apply hovers on devices with a real mouse pointer */
+@media (hover: hover) {
+  .text-link:hover {
+    text-decoration: underline;
+  }
+  .custom-select-option:hover {
+    background-color: var(--color-accent);
+    color: var(--color-accent-fg);
+  }
+  .back-link:hover {
+    color: var(--color-accent);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+  }
+  .edit-btn:hover {
+    text-decoration: underline;
+  }
+  .shipping-option:hover {
+    background-color: var(--color-secondary);
+  }
+}
+
+/* Snappy tap-state feedback for mobile touch screens */
+.text-link:active {
+  opacity: 0.7;
+}
+.custom-select-option:active {
+  background-color: var(--color-accent);
+  color: var(--color-accent-fg);
+}
+.back-link:active {
+  opacity: 0.7;
+}
+.btn-primary:active {
+  transform: translateY(1px);
+  box-shadow: none;
+  opacity: 0.9;
+}
+.edit-btn:active {
+  opacity: 0.7;
+}
+.shipping-option:active {
+  background-color: var(--color-secondary);
+}
+
+/* =========================================
    Responsive Design
    ========================================= */
 @media (max-width: 992px) {
@@ -678,7 +757,7 @@
     gap: 2rem;
   }
 
-  /* FIX: Forces the order summary to the bottom and the form to the top on mobile */
+  /* Forces the order summary to the bottom and the form to the top */
   .checkout-flow {
     order: 1;
   }
@@ -706,24 +785,37 @@
   .step-label {
     display: none;
   }
+
+  /* FIX: Because the label is hidden, reset the transform so the line aligns perfectly with the circle */
+  .progress-line {
+    transform: translateY(0);
+  }
 }
 
-/* FIX: Strict mobile constraints to prevent horizontal scrolling */
+/* Strict mobile constraints to perfectly frame content and prevent ANY horizontal blowout */
 @media (max-width: 576px) {
   .checkout-page {
     padding-top: 6rem;
   }
 
   .form-row {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
   }
 
   .container {
-    padding: 0 1rem;
-    overflow-x: hidden;
+    padding: 0 1rem !important;
+    width: 100%;
+    max-width: 100vw;
   }
 
   .summary-card {
     padding: 1.5rem 1rem;
+  }
+
+  .progress-line {
+    margin: 0 0.5rem;
   }
 }
