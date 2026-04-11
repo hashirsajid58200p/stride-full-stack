@@ -13,6 +13,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 // Now we can safely import routes that depend on process.env
 const authRoutes = require("./routes/authRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
+const currencyRoutes = require("./routes/currencyRoutes"); // <-- RE-ADDED CURRENCY ROUTE
 
 const app = express();
 
@@ -38,6 +39,7 @@ cloudinary.config({
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/currency", currencyRoutes); // <-- MOUNTED CURRENCY ROUTE
 
 // ==========================================
 // NEW: Newsletter Subscription Route
@@ -51,7 +53,6 @@ app.post("/api/newsletter/subscribe", async (req, res) => {
 
   try {
     // Adds contact to your Resend "Contacts" list automatically
-    // CRITICAL FIX: Destructure error to catch silent API failures
     const { data, error } = await resend.contacts.create({
       email: email,
       unsubscribed: false,
@@ -87,7 +88,6 @@ app.post("/api/contact", async (req, res) => {
 
   try {
     // Send an email to yourself (the admin) with the user's message
-    // CRITICAL FIX: Destructure error to catch silent API failures
     const { data, error } = await resend.emails.send({
       from: "Stride Support <onboarding@resend.dev>", // Resend's default testing address
       to: ["hs58200d@gmail.com"], // Updated to your actual verified Resend email
@@ -128,7 +128,6 @@ app.post("/api/contact", async (req, res) => {
 // ==========================================
 app.get("/api/config", (req, res) => {
   // Enterprise Speed Hack: Cache this response in Vercel's global CDN for 24 hours.
-  // It serves instantly (0ms) from the Edge Network, completely bypassing the cold start!
   res.setHeader(
     "Cache-Control",
     "public, s-maxage=86400, stale-while-revalidate=43200",

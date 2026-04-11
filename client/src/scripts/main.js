@@ -82,17 +82,13 @@ function loadComponent(url, placeholderId, initFunctionName) {
       const placeholder = document.getElementById(placeholderId);
       if (!placeholder) return;
 
-      // Because the HTML contains <script> tags, simply assigning innerHTML won't execute them.
-      // We must extract and re-append them to force the browser to evaluate the JavaScript.
       const wrapper = document.createElement("div");
       wrapper.innerHTML = html;
 
-      // Move all non-script elements into the placeholder
       while (wrapper.firstChild) {
         if (wrapper.firstChild.tagName !== "SCRIPT") {
           placeholder.appendChild(wrapper.firstChild);
         } else {
-          // Re-create the script tag to force execution
           const scriptNode = document.createElement("script");
           scriptNode.textContent = wrapper.firstChild.textContent;
           document.body.appendChild(scriptNode);
@@ -100,7 +96,6 @@ function loadComponent(url, placeholderId, initFunctionName) {
         }
       }
 
-      // Execute the specific initialization function for this component
       if (initFunctionName && typeof window[initFunctionName] === "function") {
         window[initFunctionName]();
       }
@@ -109,14 +104,12 @@ function loadComponent(url, placeholderId, initFunctionName) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Ensure the cart placeholder exists so we don't break pages that forgot it
   if (!document.getElementById("cart-placeholder")) {
     const cartPlaceholder = document.createElement("div");
     cartPlaceholder.id = "cart-placeholder";
     document.body.appendChild(cartPlaceholder);
   }
 
-  // Load the newly flattened single-file components
   if (document.getElementById("header-placeholder")) {
     loadComponent(
       "../components/header.html",
@@ -137,9 +130,6 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  // ==========================================
-  // SUPPORT WIDGET INTEGRATION
-  // ==========================================
   if (document.getElementById("support-widget-placeholder")) {
     loadComponent(
       "../components/support.html",
@@ -150,18 +140,90 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==========================================
-// GLOBAL CURRENCY SYSTEM (Simplified for Instant Load)
+// ASYNCHRONOUS GLOBAL CURRENCY SYSTEM
 // ==========================================
 
-// Global Price Formatter locked to USD for max speed
 window.formatPrice = function (usdPrice) {
+  const rate = parseFloat(localStorage.getItem("strideExchangeRate")) || 1;
+  const currency = localStorage.getItem("strideCurrency") || "USD";
+  const converted = usdPrice * rate;
+
+  const noDecimals = ["PKR", "JPY", "KRW", "INR"].includes(currency);
+
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 2,
-  }).format(usdPrice);
+    currency: currency,
+    maximumFractionDigits: noDecimals ? 0 : 2,
+    minimumFractionDigits: noDecimals ? 0 : 2,
+  }).format(converted);
 };
 
-// Dispatch the event immediately so components render instantly without waiting for an API
-window.dispatchEvent(new Event("currencyUpdated"));
+async function initCurrencySystem() {
+  // FIRE INSTANTLY: This renders the UI immediately using cached values so the user never waits!
+  window.dispatchEvent(new Event("currencyUpdated"));
+
+  const cacheTime = localStorage.getItem("strideCurrencyTime");
+  const now = new Date().getTime();
+
+  if (cacheTime && now - parseInt(cacheTime) < 43200000) {
+    console.log(
+      "Using cached currency:",
+      localStorage.getItem("strideCurrency"),
+    );
+    return;
+  }
+
+  let targetCurrency = "USD";
+
+  try {
+    try {
+      const res1 = await fetch("https://ipapi.co/json/");
+      const data1 = await res1.json();
+      targetCurrency = data1.currency || "USD";
+    } catch (err1) {
+      console.warn("Primary IP API blocked by browser. Trying fallback...");
+      try {
+        const res2 = await fetch("https://freeipapi.com/api/json");
+        const data2 = await res2.json();
+        targetCurrency = data2.currency?.code || "USD";
+      } catch (err2) {
+        console.warn("Fallback API blocked. Using native browser timezone...");
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+        if (tz.includes("Karachi")) targetCurrency = "PKR";
+        else if (tz.includes("Kolkata") || tz.includes("Calcutta"))
+          targetCurrency = "INR";
+        else if (tz.includes("London")) targetCurrency = "GBP";
+        else if (tz.includes("Europe")) targetCurrency = "EUR";
+        else if (tz.includes("Dubai")) targetCurrency = "AED";
+        else if (tz.includes("Riyadh")) targetCurrency = "SAR";
+      }
+    }
+
+    console.log("Detected Currency:", targetCurrency);
+
+    // Fetch the conversion rate in the background without freezing the UI
+    const rateRes = await fetch(`/api/currency?target=${targetCurrency}`);
+    const rateData = await rateRes.json();
+
+    if (rateData.rate) {
+      localStorage.setItem("strideCurrency", targetCurrency);
+      localStorage.setItem("strideExchangeRate", rateData.rate);
+      localStorage.setItem("strideCurrencyTime", now.toString());
+
+      // FIRE AGAIN: Silently updates the prices on screen now that we have fresh data
+      window.dispatchEvent(new Event("currencyUpdated"));
+      console.log(`Currency dynamically updated to ${targetCurrency}`);
+    }
+  } catch (error) {
+    console.error(
+      "Failed to initialize currency system, defaulting to USD.",
+      error,
+    );
+    localStorage.setItem("strideCurrency", "USD");
+    localStorage.setItem("strideExchangeRate", "1");
+    window.dispatchEvent(new Event("currencyUpdated"));
+  }
+}
+
+// Start background currency fetch
+initCurrencySystem();

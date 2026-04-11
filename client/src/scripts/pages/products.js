@@ -38,11 +38,15 @@ document.addEventListener("DOMContentLoaded", () => {
   let allProductsData = [];
 
   // ==========================================
-  // CURRENCY UI UPDATER (Simplified for USD)
+  // CURRENCY UI UPDATER
   // ==========================================
   function updatePricePlaceholders() {
-    if (minPriceInput) minPriceInput.placeholder = `Min $`;
-    if (maxPriceInput) maxPriceInput.placeholder = `Max $`;
+    const currency = localStorage.getItem("strideCurrency") || "USD";
+    const symbol =
+      currency === "PKR" ? "Rs" : currency === "USD" ? "$" : currency;
+
+    if (minPriceInput) minPriceInput.placeholder = `Min ${symbol}`;
+    if (maxPriceInput) maxPriceInput.placeholder = `Max ${symbol}`;
   }
 
   // Listen for currency being initialized or changed
@@ -431,14 +435,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const currentCards = document.querySelectorAll(".product-card");
     let visibleCount = 0;
 
-    // Filter math simplified strictly to USD
+    const rate = parseFloat(localStorage.getItem("strideExchangeRate")) || 1;
+
     const minPriceUSD =
       minPriceInput && minPriceInput.value
-        ? parseFloat(minPriceInput.value)
+        ? parseFloat(minPriceInput.value) / rate
         : 0;
     const maxPriceUSD =
       maxPriceInput && maxPriceInput.value
-        ? parseFloat(maxPriceInput.value)
+        ? parseFloat(maxPriceInput.value) / rate
         : Infinity;
 
     const sortValue = sortValueHidden ? sortValueHidden.value : "default";
@@ -491,28 +496,6 @@ document.addEventListener("DOMContentLoaded", () => {
         visibleCount++;
       } else {
         card.classList.add("hidden");
-      }
-    });
-
-    cardsArray.sort((a, b) => {
-      const priceA = parseFloat(a.getAttribute("data-price"));
-      const priceB = parseFloat(b.getAttribute("data-price"));
-      const nameA = a.querySelector(".product-name").textContent.toLowerCase();
-      const nameB = b.querySelector(".product-name").textContent.toLowerCase();
-
-      if (sortValue === "price-low") {
-        return priceA - priceB;
-      } else if (sortValue === "price-high") {
-        return priceB - priceA;
-      } else if (sortValue === "name-desc") {
-        return nameB.localeCompare(nameA);
-      } else if (sortValue === "name-asc") {
-        return nameA.localeCompare(nameB);
-      } else {
-        return (
-          parseInt(a.getAttribute("data-index"), 10) -
-          parseInt(b.getAttribute("data-index"), 10)
-        );
       }
     });
 

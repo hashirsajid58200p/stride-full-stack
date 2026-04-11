@@ -55,7 +55,6 @@
         loader.style.opacity = "0";
         loader.style.visibility = "hidden";
 
-        // NEW FIX: Restore the scrollbar as soon as the loader starts fading out!
         const scrollLock = document.getElementById("loader-scroll-lock");
         if (scrollLock) {
           scrollLock.remove();
@@ -70,7 +69,6 @@
     }
 
     // SPEED FIX: Do NOT wait for window.onload (which waits for heavy video files)
-    // Drop the loader when the DOM is ready, or force drop it after 2.5 seconds max.
     if (
       document.readyState === "complete" ||
       document.readyState === "interactive"
