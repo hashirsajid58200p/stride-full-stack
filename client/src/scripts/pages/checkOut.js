@@ -389,7 +389,13 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("indicator-step-3").classList.add("active");
     }
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // FIX: Smart scrolling that drops you exactly onto the form, instead of the order summary!
+    const flowContainer = document.querySelector(".checkout-flow");
+    if (flowContainer) {
+      const offsetTop =
+        flowContainer.getBoundingClientRect().top + window.scrollY - 100;
+      window.scrollTo({ top: offsetTop, behavior: "smooth" });
+    }
   };
 
   // ==========================================

@@ -91,6 +91,7 @@ body {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  text-align: center;
 }
 
 .step.active {
@@ -115,7 +116,7 @@ body {
   height: 2px;
   background-color: var(--color-border);
   margin: 0 1rem;
-  /* Push the line up on desktop to align with the circle above the label */
+  /* Push the line up to align perfectly with the middle of the circle */
   transform: translateY(-12px);
   transition: var(--transition-smooth);
 }
@@ -783,15 +784,6 @@ body {
     justify-content: center;
     padding: 1rem 0;
   }
-
-  .step-label {
-    display: none;
-  }
-
-  /* FIX: Because the label is hidden, reset the transform so the line aligns perfectly with the circle */
-  .progress-line {
-    transform: translateY(0);
-  }
 }
 
 /* Strict mobile constraints to perfectly frame content and prevent ANY horizontal blowout */
@@ -817,6 +809,14 @@ body {
     padding: 1.5rem 1rem;
   }
 
+  /* Make the text small enough to fit flawlessly below the circles */
+  .step-label {
+    font-size: 0.65rem;
+    letter-spacing: 0;
+    margin-top: 4px;
+  }
+
+  /* Reduce margin so lines don't run into the text */
   .progress-line {
     margin: 0 0.5rem;
   }
