@@ -640,6 +640,7 @@ body {
   flex-shrink: 0;
 }
 
+/* Coupon Section */
 .coupon-section {
   display: flex;
   gap: 0.5rem;
@@ -654,6 +655,7 @@ body {
   min-width: 0;
 }
 
+/* Totals Breakdown */
 .price-breakdown {
   display: flex;
   flex-direction: column;
@@ -757,12 +759,12 @@ body {
     gap: 2rem;
   }
 
-  /* Forces the order summary to the bottom and the form to the top */
-  .checkout-flow {
-    order: 1;
-  }
+  /* Reverted: Forces the order summary to the top and the form to the bottom */
   .checkout-summary {
     position: static;
+    order: 1;
+  }
+  .checkout-flow {
     order: 2;
   }
 
