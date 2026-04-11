@@ -47,27 +47,178 @@ document.addEventListener("DOMContentLoaded", () => {
     loadCartItems(); // Re-render the cart items and totals with the new currency
   });
 
+  // === DYNAMIC COUNTRIES & BULLETPROOF IP TRACKING ===
+  async function loadCountries() {
+    try {
+      // 1. Fetch all countries
+      const response = await fetch(
+        "https://restcountries.com/v3.1/all?fields=name",
+      );
+      if (!response.ok) throw new Error("Network response not ok");
+
+      let countriesData = await response.json();
+
+      // 2. BULLETPROOF IP TRACKING: Bypass Ad-Blockers
+      let userCountryName = null;
+
+      try {
+        // Attempt 1: ipapi.co (Can be blocked by Brave/Adblockers)
+        const res1 = await fetch("https://ipapi.co/json/");
+        const data1 = await res1.json();
+        userCountryName = data1.country_name;
+      } catch (err1) {
+        console.warn("Primary IP API blocked. Trying fallback...");
+        try {
+          // Attempt 2: freeipapi.com (Can sometimes fail CORS)
+          const res2 = await fetch("https://freeipapi.com/api/json");
+          const data2 = await res2.json();
+          userCountryName = data2.countryName;
+        } catch (err2) {
+          console.warn("Fallback API blocked. Using native timezone map...");
+          // Attempt 3: Unblockable Native Timezone Mapping
+          const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+
+          // Map major timezones to country names that match the REST API
+          if (tz.includes("Karachi")) userCountryName = "Pakistan";
+          else if (tz.includes("Kolkata") || tz.includes("Calcutta"))
+            userCountryName = "India";
+          else if (tz.includes("London")) userCountryName = "United Kingdom";
+          else if (tz.includes("New_York") || tz.includes("Los_Angeles"))
+            userCountryName = "United States";
+          else if (tz.includes("Dubai"))
+            userCountryName = "United Arab Emirates";
+          else if (tz.includes("Riyadh")) userCountryName = "Saudi Arabia";
+          else if (tz.includes("Toronto") || tz.includes("Vancouver"))
+            userCountryName = "Canada";
+          else if (tz.includes("Sydney") || tz.includes("Melbourne"))
+            userCountryName = "Australia";
+        }
+      }
+
+      // 3. Move the detected country to the top of the array
+      if (userCountryName) {
+        const userIndex = countriesData.findIndex(
+          (c) => c.name.common.toLowerCase() === userCountryName.toLowerCase(),
+        );
+        if (userIndex > -1) {
+          // Extract it and push it to the very top
+          const userCountryObj = countriesData.splice(userIndex, 1)[0];
+          countriesData.unshift(userCountryObj);
+        }
+      }
+
+      const optionsContainer = document.getElementById(
+        "countryDropdownOptions",
+      );
+
+      if (optionsContainer) {
+        // Clear any previous stubbed options
+        const existingOptions = optionsContainer.querySelectorAll(
+          ".custom-select-option",
+        );
+        existingOptions.forEach((opt) => opt.remove());
+
+        // Sort the remaining array alphabetically (ignoring the first item if we pinned the user's country)
+        const sortedCountries = userCountryName
+          ? [
+              countriesData[0],
+              ...countriesData
+                .slice(1)
+                .sort((a, b) => a.name.common.localeCompare(b.name.common)),
+            ]
+          : countriesData.sort((a, b) =>
+              a.name.common.localeCompare(b.name.common),
+            );
+
+        // Generate the HTML for the dropdown
+        sortedCountries.forEach((country, index) => {
+          const optionDiv = document.createElement("div");
+          optionDiv.className = "custom-select-option";
+          optionDiv.setAttribute("data-value", country.name.common);
+
+          // Add a visual indicator if it's their auto-detected home country
+          if (index === 0 && userCountryName) {
+            optionDiv.innerHTML = `<strong>${country.name.common} (Detected)</strong>`;
+          } else {
+            optionDiv.textContent = country.name.common;
+          }
+
+          optionsContainer.appendChild(optionDiv);
+        });
+
+        // Add search filter functionality
+        const searchInput = document.getElementById("countrySearchInput");
+        if (searchInput) {
+          searchInput.addEventListener("input", function () {
+            const term = this.value.toLowerCase().trim();
+            const allOptions = document.querySelectorAll(
+              "#countryDropdownOptions .custom-select-option",
+            );
+            allOptions.forEach((opt) => {
+              const matches = opt.textContent.toLowerCase().includes(term);
+              opt.style.display = matches ? "block" : "none";
+            });
+          });
+        }
+
+        // 4. Auto-select the user's country so they don't even have to click the dropdown
+        if (userCountryName) {
+          const firstOption = document.querySelector(
+            "#countryDropdownOptions .custom-select-option",
+          );
+          if (
+            firstOption &&
+            firstOption.getAttribute("data-value").toLowerCase() ===
+              userCountryName.toLowerCase()
+          ) {
+            // Simulate a click on the option to update the UI and hidden inputs
+            firstOption.click();
+            console.log(
+              `✅ Bulletproof IP Tracked: Auto-selected ${userCountryName}`,
+            );
+          }
+        }
+      }
+    } catch (error) {
+      console.error("❌ Failed to load countries:", error);
+    }
+  }
+
   if (customSelectWrapper) {
     customSelectDisplay.addEventListener("click", () => {
       customSelectWrapper.classList.toggle("open");
     });
 
-    customSelectOptions.forEach((option) => {
-      option.addEventListener("click", function () {
-        customSelectOptions.forEach((opt) => opt.classList.remove("selected"));
-        this.classList.add("selected");
+    // Event delegation for dynamically loaded country options
+    const countryOptionsContainer = document.getElementById(
+      "countryDropdownOptions",
+    );
+    if (countryOptionsContainer) {
+      countryOptionsContainer.addEventListener("click", function (e) {
+        const option = e.target.closest(".custom-select-option");
+        if (option) {
+          document
+            .querySelectorAll("#countryDropdownOptions .custom-select-option")
+            .forEach((opt) => opt.classList.remove("selected"));
+          option.classList.add("selected");
 
-        const value = this.getAttribute("data-value");
-        const text = this.textContent;
+          const value = option.getAttribute("data-value");
+          // Clean the "(Detected)" text out if they click their own country
+          const text = option.textContent.replace("(Detected)", "").trim();
 
-        customSelectText.textContent = text;
-        customSelectDisplay.classList.add("has-value");
-        countryInputHidden.value = value;
-        countryErrorMsg.style.display = "none";
+          customSelectText.textContent = text;
+          customSelectDisplay.classList.add("has-value");
+          countryInputHidden.value = value;
+          countryErrorMsg.style.display = "none";
 
-        customSelectWrapper.classList.remove("open");
+          customSelectWrapper.classList.remove("open");
+
+          // Clear search input after selection
+          const searchInput = document.getElementById("countrySearchInput");
+          if (searchInput) searchInput.value = "";
+        }
       });
-    });
+    }
 
     document.addEventListener("click", (e) => {
       if (!customSelectWrapper.contains(e.target)) {
@@ -403,4 +554,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadCartItems();
   loadCouponComponent();
+
+  // Load countries dynamically when page loads
+  loadCountries();
 });

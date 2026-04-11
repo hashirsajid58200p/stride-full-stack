@@ -6,10 +6,14 @@
   padding-top: 8rem;
   padding-bottom: 5rem;
   background-color: var(--color-bg);
+  /* FIX: Prevent horizontal scrolling on mobile */
+  overflow-x: hidden;
 }
 
 .checkout-page .container {
   max-width: 1200px !important;
+  /* FIX: Ensure container never exceeds screen width */
+  width: 100%;
 }
 
 .checkout-layout {
@@ -17,6 +21,8 @@
   grid-template-columns: 1fr 420px;
   gap: 4rem;
   align-items: flex-start;
+  /* FIX: Ensure grid doesn't cause overflow */
+  width: 100%;
 }
 
 /* =========================================
@@ -27,6 +33,8 @@
   flex-direction: column;
   gap: 2rem;
   animation: fadeIn 0.6s ease-out;
+  /* FIX: Ensure flow stays within bounds */
+  width: 100%;
 }
 
 .progress-tracker {
@@ -104,6 +112,7 @@
 .checkout-step {
   display: none;
   animation: fadeIn 0.4s ease-out;
+  width: 100%;
 }
 
 .checkout-step.active {
@@ -139,6 +148,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 100%;
 }
 
 .form-row {
@@ -164,6 +174,8 @@
   color: var(--color-fg);
   font-family: inherit;
   font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
   transition:
     border-color 0.3s ease,
     box-shadow 0.3s ease;
@@ -234,11 +246,20 @@
   border: 1px solid var(--color-border);
   border-radius: 8px;
   margin-top: 0.5rem;
-  overflow: hidden;
+  max-height: 260px; /* Exactly 5 countries visible */
+  overflow-y: scroll;
   display: none;
   z-index: 100;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   animation: fadeIn 0.2s ease;
+
+  /* Hide scrollbar completely but keep scrollable */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.custom-select-options::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 .custom-select-wrapper.open .custom-select-options {
@@ -256,6 +277,32 @@
 .custom-select-option.selected {
   background-color: var(--color-accent);
   color: var(--color-accent-fg);
+}
+
+.country-search-input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  margin: 0 !important;
+  /* FIX: Makes the input look perfectly flush and square with the dropdown bounds */
+  border-bottom: 1px solid var(--color-border) !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  background-color: var(--color-bg);
+  font-size: 1rem;
+  color: var(--color-fg);
+  outline: none;
+  box-sizing: border-box;
+  border-radius: 0 !important; /* Forces strict sharp edges */
+}
+
+.country-search-input::placeholder {
+  color: var(--color-muted-fg);
+}
+
+.country-search-input:focus {
+  border-bottom-color: var(--color-accent) !important;
+  box-shadow: none !important;
 }
 
 /* ========================================= */
@@ -471,6 +518,7 @@
   position: sticky;
   top: 100px;
   animation: slideUp 0.6s ease-out;
+  width: 100%;
 }
 
 .summary-card {
@@ -478,6 +526,8 @@
   border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 2rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .summary-title {
@@ -628,9 +678,13 @@
     gap: 2rem;
   }
 
+  /* FIX: Forces the order summary to the bottom and the form to the top on mobile */
+  .checkout-flow {
+    order: 1;
+  }
   .checkout-summary {
     position: static;
-    order: -1;
+    order: 2;
   }
 
   .form-actions {
@@ -654,8 +708,22 @@
   }
 }
 
+/* FIX: Strict mobile constraints to prevent horizontal scrolling */
 @media (max-width: 576px) {
+  .checkout-page {
+    padding-top: 6rem;
+  }
+
   .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .container {
+    padding: 0 1rem;
+    overflow-x: hidden;
+  }
+
+  .summary-card {
+    padding: 1.5rem 1rem;
   }
 }

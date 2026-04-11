@@ -2,12 +2,23 @@
    Contact Page Styles
    ========================================= */
 
+/* Ensure the body can act as a full-height flex container */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#footer-placeholder {
+  margin-top: auto; /* Guarantees footer is pushed to the absolute bottom */
+}
+
 .contact-page-wrapper {
   padding-top: 64px; /* Account for fixed header */
   background-color: var(--color-bg);
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  flex-grow: 1; /* Wrapper expands to fill the body */
 }
 
 /* =========================================
@@ -15,8 +26,8 @@
    ========================================= */
 .contact-hero-section {
   padding: 100px 0 80px 0;
-  flex-grow: 1;
   animation: fadeIn 0.8s ease-out;
+  flex-grow: 1;
 }
 
 .contact-header-row {
@@ -73,12 +84,31 @@
   transition: color 0.3s ease;
 }
 
-.social-icon-circle:hover {
-  background-color: var(--color-accent);
-  border-color: var(--color-accent);
+/* FIX: Only apply hover effects on devices with a real mouse to prevent sticky-hover on mobile */
+@media (hover: hover) {
+  .social-icon-circle:hover {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+  .social-icon-circle:hover i {
+    color: #ffffff;
+  }
+
+  .submit-message-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    opacity: 0.9;
+  }
 }
 
-.social-icon-circle:hover i {
+/* FIX: Add snappy active states for mobile touch feedback */
+.social-icon-circle:active {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  transform: scale(0.95);
+}
+
+.social-icon-circle:active i {
   color: #ffffff;
 }
 
@@ -111,9 +141,8 @@
   margin-bottom: 10px;
 }
 
-/* Removing box borders and using only bottom border */
 .form-control {
-  background-color: transparent;
+  background-color: transparent !important;
   border: none;
   border-bottom: 1px solid var(--color-border);
   border-radius: 0;
@@ -121,23 +150,37 @@
   font-size: 1.1rem;
   color: var(--color-fg);
   font-family: inherit;
-  outline: none;
+  outline: none !important;
+  box-shadow: none !important;
   transition: border-color 0.3s ease;
 }
 
-.form-control:focus {
+.form-control:focus,
+.form-control:active {
   border-bottom-color: var(--color-accent);
+  outline: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
+
+.form-control:-webkit-autofill,
+.form-control:-webkit-autofill:hover,
+.form-control:-webkit-autofill:focus,
+.form-control:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--color-bg) inset !important;
+  -webkit-text-fill-color: var(--color-fg) !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 .message-textarea {
   resize: none;
   min-height: 80px;
-  padding-top: 40px; /* Pushes the typing cursor down */
+  padding-top: 40px;
   overflow-y: auto;
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;
 }
 .message-textarea::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
+  display: none;
 }
 
 /* Submit Button */
@@ -157,10 +200,11 @@
   margin-top: 20px;
 }
 
-.submit-message-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  opacity: 0.9;
+/* Snappy tap effect for mobile */
+.submit-message-btn:active {
+  transform: translateY(1px);
+  box-shadow: none;
+  opacity: 0.8;
 }
 
 .submit-message-btn:disabled {
@@ -181,6 +225,7 @@
   background-color: var(--color-primary);
   color: var(--color-primary-fg);
   padding: 100px 0;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .contact-info-row {
@@ -249,14 +294,24 @@
 /* =========================================
    Responsive Adjustments
    ========================================= */
-@media (max-width: 1024px) {
-  .contact-main-heading {
-    font-size: 3.5rem;
-  }
-  .contact-info-main-heading {
-    font-size: 2.8rem;
-  }
 
+@media (min-width: 992px) {
+  .contact-header-row,
+  .contact-form,
+  .contact-info-row {
+    padding: 0 1rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .contact-header-row,
+  .contact-form,
+  .contact-info-row {
+    padding: 0 2.5rem;
+  }
+}
+
+@media (max-width: 1024px) {
   .form-inputs-grid {
     grid-template-columns: 1fr 1fr;
   }
@@ -321,5 +376,27 @@
   .contact-info-right-col {
     flex-direction: column;
     gap: 40px;
+  }
+}
+
+/* Small Mobile (576px and below) */
+@media (max-width: 576px) {
+  .contact-hero-section {
+    padding: 40px 0;
+  }
+  .contact-info-section {
+    padding: 60px 0;
+  }
+  .contact-main-heading {
+    font-size: 2.2rem;
+  }
+  .contact-info-main-heading {
+    font-size: 2rem;
+  }
+  .form-inputs-grid {
+    gap: 25px;
+  }
+  .contact-social-col {
+    gap: 10px;
   }
 }
