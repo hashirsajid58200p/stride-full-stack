@@ -29,15 +29,14 @@ exports.createCheckoutSession = async (req, res) => {
       // REDIRECT URL TOGGLE
       // ==========================================
 
-      // DEPLOYMENT VARIANT: (Active for GitHub/Vercel)
-      success_url: `${process.env.CLIENT_URL}/pages/orderConfirmation.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.CLIENT_URL}/pages/checkOut.html`,
+      // DEPLOYMENT VARIANT: (Commented out for local development)
+      // success_url: `${process.env.CLIENT_URL}/pages/orderConfirmation.html?session_id={CHECKOUT_SESSION_ID}`,
+      // cancel_url: `${process.env.CLIENT_URL}/pages/checkOut.html`,
 
-      // LOCAL MACHINE VARIANT: (Uncomment this block when working locally)
-      /*
-      success_url: `http://127.0.0.1:5501/client/src/pages/orderConfirmation.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `http://127.0.0.1:5501/client/src/pages/checkOut.html`,
-      */
+      // LOCAL MACHINE VARIANT: (Active for local development)
+      // Change these two lines in your createCheckoutSession function:
+      success_url: `http://localhost:5173/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `http://localhost:5173/checkout`,
     });
 
     res.status(200).json({ id: session.id, url: session.url });

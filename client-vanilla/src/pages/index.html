@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stride - Premium Footwear Collection</title>
+    <meta
+      name="description"
+      content="Discover authentic sneakers from Nike, Adidas, Jordan and more. Shop the latest collection of premium athletic footwear."
+    />
+
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../public/images/logos/stride_logo_dark.png"
+    />
+
+    <meta property="og:title" content="Stride - Premium Footwear Collection" />
+    <meta
+      property="og:description"
+      content="Discover authentic sneakers from Nike, Adidas, Jordan and more. Shop the latest collection of premium athletic footwear."
+    />
+    <meta property="og:type" content="website" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
+    <link rel="stylesheet" href="../styles/root.css" />
+    <link rel="stylesheet" href="../styles/pages/index.css" />
+  </head>
+  <body>
+    <script>
+      if (!sessionStorage.getItem("strideFirstLoadDone")) {
+        // NEW FIX: Inject a style tag to instantly hide the scrollbar
+        document.write(
+          '<style id="loader-scroll-lock">body { overflow: hidden !important; }</style>',
+        );
+        document.write(
+          '<div id="anti-flash-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #ffffff; z-index: 9999999;"></div>',
+        );
+      }
+    </script>
+
+    <div id="loader-placeholder"></div>
+    <div id="header-placeholder"></div>
+    <div id="cart-placeholder"></div>
+
+    <section class="hero">
+      <video class="hero-video" autoplay muted loop playsinline>
+        <source
+          src="../../public/videos/hero_background.mp4"
+          type="video/mp4"
+        />
+      </video>
+
+      <!-- Mobile Fallback Image -->
+      <img
+        src="../../public/images/backgrounds/hero_background_mobile.jpg"
+        alt="Stride Hero"
+        class="hero-mobile-img"
+      />
+
+      <div class="container">
+        <div class="hero-content">
+          <h1 class="hero-title">
+            Step Into
+            <span class="hero-accent">Excellence</span>
+          </h1>
+
+          <p class="hero-text">
+            Discover the latest collection from Nike, Adidas, and premium
+            brands. Elevate your style with authentic sneakers.
+          </p>
+
+          <div class="hero-buttons">
+            <a href="about.html" class="btn btn-outline">Our Story</a>
+            <a href="products.html" class="btn btn-primary">Shop Now</a>
+          </div>
+        </div>
+      </div>
+      <div class="hero-gradient"></div>
+    </section>
+
+    <div class="hero-marquee">
+      <div class="hero-marquee-track">
+        <div class="hero-marquee-content">
+          <a href="products.html?category=new-arrival">New Arrivals</a>
+          <a href="products.html?category=men">Shop Men</a>
+          <a href="products.html?category=women">Shop Women</a>
+        </div>
+      </div>
+    </div>
+
+    <section class="featured-products">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Featured Collection</h2>
+          <p class="section-text">
+            Handpicked selection of the season's most coveted sneakers
+          </p>
+        </div>
+
+        <div class="products-grid" id="featured-products-grid"></div>
+
+        <div class="view-all-container">
+          <a href="products.html" class="btn-view-all">View All Products</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="text-marquee">
+      <div class="text-marquee-track">
+        <div class="text-marquee-content">
+          <span>BUY NOW PAY LATER</span>
+          <span>FREE SHIPPING ON ALL ORDERS</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="brand-showcase">
+      <div class="container-fluid">
+        <div class="section-header">
+          <h2 class="section-title">Shop by Brand</h2>
+          <p class="section-text">
+            Explore collections from the world's most iconic sneaker brands
+          </p>
+        </div>
+
+        <div class="marquee-wrapper">
+          <div class="marquee-row reverse">
+            <div class="marquee-track">
+              <div class="marquee-content">
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/nike.png"
+                    alt="Nike"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/adidas.png"
+                    alt="Adidas"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/puma.png"
+                    alt="Puma"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/reebok.png"
+                    alt="Reebok"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/underarmour.png"
+                    alt="Under Armour"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/newbalance.png"
+                    alt="New Balance"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/onrunning.png"
+                    alt="On Running"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/converse.png"
+                    alt="Converse"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/vans.png"
+                    alt="Vans"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/jordan.png"
+                    alt="Jordan"
+                    class="brand-icon"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="marquee-row normal">
+            <div class="marquee-track">
+              <div class="marquee-content">
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/fila.png"
+                    alt="Fila"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/brooks.png"
+                    alt="Brooks"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/saucony.png"
+                    alt="Saucony"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/asics.png"
+                    alt="Asics"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/hokaoneone.png"
+                    alt="Hoka One One"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/columbia.png"
+                    alt="Columbia"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/thenorthface.png"
+                    alt="The North Face"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/salomon.png"
+                    alt="Salomon"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/merrell.png"
+                    alt="Merrell"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/timberland.png"
+                    alt="Timberland"
+                    class="brand-icon"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="marquee-row reverse">
+            <div class="marquee-track">
+              <div class="marquee-content">
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/ecco.png"
+                    alt="Ecco"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/kswiss.png"
+                    alt="K-Swiss"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/champion.png"
+                    alt="Champion"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/lotto.png"
+                    alt="Lotto"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/diadora.png"
+                    alt="Diadora"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/mizuno.png"
+                    alt="Mizuno"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/altra.png"
+                    alt="Altra"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/vibram.png"
+                    alt="Vibram"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/camper.png"
+                    alt="Camper"
+                    class="brand-icon"
+                  />
+                </div>
+                <div class="brand-card-mini">
+                  <img
+                    src="../../public/images/logos/brands/superga.png"
+                    alt="Superga"
+                    class="brand-icon"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonials">
+      <div class="container">
+        <h2 class="section-title testimonials-title">Happy Customers</h2>
+        <div class="carousel-wrapper">
+          <button class="carousel-btn prev" aria-label="Previous">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+
+          <div class="carousel-track" id="testimonial-track">
+            <div class="testimonial-card">
+              <div class="stars">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </div>
+              <p class="review-text">
+                Very comfortable and perfect for everyday wear. Great quality
+              </p>
+              <p class="customer-name">AHMAD SAEED KHAN</p>
+            </div>
+
+            <div class="testimonial-card">
+              <div class="stars">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </div>
+              <p class="review-text">Perfect mix of casual and formal</p>
+              <p class="customer-name">HAMDAAN</p>
+            </div>
+
+            <div class="testimonial-card">
+              <div class="stars">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </div>
+              <p class="review-text">
+                I wear them every day to work. Still feel like new
+              </p>
+              <p class="customer-name">ALI ZAIDI</p>
+            </div>
+
+            <div class="testimonial-card">
+              <div class="stars">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </div>
+              <p class="review-text">Great value for money</p>
+              <p class="customer-name">ZUNAIR KHAN</p>
+            </div>
+
+            <div class="testimonial-card">
+              <div class="stars">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </div>
+              <p class="review-text">
+                Perfect for office and casual wear. I'm really happy with the
+                purchase
+              </p>
+              <p class="customer-name">SUBHAN</p>
+            </div>
+
+            <div class="testimonial-card">
+              <div class="stars">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </div>
+              <p class="review-text">
+                Didn't expect this level of comfort. Really impressed
+              </p>
+              <p class="customer-name">SAMEEN RUDABA</p>
+            </div>
+
+            <div class="testimonial-card">
+              <div class="stars">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </div>
+              <p class="review-text">
+                Stride never disappoint. This pair is my new favorite
+              </p>
+              <p class="customer-name">SALMAN WATTO</p>
+            </div>
+          </div>
+
+          <button class="carousel-btn next" aria-label="Next">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div
+      id="newsletter-placeholder"
+      data-bg="../../public/images/backgrounds/newsletter_background.jpeg"
+    ></div>
+
+    <section class="features-strip">
+      <div class="container">
+        <div class="features-grid">
+          <div class="feature-item">
+            <i class="bi bi-box-seam"></i>
+            <p>FREE DELIVERY PREPAID</p>
+          </div>
+          <div class="feature-item">
+            <i class="bi bi-arrow-counterclockwise"></i>
+            <p>SATISFIED OR REFUNDED</p>
+          </div>
+          <div class="feature-item">
+            <i class="bi bi-chat-dots"></i>
+            <p>BEST CHAT SUPPORT</p>
+          </div>
+          <div class="feature-item">
+            <i class="bi bi-credit-card"></i>
+            <p>SECURE PAYMENTS</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="support-widget-placeholder"></div>
+
+    <div id="footer-placeholder"></div>
+
+    <script type="module" src="../scripts/main.js"></script>
+    <script type="module" src="../scripts/pages/index.js"></script>
+  </body>
+</html>

@@ -1,0 +1,204 @@
+/* Privacy Policy Styles - Blended with Root Styling */
+
+.privacy-page {
+  min-height: 100vh;
+  padding-top: 8rem; /* Accounts for fixed transparent header */
+  padding-bottom: 5rem;
+  background-color: var(--color-bg);
+  overflow-x: hidden;
+}
+
+/* OVERRIDE: Reverted back to the original proportional viewport width (vw) 
+  This gives a consistent, beautiful margin on all screens!
+*/
+.privacy-page .container {
+  max-width: 100% !important;
+  width: 100% !important;
+  padding-left: 8vw !important;
+  padding-right: 8vw !important;
+  box-sizing: border-box;
+}
+
+.policy-wrapper {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 auto !important;
+  background-color: var(--color-bg);
+  animation: fadeIn 0.6s ease-out;
+  box-sizing: border-box;
+}
+
+.policy-header {
+  text-align: center; /* Keeps the main title and date centered */
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.page-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--color-fg);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.last-updated {
+  font-size: 0.9rem;
+  color: var(--color-muted-fg);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.policy-content {
+  color: var(--color-fg);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  text-align: left !important; /* Explicitly forces all content to align left */
+  width: 100%;
+}
+
+.policy-content h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-fg);
+  margin-top: 3.5rem;
+  margin-bottom: 1rem;
+  scroll-margin-top: 100px; /* Ensures anchors don't hide under the fixed navbar */
+}
+
+.policy-content p {
+  margin-bottom: 1.5rem;
+  color: var(--color-muted-fg);
+}
+
+/* Base UL settings for policy text */
+.policy-content ul {
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+  color: var(--color-muted-fg);
+}
+
+.policy-content li {
+  margin-bottom: 0.5rem;
+}
+
+.policy-content strong {
+  color: var(--color-fg);
+  font-weight: 600;
+}
+
+.policy-content a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: var(--transition-smooth);
+}
+
+/* Table of Contents Specific Styles */
+.table-of-contents {
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 3rem 0;
+  width: 100%;
+}
+
+.table-of-contents h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+/* FIX: Higher specificity to override the 1.5rem indent from .policy-content ul */
+.policy-content .toc-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.policy-content .toc-list li {
+  margin-bottom: 0.75rem;
+}
+
+.policy-content .toc-list a {
+  color: var(--color-fg);
+  text-decoration: none;
+  font-weight: 500;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  transition: var(--transition-smooth);
+}
+
+.toc-icon {
+  color: var(--color-accent);
+  font-size: 1.1rem;
+  flex-shrink: 0; /* Ensures the arrow icon never squishes */
+  margin-top: 2px; /* Optical alignment with the text */
+  transition: transform 0.2s ease;
+}
+
+/* =========================================
+   HOVER & ACTIVE STATES (Mobile Fixes)
+   ========================================= */
+
+@media (hover: hover) {
+  .policy-content a:hover {
+    color: var(--color-fg);
+  }
+
+  .policy-content .toc-list a:hover {
+    color: var(--color-accent);
+    transform: translateX(5px);
+  }
+
+  .policy-content .toc-list a:hover .toc-icon {
+    transform: translateX(3px);
+  }
+}
+
+/* Snappy tap-state feedback for mobile touch screens */
+.policy-content a:active {
+  color: var(--color-accent);
+  opacity: 0.7;
+}
+
+.policy-content .toc-list a:active {
+  color: var(--color-accent);
+  opacity: 0.7;
+  transform: translateX(2px);
+}
+
+/* =========================================
+   Responsive Adjustments
+   ========================================= */
+@media (max-width: 768px) {
+  .privacy-page {
+    padding-top: 6rem;
+  }
+  .privacy-page .container {
+    padding-left: 5vw !important; /* Slightly smaller safe-zone for mobile screens */
+    padding-right: 5vw !important;
+  }
+  .page-title {
+    font-size: 2.25rem;
+  }
+  .policy-content h2 {
+    font-size: 1.5rem;
+  }
+  .table-of-contents {
+    padding: 1.5rem;
+  }
+
+  /* FIX: Shrink the TOC font sizes and spacing for mobile so it fits gracefully */
+  .policy-content .toc-list a {
+    font-size: 0.85rem;
+    gap: 8px;
+  }
+  .toc-icon {
+    font-size: 0.9rem;
+    margin-top: 1px;
+  }
+}

@@ -1,0 +1,413 @@
+/* =========================================
+   FAQ Page Styles
+   ========================================= */
+
+.faq-page-wrapper {
+  padding-top: 64px; /* Account for fixed header */
+  background-color: var(--color-bg);
+}
+
+/* Hero Section */
+.faq-hero-section {
+  padding: 60px 0 120px 0;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.faq-hero-top-content {
+  margin-bottom: 50px;
+  text-align: left;
+}
+
+.faq-hero-main-heading {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--color-fg);
+  margin-bottom: 10px;
+}
+
+.faq-hero-divider {
+  width: 100%;
+  max-width: 595px;
+  height: 2px;
+  background-color: var(--color-accent);
+  margin-bottom: 30px;
+}
+
+.faq-hero-person-info {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* FIX: Ensure the link wrapping the avatar never shrinks under pressure */
+.faq-hero-person-info a {
+  flex-shrink: 0;
+}
+
+.faq-hero-avatar {
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-border);
+  outline: 3px solid var(--color-fg); /* Uses theme foreground: White in Dark Mode, Black in Light Mode */
+  transition: transform 0.2s ease;
+  /* FIX: Ensure the image itself never shrinks into an oval */
+  flex-shrink: 0;
+}
+
+.faq-hero-person-info a:active .faq-hero-avatar {
+  transform: scale(0.95);
+}
+
+.faq-hero-person-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.faq-hero-person-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  margin-bottom: 5px;
+}
+
+.faq-hero-person-description {
+  font-size: 1rem;
+  color: var(--color-muted-fg);
+  line-height: 1.4;
+  margin-bottom: 0;
+}
+
+/* FAQ Content Wrapper - Pure CSS Grid */
+.faq-content-wrapper {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+/* Left Column: Jump to Section Card */
+.faq-left-col {
+  position: sticky;
+  top: 100px; /* Sticks when scrolling down */
+}
+
+.faq-jump-to-card {
+  background-color: var(--color-primary); /* Dark primary color from theme */
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.faq-jump-to-heading {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--color-primary-fg);
+  margin-bottom: 15px;
+}
+
+.faq-jump-to-divider {
+  width: 100%;
+  height: 1px;
+  background-color: var(--color-primary-fg);
+  opacity: 0.25;
+  margin-bottom: 20px;
+}
+
+.faq-jump-to-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.jump-link {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  text-decoration: none;
+  color: var(--color-primary-fg);
+  transition: var(--transition-smooth);
+  opacity: 0.85;
+}
+
+/* Right Column: FAQ Questions Card */
+.faq-questions-card {
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 30px 35px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+  scroll-margin-top: 100px; /* Offset for sticky header when jumping */
+}
+
+.faq-questions-heading {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  margin-bottom: 7px;
+}
+
+.faq-questions-paragraph {
+  font-size: 1rem;
+  color: var(--color-muted-fg);
+  margin-bottom: 15px;
+}
+
+.faq-questions-divider {
+  width: 100%;
+  height: 1px;
+  background-color: var(--color-fg);
+  opacity: 0.25;
+  margin-bottom: 20px;
+}
+
+.faq-item {
+  margin-bottom: 0px;
+}
+
+.faq-item:last-child .faq-item-divider {
+  display: none;
+}
+
+.faq-question-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+  padding: 10px 0;
+}
+
+.faq-dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-accent);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.faq-question {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  margin: 0;
+  flex-grow: 1;
+  transition: color 0.2s ease;
+}
+
+.faq-toggle-icon {
+  font-size: 1.5rem;
+  color: var(--color-fg);
+  transition:
+    transform 0.3s ease,
+    color 0.2s ease;
+}
+
+.faq-item.active .faq-toggle-icon {
+  transform: rotate(180deg);
+  color: var(--color-accent);
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  padding-left: 21px; /* Align with text past dot */
+}
+
+.faq-answer p {
+  font-size: 0.95rem;
+  color: var(--color-muted-fg);
+  line-height: 1.6;
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+
+.faq-item-divider {
+  width: 100%;
+  height: 1px;
+  background-color: var(--color-fg);
+  opacity: 0.15;
+  margin: 10px 0;
+}
+
+/* =========================================
+   Bottom Split Banner
+   ========================================= */
+.faqc2-section {
+  width: 100%;
+  overflow: hidden;
+}
+
+.faqc2-content-row {
+  display: flex;
+  min-height: 400px;
+}
+
+/* Left Column (45%) */
+.faqc2-left-col {
+  flex: 0 0 45%;
+  background-color: var(--color-secondary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 40px;
+}
+
+.faqc2-left-content {
+  text-align: center;
+  max-width: 450px;
+}
+
+.faqc2-left-heading {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-fg);
+  margin-bottom: 20px;
+}
+
+.faqc2-left-paragraph {
+  font-size: 1.1rem;
+  color: var(--color-muted-fg);
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.faqc2-button {
+  display: inline-block;
+  background-color: var(--color-primary);
+  color: var(--color-primary-fg);
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 1rem 3rem;
+  border-radius: 8px;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+/* Right Column (55%) */
+.faqc2-right-col {
+  flex: 0 0 55%;
+  background-color: var(--color-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 40px;
+}
+
+.faqc2-right-content {
+  text-align: center;
+  max-width: 550px;
+}
+
+.faqc2-right-heading {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-primary-fg);
+  margin-bottom: 20px;
+}
+
+.faqc2-right-paragraph {
+  font-size: 1.1rem;
+  color: var(--color-primary-fg);
+  opacity: 0.85;
+  margin-bottom: 0;
+  line-height: 1.6;
+}
+
+.faqc2-email {
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================
+   HOVER & ACTIVE STATES (Mobile Fixes)
+   ========================================= */
+
+@media (hover: hover) {
+  .jump-link:hover,
+  .jump-link.active {
+    opacity: 1;
+    transform: translateX(5px);
+    color: var(--color-accent);
+  }
+
+  .faq-question-header:hover .faq-question {
+    color: var(--color-accent);
+  }
+
+  .faqc2-button:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+}
+
+/* Snappy tap-state feedback for mobile touch screens */
+.jump-link:active {
+  opacity: 1;
+  color: var(--color-accent);
+}
+
+.faq-question-header:active .faq-question {
+  color: var(--color-accent);
+}
+
+.faqc2-button:active {
+  opacity: 0.8;
+  transform: translateY(1px);
+}
+
+/* =========================================
+   Responsive Adjustments
+   ========================================= */
+
+@media (max-width: 991.98px) {
+  .faq-content-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .faq-left-col {
+    display: none;
+  }
+
+  .faqc2-content-row {
+    flex-direction: column;
+  }
+
+  .faqc2-left-col,
+  .faqc2-right-col {
+    flex: 0 0 100%;
+    padding: 60px 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .faq-hero-main-heading {
+    font-size: 2.2rem;
+  }
+  .faq-questions-card {
+    padding: 20px;
+  }
+  .faqc2-left-heading,
+  .faqc2-right-heading {
+    font-size: 2rem;
+  }
+}

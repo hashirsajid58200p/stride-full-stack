@@ -6,4 +6,7 @@ const currencyController = require("../controllers/currencyController");
 // Handles GET requests to /api/currency
 router.get("/", currencyController.getExchangeRate);
 
+// New: Detect user IP and currency from server-side to avoid CORS
+router.get("/detect-ip", currencyController.detectIp);
+
 module.exports = router;

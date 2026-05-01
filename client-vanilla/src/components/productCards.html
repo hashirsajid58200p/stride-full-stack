@@ -1,0 +1,445 @@
+<style>
+  /* =========================================
+   Product Card Component Styles
+   ========================================= */
+  .product-card {
+    background: var(--color-bg);
+    border: 2px solid var(--color-accent);
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: var(--transition-smooth);
+    display: flex;
+    flex-direction: column;
+    text-decoration: none; /* Ensure link behaves like a card */
+  }
+
+  .product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  }
+
+  .product-image {
+    position: relative;
+    height: 190px;
+    width: 100%;
+    overflow: hidden;
+    background: var(--color-secondary);
+  }
+
+  .badge-container {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 5;
+  }
+
+  .badge-tag,
+  .badge-new {
+    background-color: var(--color-fg);
+    color: var(--color-bg);
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+    width: max-content;
+  }
+
+  .badge-new {
+    background-color: var(--color-accent);
+    color: var(--color-accent-fg);
+  }
+
+  .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+  }
+
+  .product-card:hover .product-image img {
+    transform: scale(1.1);
+  }
+
+  .product-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(23, 23, 23, 0.2), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+
+  .product-card:hover .product-overlay {
+    opacity: 1;
+  }
+
+  .product-content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex-grow: 1;
+  }
+
+  .product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .name-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    flex-grow: 1;
+  }
+
+  .product-brand {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .product-name {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--color-fg);
+    line-height: 1.2;
+  }
+
+  .product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .product-stars {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    color: var(--color-accent);
+    font-size: 0.8rem;
+    min-height: 20px;
+  }
+
+  .review-count {
+    color: var(--color-muted-fg);
+    font-size: 0.8rem;
+    margin-left: 0.3rem;
+  }
+
+  .product-price {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-fg);
+    margin-top: 0;
+  }
+
+  .action-btn-wishlist {
+    background: transparent;
+    border: 2px solid var(--color-accent);
+    color: var(--color-accent);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
+    transition:
+      transform 0.2s cubic-bezier(0.2, 0, 0, 1),
+      background-color 0.3s ease,
+      color 0.3s ease;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .action-btn-wishlist:hover,
+  .action-btn-wishlist.active {
+    background: var(--color-accent);
+    color: var(--color-accent-fg);
+  }
+
+  .action-btn-wishlist:active {
+    transform: scale(0.85);
+  }
+
+  .product-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: auto;
+    padding-top: 0.5rem;
+  }
+
+  .action-btn-view {
+    flex: 1;
+    background: var(--color-accent);
+    color: var(--color-accent-fg);
+    border: none;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    padding: 0.6rem 0;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .action-btn-view:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+  }
+
+  .action-btn-view:active {
+    transform: scale(0.95);
+  }
+
+  .product-card.hidden {
+    display: none !important;
+  }
+</style>
+
+<script>
+  // ==========================================
+  // GLOBAL LISTENER FOR ALL PRODUCT CARDS
+  // ==========================================
+  if (!window.productCardWishlistListenerAttached) {
+    // Core Sync Function: Safely updates all card hearts in the DOM
+    window.syncProductCardHearts = function () {
+      const allCardBtns = document.querySelectorAll(
+        ".action-btn-wishlist[data-product]",
+      );
+      allCardBtns.forEach((btn) => {
+        const p = JSON.parse(decodeURIComponent(btn.dataset.product));
+
+        let isWished = false;
+        if (window.WishlistEngine) {
+          isWished = window.WishlistEngine.isSpecificWished(p.id, "Default");
+        } else {
+          // Fallback parsing if engine isn't injected yet
+          const key =
+            window.auth && window.auth.currentUser
+              ? `strideWishlist_${window.auth.currentUser.uid}`
+              : "strideWishlist_guest";
+          const list = JSON.parse(localStorage.getItem(key)) || [];
+          isWished = list.some(
+            (item) =>
+              String(item.id).toLowerCase() ===
+              String(`${p.id}|Default`).toLowerCase(),
+          );
+        }
+
+        if (isWished) {
+          btn.classList.add("active");
+          btn.innerHTML = '<i class="bi bi-heart-fill"></i>';
+        } else {
+          btn.classList.remove("active");
+          btn.innerHTML = '<i class="bi bi-heart"></i>';
+        }
+      });
+    };
+
+    // 1. Listen for global engine updates
+    window.addEventListener("wishlistUpdated", window.syncProductCardHearts);
+
+    // 2. CRITICAL FIX: Standalone auth listener for the cards to fix the refresh race condition!
+    // This ensures hearts sync the moment Firebase confirms login status in the background
+    const attachCardAuthListener = () => {
+      if (window.auth && typeof window.onAuthStateChanged === "function") {
+        window.onAuthStateChanged(window.auth, () => {
+          window.syncProductCardHearts();
+        });
+      }
+    };
+
+    if (window.auth) {
+      attachCardAuthListener();
+    } else {
+      window.addEventListener("firebaseInitialized", attachCardAuthListener);
+    }
+
+    // 3. Handle Clicks
+    document.addEventListener("click", async (e) => {
+      const wishBtn = e.target.closest(".action-btn-wishlist");
+
+      if (wishBtn && wishBtn.dataset.product) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!window.WishlistEngine) {
+          try {
+            const response = await fetch("../components/wishlist.html");
+            const html = await response.text();
+            const wrapper = document.createElement("div");
+            wrapper.innerHTML = html;
+            const scripts = wrapper.querySelectorAll("script");
+            scripts.forEach((script) => {
+              const newScript = document.createElement("script");
+              newScript.textContent = script.textContent;
+              document.body.appendChild(newScript);
+            });
+          } catch (err) {
+            console.error("Failed to load wishlist engine:", err);
+            if (window.showToast)
+              window.showToast("Failed to access wishlist.", "error");
+            return;
+          }
+        }
+
+        const p = JSON.parse(decodeURIComponent(wishBtn.dataset.product));
+
+        // Delegate exclusively to Default
+        const isNowWished = window.WishlistEngine.toggleFromCard(p);
+
+        if (isNowWished) {
+          wishBtn.classList.add("active");
+          wishBtn.innerHTML = '<i class="bi bi-heart-fill"></i>';
+        } else {
+          wishBtn.classList.remove("active");
+          wishBtn.innerHTML = '<i class="bi bi-heart"></i>';
+        }
+      }
+    });
+
+    window.productCardWishlistListenerAttached = true;
+  }
+
+  // ==========================================
+  // RENDER CARD ENGINE
+  // ==========================================
+  window.renderProductCardTemplate = function (p, index) {
+    const tagsArray = p.tags ? p.tags.split(",").map((t) => t.trim()) : [];
+    let badgesHTML = "";
+    tagsArray.forEach((tag) => {
+      if (tag.toLowerCase() === "new arrival") {
+        badgesHTML += `<span class="badge-new">New Arrival</span>`;
+      } else if (tag.toLowerCase() === "on sale") {
+        badgesHTML += `<span class="badge-tag" style="background:#ef4444;">Sale</span>`;
+      } else {
+        badgesHTML += `<span class="badge-tag">${tag}</span>`;
+      }
+    });
+
+    const categoryDataString = tagsArray
+      .map((t) => t.toLowerCase().replace(/\s+/g, "-"))
+      .join(" ");
+    const brandDataString = p.brand
+      ? p.brand.trim().toLowerCase().replace(/\s+/g, "-")
+      : "";
+    const sizeDataString = p.product_sizes
+      ? p.product_sizes.map((s) => s.size).join(",")
+      : "";
+
+    let starsHtml = "";
+    let reviewCount = 0;
+
+    if (p.reviews && p.reviews.length > 0) {
+      reviewCount = p.reviews.length;
+      const totalRating = p.reviews.reduce((sum, rev) => sum + rev.rating, 0);
+      const avgRating = Math.round(totalRating / reviewCount);
+
+      for (let i = 1; i <= 5; i++) {
+        starsHtml +=
+          i <= avgRating
+            ? '<i class="bi bi-star-fill"></i>'
+            : '<i class="bi bi-star"></i>';
+      }
+    } else {
+      starsHtml = '<i class="bi bi-star"></i>'.repeat(5);
+    }
+
+    // STRICT CHECK to solve false positive: Only light up if "Default" variant is wishlisted
+    let isWished = false;
+    if (window.WishlistEngine) {
+      isWished = window.WishlistEngine.isSpecificWished(p.id, "Default");
+    } else {
+      const key =
+        window.auth && window.auth.currentUser
+          ? `strideWishlist_${window.auth.currentUser.uid}`
+          : "strideWishlist_guest";
+      const list = JSON.parse(localStorage.getItem(key)) || [];
+      isWished = list.some(
+        (item) =>
+          String(item.id).toLowerCase() ===
+          String(`${p.id}|Default`).toLowerCase(),
+      );
+    }
+
+    const heartIcon = isWished
+      ? '<i class="bi bi-heart-fill"></i>'
+      : '<i class="bi bi-heart"></i>';
+    const activeClass = isWished ? "active" : "";
+
+    return `
+  <div class="product-card" data-index="${index}" data-category="${categoryDataString}" data-brand="${brandDataString}" data-price="${p.price}" data-sizes="${sizeDataString}">
+    <div class="product-image">
+      <div class="badge-container">
+        ${badgesHTML}
+      </div>
+      <img src="${p.main_image_url}" alt="${p.name}" loading="lazy" />
+      <div class="product-overlay"></div>
+    </div>
+    <div class="product-content">
+      <div class="product-info">
+        <div class="product-header">
+          <div class="name-container">
+            <span class="product-brand">${p.brand}</span>
+            <h3 class="product-name">${p.name}</h3>
+          </div>
+          <button class="action-btn-wishlist ${activeClass}" data-product='${encodeURIComponent(JSON.stringify(p))}' aria-label="Add to wishlist" title="Wishlist">
+            ${heartIcon}
+          </button>
+        </div>
+        
+        <div class="product-stars">
+          ${starsHtml}
+          <span class="review-count">(${reviewCount})</span>
+        </div>
+
+        <p class="product-price">${window.formatPrice(p.price)}</p>
+      </div>
+      <div class="product-actions">
+        <a href="productDetail.html?id=${p.id}" class="action-btn-view" title="View Details">
+          View Details
+        </a>
+      </div>
+    </div>
+  </div>
+  `;
+  };
+
+  document.addEventListener("mouseover", (e) => {
+    const card = e.target.closest(".product-card");
+    if (card) {
+      const img = card.querySelector(".product-image img");
+      if (img) img.style.transform = "scale(1.1)";
+    }
+  });
+
+  document.addEventListener("mouseout", (e) => {
+    const card = e.target.closest(".product-card");
+    if (card) {
+      const img = card.querySelector(".product-image img");
+      if (img) img.style.transform = "scale(1)";
+    }
+  });
+</script>

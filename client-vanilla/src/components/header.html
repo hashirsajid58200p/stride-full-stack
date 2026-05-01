@@ -1,0 +1,1143 @@
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+/>
+
+<style>
+  /* Navigation */
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+
+    background-color: var(--nav-bg-transparent);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+
+    border-bottom: 1px solid var(--nav-border);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+
+    transition:
+      background-color 0.4s ease,
+      box-shadow 0.4s ease,
+      border-color 0.4s ease;
+  }
+
+  /* OVERRIDE: The perfectly balanced "Goldilocks" margins */
+  .navbar .header-container {
+    max-width: 100% !important;
+    padding: 0 3vw !important; /* Perfectly balanced: not too wide, not too narrow */
+    margin: 0 auto;
+  }
+
+  .navbar.scrolled {
+    background-color: var(--nav-bg-solid);
+    box-shadow: var(--nav-shadow);
+  }
+
+  .nav-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: relative;
+    transition: height 0.3s ease;
+  }
+
+  .nav-left {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo-link {
+    display: flex;
+    align-items: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .logo-img {
+    height: 145px;
+    width: auto;
+    /* Added opacity transition for smooth dark/light mode image swapping */
+    transition:
+      opacity 0.2s ease,
+      transform 0.3s ease;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  /* Optimized transitions for the "Fast Down, Smooth Up" native app feel */
+  .icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.2s ease;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--color-fg);
+    background: transparent;
+    border: none;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .icon-btn i {
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+  }
+
+  .cart-btn {
+    position: relative;
+  }
+
+  .cart-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    background: var(--color-accent);
+    color: var(--color-accent-fg);
+    font-size: 0.625rem;
+    border-radius: 50%;
+  }
+
+  /* =========================================
+   Desktop Nav Links & Active State Indicators
+   ========================================= */
+  .mobile-menu-btn {
+    display: none !important;
+  }
+
+  .mobile-menu-close {
+    display: none;
+  }
+
+  /* ABSOLUTE CENTERING FOR LINKS */
+  .nav-links {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .nav-links a {
+    position: relative;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition:
+      color 0.2s ease,
+      opacity 0.2s ease;
+    text-decoration: none;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.5rem 0;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background-color: var(--color-accent);
+    transition: width 0.3s ease;
+  }
+
+  .nav-links a.active::after {
+    width: 100%;
+  }
+
+  .nav-links a.active {
+    color: var(--color-accent);
+  }
+
+  /* =========================================
+   Account Dropdown Styles
+   ========================================= */
+  .account-container {
+    position: relative;
+  }
+
+  .account-dropdown {
+    position: absolute;
+    top: 130%;
+    right: 0;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 200px; /* Reduced to a sleek, compact width */
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: var(--transition-smooth);
+  }
+
+  .account-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .dropdown-item {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    padding: 0.75rem 1rem;
+    color: var(--color-fg);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 8px;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .dropdown-item i {
+    font-size: 1.15rem;
+    color: var(--color-muted-fg);
+    transition: color 0.2s ease;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 24px !important;
+    height: 24px !important;
+    margin-right: 12px !important;
+    flex-shrink: 0 !important;
+  }
+ 
+  .dropdown-item span {
+    display: inline-block !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
+  }
+
+  .dropdown-divider {
+    height: 1px;
+    background-color: var(--color-border);
+    margin: 0.5rem 0;
+  }
+
+  /* =========================================
+   Search Modal Overlay Styles
+   ========================================= */
+  .search-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 15vh;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition-smooth);
+    backdrop-filter: blur(5px);
+  }
+
+  .search-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .search-modal-content {
+    background: var(--color-bg);
+    width: 90%;
+    max-width: 600px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    transform: translateY(-20px);
+    transition: var(--transition-smooth);
+  }
+
+  .search-modal-overlay.active .search-modal-content {
+    transform: translateY(0);
+  }
+
+  .search-modal-header {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .search-modal-header i.bi-search {
+    font-size: 1.2rem;
+    color: var(--color-muted-fg);
+    margin-right: 1rem;
+  }
+
+  .search-modal-header input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 1.1rem;
+    color: var(--color-fg);
+    outline: none;
+    font-family: inherit;
+  }
+
+  .close-search-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--color-muted-fg);
+    cursor: pointer;
+    transition:
+      color 0.2s ease,
+      transform 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .search-results {
+    max-height: 350px;
+    overflow-y: auto;
+    padding: 1rem;
+  }
+
+  .search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--color-fg);
+    transition: background-color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .search-result-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+    background-color: var(--color-secondary);
+  }
+
+  .search-result-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .search-result-brand {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.1rem;
+  }
+
+  .search-result-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .search-result-price {
+    color: var(--color-fg);
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-top: 0.1rem;
+  }
+
+  .no-search-results {
+    padding: 2rem;
+    text-align: center;
+    color: var(--color-muted-fg);
+    font-size: 0.95rem;
+  }
+
+  /* =========================================
+   HOVER & ACTIVE STATES (Zero-Lag Fixes)
+   ========================================= */
+
+  /* Desktop Hovers */
+  @media (hover: hover) {
+    .icon-btn:hover {
+      background-color: var(--color-secondary);
+      color: var(--color-accent);
+    }
+    .nav-links a:hover {
+      color: var(--color-accent);
+    }
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+    .dropdown-item:hover {
+      background-color: var(--color-secondary);
+      color: var(--color-accent);
+    }
+    .dropdown-item:hover i {
+      color: var(--color-accent);
+    }
+    .close-search-btn:hover {
+      color: var(--color-accent);
+    }
+    .search-result-item:hover {
+      background-color: var(--color-secondary);
+    }
+  }
+
+  /* Instant Tap State for Mobile (Overrides transition speed on press) */
+  .icon-btn:active {
+    transition: transform 0.05s ease; /* Instant shrink */
+    transform: scale(0.92);
+  }
+
+  .nav-links a:active {
+    transition: opacity 0.05s ease;
+    opacity: 0.6;
+  }
+
+  .dropdown-item:active {
+    background-color: var(--color-secondary);
+    color: var(--color-accent);
+  }
+
+  .close-search-btn:active {
+    transition: transform 0.05s ease;
+    transform: scale(0.85);
+  }
+
+  .search-result-item:active {
+    background-color: var(--color-secondary);
+  }
+
+  /* =========================================
+   Mobile Sidebar Drawer Styles & Responsiveness
+   ========================================= */
+  .mobile-menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 990; /* Kept safely below the navbar */
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .mobile-menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  @media (max-width: 992px) {
+    .mobile-menu-btn {
+      display: flex !important;
+    }
+
+    .nav-links {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: auto;
+      transform: translateX(100%);
+      width: 280px;
+      height: 100vh;
+      background-color: var(--color-bg);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding: 5rem 2rem 2rem 2rem;
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 2001;
+      gap: 0;
+    }
+
+    .nav-links.active {
+      transform: translateX(0);
+    }
+
+    .mobile-menu-close {
+      display: block;
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--color-fg);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .nav-links a {
+      font-size: 1.05rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--color-border);
+      width: 100%;
+      display: block;
+    }
+
+    .nav-links a:last-child {
+      border-bottom: none;
+    }
+
+    .nav-links a::after {
+      bottom: 0;
+    }
+  }
+
+  /* Tablet Responsiveness */
+  @media (max-width: 768px) {
+    .logo-img {
+      height: 105px;
+      object-fit: contain;
+    }
+  }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 576px) {
+    .nav-content {
+      height: 75px;
+    }
+
+    .navbar .header-container {
+      padding: 0 0.5rem !important;
+    }
+
+    .logo-img {
+      height: auto;
+      max-width: 250px;
+      max-height: 110px;
+      object-fit: contain;
+    }
+
+    .nav-right {
+      gap: 1px;
+    }
+
+    .icon-btn {
+      width: 28px;
+      height: 36px;
+    }
+
+    .icon-btn i {
+      font-size: 1.05rem;
+    }
+
+    .cart-badge {
+      width: 14px;
+      height: 14px;
+      font-size: 0.55rem;
+      top: 0px;
+      right: -3px;
+    }
+
+    .nav-links a {
+      font-size: 0.95rem;
+      padding: 0.85rem 0;
+    }
+
+    .mobile-menu-close {
+      font-size: 1.2rem;
+    }
+
+    .search-modal-content {
+      width: 95%;
+    }
+
+    .search-modal-header {
+      padding: 0.85rem 1rem;
+    }
+
+    .search-modal-header i.bi-search {
+      font-size: 1rem;
+      margin-right: 0.5rem;
+    }
+
+    .search-modal-header input {
+      font-size: 0.95rem;
+    }
+
+    .close-search-btn {
+      font-size: 1.25rem;
+    }
+
+    .search-result-img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .search-result-name {
+      font-size: 0.85rem;
+    }
+
+    .search-result-brand {
+      font-size: 0.65rem;
+    }
+
+    .search-result-price {
+      font-size: 0.85rem;
+    }
+  }
+</style>
+
+<nav class="navbar">
+  <div class="container header-container">
+    <div class="nav-content">
+      <div class="nav-left">
+        <a href="index.html" class="logo-link" title="Home">
+          <img
+            src="../../public/images/logos/stride_logo_light.png"
+            alt="Stride Logo"
+            class="logo-img"
+          />
+        </a>
+      </div>
+
+      <div class="nav-links" id="navLinks">
+        <button class="mobile-menu-close" id="mobileMenuClose">
+          <i class="bi bi-x-lg"></i>
+        </button>
+
+        <a href="products.html?category=new-arrival" data-nav="new-arrival"
+          >New Arrivals</a
+        >
+        <a href="products.html?category=men" data-nav="men">Men</a>
+        <a href="products.html?category=women" data-nav="women">Women</a>
+        <a href="about.html" data-nav="about">About</a>
+        <a href="contact.html" data-nav="contact">Contact</a>
+      </div>
+
+      <div class="nav-right">
+        <button class="icon-btn search-toggle-btn" aria-label="Search">
+          <i class="bi bi-search"></i>
+        </button>
+
+        <button class="icon-btn theme-toggle-btn" aria-label="Toggle Theme">
+          <i class="bi bi-sun"></i>
+        </button>
+
+        <a
+          href="#"
+          class="icon-btn wishlist-btn"
+          id="headerWishlistBtn"
+          aria-label="Wishlist"
+        >
+          <i class="bi bi-heart"></i>
+        </a>
+
+        <button class="icon-btn cart-btn" aria-label="Shopping Cart">
+          <i class="bi bi-cart"></i>
+          <span class="cart-badge">0</span>
+        </button>
+
+        <div class="account-container">
+          <button class="icon-btn account-btn" aria-label="Account" style="padding: 0;">
+            <i class="bi bi-person" id="header-default-avatar-icon" style="display: none;"></i>
+            <div id="header-user-avatar-content" style="display:none; width: 100%; height: 100%; border-radius: 50%; border: 2px solid var(--color-accent); font-size: 0.95rem; font-weight: bold; color: var(--color-accent); align-items: center; justify-content: center; background-color: var(--color-secondary); overflow: hidden;"></div>
+          </button>
+
+          <div class="account-dropdown" id="accountDropdown">
+            <a href="#" id="dashboardLink" class="dropdown-item">
+              <i class="bi bi-grid-1x2"></i><span>Dashboard</span>
+            </a>
+            <a href="#" id="headerProfileLink" class="dropdown-item">
+              <i class="bi bi-person"></i><span>My Account</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" id="logoutBtn" class="dropdown-item">
+              <i class="bi bi-box-arrow-right"></i><span>Logout</span>
+            </a>
+          </div>
+        </div>
+
+        <button
+          class="mobile-menu-btn icon-btn"
+          id="mobileMenuBtn"
+          aria-label="Menu"
+        >
+          <i class="bi bi-list"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
+<div class="search-modal-overlay" id="searchModal">
+  <div class="search-modal-content">
+    <div class="search-modal-header">
+      <i class="bi bi-search"></i>
+      <input
+        type="text"
+        id="headerSearchInput"
+        placeholder="Search for sneakers, brands..."
+        autocomplete="off"
+      />
+      <button class="close-search-btn" id="closeSearchBtn">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
+
+<script>
+  window.initHeader = function () {
+    // ==========================================
+    // Active Page Indicator & Seamless Navigation Logic
+    // ==========================================
+    const currentPath =
+      window.location.pathname.split("/").pop() || "index.html";
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentCategory = urlParams.get("category");
+    const navLinksAnchor = document.querySelectorAll(".nav-links a");
+
+    function updateActiveLink(targetCategory) {
+      navLinksAnchor.forEach((link) => {
+        link.classList.remove("active");
+        const dataNav = link.getAttribute("data-nav");
+
+        if (currentPath === "products.html" && targetCategory === dataNav) {
+          link.classList.add("active");
+        } else if (currentPath === "about.html" && dataNav === "about") {
+          link.classList.add("active");
+        } else if (currentPath === "contact.html" && dataNav === "contact") {
+          link.classList.add("active");
+        }
+      });
+    }
+
+    // Initial load check
+    updateActiveLink(currentCategory);
+
+    // Seamless navigation: If on products page and clicked a product link, don't reload!
+    navLinksAnchor.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        const href = link.getAttribute("href");
+
+        if (
+          currentPath === "products.html" &&
+          href.startsWith("products.html")
+        ) {
+          e.preventDefault();
+          const targetCategory = link.getAttribute("data-nav");
+
+          const newUrl =
+            window.location.protocol +
+            "//" +
+            window.location.host +
+            window.location.pathname +
+            "?category=" +
+            targetCategory;
+          window.history.pushState({ path: newUrl }, "", newUrl);
+
+          updateActiveLink(targetCategory);
+          window.dispatchEvent(
+            new CustomEvent("categoryChanged", { detail: targetCategory }),
+          );
+
+          if (window.innerWidth <= 992) closeMobileMenu();
+        }
+      });
+    });
+
+    // ==========================================
+    // SEAMLESS UNIVERSAL WISHLIST REDIRECT
+    // ==========================================
+    const wishlistBtn = document.getElementById("headerWishlistBtn");
+    if (wishlistBtn) {
+      wishlistBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        const userRole = localStorage.getItem("userRole");
+        const isLoggedIn = userRole || (window.auth && window.auth.currentUser);
+
+        // Force guest users to login first
+        if (!isLoggedIn) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        const dashboardPath = userRole === "admin" ? "adminDashboard.html" : "userDashboard.html";
+        const targetView = userRole === "admin" ? "" : "?view=wishlist";
+
+        // If already on the matching dashboard, just trigger the tab switch dynamically
+        if (currentPath === dashboardPath && userRole !== "admin") {
+          const newUrl =
+            window.location.protocol +
+            "//" +
+            window.location.host +
+            window.location.pathname +
+            targetView;
+          window.history.pushState({ path: newUrl }, "", newUrl);
+          window.dispatchEvent(
+            new CustomEvent("viewChanged", { detail: "wishlist" }),
+          );
+        } else {
+          // If on any other page, or if admin, redirect fully to the correct dashboard
+          window.location.href = dashboardPath + targetView;
+        }
+      });
+    }
+
+    // ==========================================
+    // Mobile Menu Slide-Out Drawer Logic
+    // ==========================================
+    const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+    const mobileMenuClose = document.getElementById("mobileMenuClose");
+    const mobileMenuOverlay = document.getElementById("mobileMenuOverlay");
+    const navLinks = document.getElementById("navLinks");
+
+    function openMobileMenu() {
+      navLinks.classList.add("active");
+      mobileMenuOverlay.classList.add("active");
+      document.body.style.overflow = "hidden"; // Prevent scrolling behind drawer
+    }
+
+    function closeMobileMenu() {
+      navLinks.classList.remove("active");
+      mobileMenuOverlay.classList.remove("active");
+      document.body.style.overflow = "";
+    }
+
+    if (mobileMenuBtn) mobileMenuBtn.addEventListener("click", openMobileMenu);
+    if (mobileMenuClose)
+      mobileMenuClose.addEventListener("click", closeMobileMenu);
+    if (mobileMenuOverlay)
+      mobileMenuOverlay.addEventListener("click", closeMobileMenu);
+
+    // ==========================================
+    // Navbar Background on Scroll
+    // ==========================================
+    const navbar = document.querySelector(".navbar");
+
+    function handleScroll() {
+      if (window.scrollY > 50) {
+        navbar.classList.add("scrolled");
+      } else {
+        navbar.classList.remove("scrolled");
+      }
+    }
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+
+    // ==========================================
+    // Theme Toggle Logic (Zero-Lag Optimized)
+    // ==========================================
+    const themeBtn = document.querySelector(".theme-toggle-btn");
+    const themeIcon = themeBtn.querySelector("i");
+    const logoImg = document.querySelector(".logo-img");
+
+    if (document.documentElement.getAttribute("data-theme") === "dark") {
+      themeIcon.classList.replace("bi-sun", "bi-moon");
+      if (logoImg)
+        logoImg.src = "../../public/images/logos/stride_logo_dark.png";
+    }
+
+    themeBtn.addEventListener("click", () => {
+      const currentTheme = document.documentElement.getAttribute("data-theme");
+      const isDark = currentTheme === "dark";
+
+      // Fade out logo smoothly to mask image loading
+      if (logoImg) logoImg.style.opacity = "0";
+
+      // Delay DOM heavy lifting by 50ms so the button 'click' animation renders instantly
+      setTimeout(() => {
+        if (isDark) {
+          document.documentElement.removeAttribute("data-theme");
+          localStorage.setItem("theme", "light");
+          themeIcon.classList.replace("bi-moon", "bi-sun");
+          if (logoImg)
+            logoImg.src = "../../public/images/logos/stride_logo_light.png";
+        } else {
+          document.documentElement.setAttribute("data-theme", "dark");
+          localStorage.setItem("theme", "dark");
+          themeIcon.classList.replace("bi-sun", "bi-moon");
+          if (logoImg)
+            logoImg.src = "../../public/images/logos/stride_logo_dark.png";
+        }
+
+        // Fade logo back in
+        if (logoImg) {
+          // Give browser time to fetch the new source
+          setTimeout(() => {
+            logoImg.style.opacity = "1";
+          }, 50);
+        }
+      }, 50);
+    });
+
+    // ==========================================
+    // Search Overlay Logic (Dynamic Supabase Search)
+    // ==========================================
+    const searchToggleBtn = document.querySelector(".search-toggle-btn");
+    const searchModal = document.getElementById("searchModal");
+    const closeSearchBtn = document.getElementById("closeSearchBtn");
+    const searchInput = document.getElementById("headerSearchInput");
+    const searchResults = document.getElementById("searchResults");
+
+    let searchTimeout; // Used for debouncing the input
+
+    if (searchToggleBtn && searchModal) {
+      searchToggleBtn.addEventListener("click", () => {
+        searchModal.classList.add("active");
+        document.body.style.overflow = "hidden";
+        setTimeout(() => searchInput.focus(), 100);
+      });
+
+      closeSearchBtn.addEventListener("click", () => {
+        searchModal.classList.remove("active");
+        document.body.style.overflow = "";
+        searchInput.value = "";
+        searchResults.innerHTML = "";
+      });
+
+      searchModal.addEventListener("click", (e) => {
+        if (e.target === searchModal) {
+          searchModal.classList.remove("active");
+          document.body.style.overflow = "";
+        }
+      });
+
+      searchInput.addEventListener("input", (e) => {
+        clearTimeout(searchTimeout); // Clear previous timer
+        const query = e.target.value.trim();
+
+        searchResults.innerHTML = "";
+
+        if (query.length === 0) return;
+
+        searchResults.innerHTML = `<div class="no-search-results">Searching...</div>`;
+
+        // Debounce: Wait 300ms after user stops typing before hitting the database
+        searchTimeout = setTimeout(async () => {
+          if (!window.supabase) {
+            searchResults.innerHTML = `<div class="no-search-results">Database connecting... please wait.</div>`;
+            return;
+          }
+
+          try {
+            // Query Supabase: match if the 'name' OR 'brand' contains the query string (case-insensitive)
+            const { data, error } = await window.supabase
+              .from("products")
+              .select("id, name, brand, price, main_image_url")
+              .or(`name.ilike.%${query}%,brand.ilike.%${query}%`)
+              .limit(6); // Limit results to top 6 to prevent massive dropdowns
+
+            if (error) throw error;
+
+            searchResults.innerHTML = "";
+
+            if (data.length === 0) {
+              searchResults.innerHTML = `<div class="no-search-results">No products found matching "${query}"</div>`;
+              return;
+            }
+
+            // Render Results with Brand Name included
+            data.forEach((p) => {
+              const item = document.createElement("a");
+              item.href = `productDetail.html?id=${p.id}`;
+              item.className = "search-result-item";
+              item.innerHTML = `
+                <img src="${p.main_image_url}" alt="${p.name}" class="search-result-img" />
+                <div class="search-result-info">
+                  <span class="search-result-brand">${p.brand}</span>
+                  <span class="search-result-name">${p.name}</span>
+                  <span class="search-result-price">${typeof window.formatPrice === "function" ? window.formatPrice(p.price) : `$${p.price.toFixed(2)}`}</span>
+                </div>
+              `;
+              searchResults.appendChild(item);
+            });
+          } catch (err) {
+            console.error("Search error:", err);
+            searchResults.innerHTML = `<div class="no-search-results">Error performing search. Please try again.</div>`;
+          }
+        }, 300);
+      });
+    }
+
+    // ==========================================
+    // Account Dropdown & Auth Logic
+    // ==========================================
+    const accountBtn = document.querySelector(".account-btn");
+    const accountDropdown = document.getElementById("accountDropdown");
+    const dashboardLink = document.getElementById("dashboardLink");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    if (accountBtn) {
+      accountBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+
+        const userRole = localStorage.getItem("userRole");
+        const isLoggedIn = userRole || (window.auth && window.auth.currentUser);
+
+        if (!isLoggedIn) {
+          // If not logged in, only redirect if we aren't already on the login page
+          if (!window.location.pathname.includes("login.html")) {
+            window.location.href = "login.html";
+          }
+        } else {
+          // Logged in: Toggle the menu
+          accountDropdown.classList.toggle("show");
+          const profileLink = document.getElementById("headerProfileLink");
+          if (userRole === "admin") {
+            dashboardLink.href = "adminDashboard.html";
+            if (profileLink) profileLink.style.display = "none";
+          } else {
+            dashboardLink.href = "userDashboard.html";
+            if (profileLink) {
+              profileLink.style.display = "block";
+              profileLink.href = "userDashboard.html?view=profile";
+            }
+          }
+        }
+      });
+    }
+
+    document.addEventListener("click", (e) => {
+      if (accountDropdown && accountDropdown.classList.contains("show")) {
+        if (!e.target.closest(".account-container")) {
+          accountDropdown.classList.remove("show");
+        }
+      }
+    });
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        // Remove role from local storage
+        localStorage.removeItem("userRole");
+
+        // Sign out from Firebase if available, then redirect
+        if (window.auth) {
+          window.auth
+            .signOut()
+            .then(() => {
+              window.location.href = "login.html";
+            })
+            .catch(() => {
+              window.location.href = "login.html";
+            });
+        } else {
+          window.location.href = "login.html";
+        }
+      });
+    }
+
+    // ==========================================
+    // Fetch Header Avatar if Logged In
+    // ==========================================
+    function applyAvatarDOM(avatarUrl, initials) {
+        const icon = document.getElementById("header-default-avatar-icon");
+        const avatarContainer = document.getElementById("header-user-avatar-content");
+        if (!icon || !avatarContainer) return;
+        icon.style.display = "none";
+        avatarContainer.style.display = "flex";
+        avatarContainer.parentElement.style.borderRadius = "50%";
+        avatarContainer.parentElement.style.background = "transparent";
+
+        if (avatarUrl) {
+            avatarContainer.innerHTML = `<img src="${avatarUrl}" style="width: 100%; height: 100%; object-fit: cover;" alt="Profile">`;
+        } else if (initials) {
+            avatarContainer.innerHTML = `<span>${initials}</span>`;
+        }
+    }
+
+    function removeAvatarDOM() {
+        const icon = document.getElementById("header-default-avatar-icon");
+        const avatarContainer = document.getElementById("header-user-avatar-content");
+        if (!icon || !avatarContainer) return;
+        icon.style.display = "flex";
+        avatarContainer.style.display = "none";
+        avatarContainer.parentElement.style.borderRadius = "";
+        avatarContainer.parentElement.style.background = "";
+    }
+
+    // 1. Instantly attempt to load from local storage to prevent flicker
+    function preloadLocalAvatar() {
+        if (!localStorage.getItem("userRole")) return; // Probably not logged in
+
+        let localProfile = null;
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith("stride_profile_")) {
+                try {
+                    localProfile = JSON.parse(localStorage.getItem(key));
+                    break;
+                } catch(e) {}
+            }
+        }
+
+        if (localProfile) {
+            const initials = localProfile.fullName ? localProfile.fullName.split(" ").map(n => n[0]).join("").toUpperCase() : "U";
+            applyAvatarDOM(localProfile.avatarUrl, initials);
+        }
+    }
+    
+    // Call it immediately synchronously
+    preloadLocalAvatar();
+
+    // 2. Setup Firebase listener to confirm auth state and update with fresh data
+    function setupHeaderAvatar() {
+      if (!window.auth || !window.onAuthStateChanged) return;
+      window.onAuthStateChanged(window.auth, (user) => {
+        if (user) {
+          let avatarUrl = user.photoURL;
+          let displayName = user.displayName || "User";
+          try {
+             const localData = JSON.parse(localStorage.getItem(`stride_profile_${user.uid}`));
+             if (localData && localData.avatarUrl) avatarUrl = localData.avatarUrl;
+             if (localData && localData.fullName) displayName = localData.fullName;
+          } catch(e) {}
+          const initials = displayName.split(" ").map(n => n[0]).join("").toUpperCase();
+          applyAvatarDOM(avatarUrl, initials);
+        } else {
+          removeAvatarDOM();
+        }
+      });
+    }
+
+    if (window.auth) {
+      setupHeaderAvatar();
+    } else {
+      window.addEventListener("firebaseInitialized", setupHeaderAvatar);
+    }
+  };
+</script>
