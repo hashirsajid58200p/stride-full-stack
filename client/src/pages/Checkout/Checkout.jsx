@@ -305,8 +305,8 @@ export default function Checkout() {
     
     // Testing Lab Override
     const testConfig = JSON.parse(localStorage.getItem("stride_admin_test_config") || "{}");
-    if (testConfig.skipStripeRedirect) {
-      if (window.showToast) window.showToast("Stripe Redirect Skipped (Testing Lab Mode)", "info");
+    if (testConfig.enableStripeCheckout === false) {
+      if (window.showToast) window.showToast("Stripe Checkout Disabled (Testing Lab Mode)", "info");
       setStep(3); // Go to step 3 but don't call initiateStripeCheckout
       setIsProcessingPayment(false);
       return;
@@ -785,7 +785,7 @@ export default function Checkout() {
                 <div className={styles["payment-loader"]}>
                   {(() => {
                     const testConfig = JSON.parse(localStorage.getItem("stride_admin_test_config") || "{}");
-                    if (testConfig.skipStripeRedirect) {
+                    if (testConfig.enableStripeCheckout === false) {
                       return (
                         <>
                           <div className={`${styles.spinner} ${styles.paused}`} style={{ borderTopColor: "var(--color-muted-fg)", animation: "none" }}></div>

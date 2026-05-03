@@ -153,8 +153,8 @@ export default function AdminDashboard() {
       allowBuyNow: false,
       allowReviews: false,
       allowWishlist: false,
-      allowChatbot: true,
-      skipStripeRedirect: false
+      enableChatbot: true,
+      enableStripeCheckout: true
     };
   });
 
@@ -331,6 +331,8 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     localStorage.setItem("stride_admin_test_config", JSON.stringify(testConfig));
+    // Dispatch event so other components in the same tab (like App.jsx) can react
+    window.dispatchEvent(new Event("stride_config_updated"));
   }, [testConfig]);
 
   // Click Outside logic to prevent crashes and handle UI cleanup
@@ -2817,14 +2819,14 @@ export default function AdminDashboard() {
 
                     <div className={styles["testing-item"]}>
                       <div className={styles["testing-info"]}>
-                        <strong className={styles["testing-title"]}>Show Support Chatbot</strong>
-                        <p className={styles["testing-desc"]}>Toggle visibility of the floating AI Support widget.</p>
+                        <strong className={styles["testing-title"]}>Enable Support Chat</strong>
+                        <p className={styles["testing-desc"]}>Toggle the floating AI Support widget on/off.</p>
                       </div>
                       <label className={styles["switch"]}>
                         <input 
                           type="checkbox" 
-                          checked={testConfig.allowChatbot}
-                          onChange={(e) => setTestConfig({...testConfig, allowChatbot: e.target.checked})}
+                          checked={testConfig.enableChatbot}
+                          onChange={(e) => setTestConfig({...testConfig, enableChatbot: e.target.checked})}
                         />
                         <span className={styles["slider"]}></span>
                       </label>
@@ -2832,14 +2834,14 @@ export default function AdminDashboard() {
 
                     <div className={styles["testing-item"]}>
                       <div className={styles["testing-info"]}>
-                        <strong className={styles["testing-title"]}>Disable Stripe Checkout</strong>
-                        <p className={styles["testing-desc"]}>Prevent redirection to Stripe after delivery selection.</p>
+                        <strong className={styles["testing-title"]}>Enable Stripe Checkout</strong>
+                        <p className={styles["testing-desc"]}>Allow redirection to Stripe for payments.</p>
                       </div>
                       <label className={styles["switch"]}>
                         <input 
                           type="checkbox" 
-                          checked={testConfig.skipStripeRedirect}
-                          onChange={(e) => setTestConfig({...testConfig, skipStripeRedirect: e.target.checked})}
+                          checked={testConfig.enableStripeCheckout}
+                          onChange={(e) => setTestConfig({...testConfig, enableStripeCheckout: e.target.checked})}
                         />
                         <span className={styles["slider"]}></span>
                       </label>

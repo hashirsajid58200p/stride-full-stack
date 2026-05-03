@@ -77,9 +77,25 @@ function App() {
       {/* Global Elements - Always available */}
       <Cart />
       {(() => {
-        const testConfig = JSON.parse(localStorage.getItem("stride_admin_test_config") || "{}");
-        if (testConfig.allowChatbot !== false) return <Support />;
-        return null;
+        const [showChat, setShowChat] = React.useState(() => {
+          const config = JSON.parse(localStorage.getItem("stride_admin_test_config") || "{}");
+          return config.enableChatbot !== false;
+        });
+
+        React.useEffect(() => {
+          const handleUpdate = () => {
+            const config = JSON.parse(localStorage.getItem("stride_admin_test_config") || "{}");
+            setShowChat(config.enableChatbot !== false);
+          };
+          window.addEventListener("stride_config_updated", handleUpdate);
+          window.addEventListener("storage", handleUpdate);
+          return () => {
+            window.removeEventListener("stride_config_updated", handleUpdate);
+            window.removeEventListener("storage", handleUpdate);
+          };
+        }, []);
+
+        return showChat ? <Support /> : null;
       })()}
 
       <main>
