@@ -2368,18 +2368,18 @@ input[placeholder="Stock Qty"]::placeholder {
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 1.75rem;
+  padding: 1.25rem;
   background-color: var(--color-bg);
   border: 1px solid var(--color-border);
-  border-radius: 16px;
+  border-radius: 12px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  min-height: 220px;
+  min-height: 160px;
 }
 
 .testing-item:hover {
   border-color: var(--color-accent);
-  transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 .testing-info {

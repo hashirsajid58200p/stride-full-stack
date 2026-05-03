@@ -2832,8 +2832,8 @@ export default function AdminDashboard() {
 
                     <div className={styles["testing-item"]}>
                       <div className={styles["testing-info"]}>
-                        <strong className={styles["testing-title"]}>Skip Stripe Redirect</strong>
-                        <p className={styles["testing-desc"]}>When enabled, checkout stops before redirecting to Stripe.</p>
+                        <strong className={styles["testing-title"]}>Disable Stripe Checkout</strong>
+                        <p className={styles["testing-desc"]}>Prevent redirection to Stripe after delivery selection.</p>
                       </div>
                       <label className={styles["switch"]}>
                         <input 

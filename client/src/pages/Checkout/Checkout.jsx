@@ -789,9 +789,9 @@ export default function Checkout() {
                       return (
                         <>
                           <div className={`${styles.spinner} ${styles.paused}`} style={{ borderTopColor: "var(--color-muted-fg)", animation: "none" }}></div>
-                          <h2>Stripe Redirect Skipped</h2>
+                          <h2>Stripe Checkout Disabled</h2>
                           <p style={{ color: "var(--color-muted-fg)", marginBottom: "1.5rem" }}>
-                            Testing Lab Mode: Redirection to Stripe has been disabled by the administrator.
+                            Testing Lab Mode: Stride has been disabled. The process stops before payment.
                           </p>
                           <Link to="/" className={styles["btn-outline"]} style={{ textDecoration: "none" }}>Return to Home</Link>
                         </>
