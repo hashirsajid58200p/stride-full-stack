@@ -76,7 +76,11 @@ function App() {
 
       {/* Global Elements - Always available */}
       <Cart />
-      <Support />
+      {(() => {
+        const testConfig = JSON.parse(localStorage.getItem("stride_admin_test_config") || "{}");
+        if (testConfig.allowChatbot !== false) return <Support />;
+        return null;
+      })()}
 
       <main>
         <Routes>

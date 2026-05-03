@@ -302,6 +302,16 @@ export default function Checkout() {
         );
       return;
     }
+    
+    // Testing Lab Override
+    const testConfig = JSON.parse(localStorage.getItem("stride_admin_test_config") || "{}");
+    if (testConfig.skipStripeRedirect) {
+      if (window.showToast) window.showToast("Stripe Redirect Skipped (Testing Lab Mode)", "info");
+      setStep(3); // Go to step 3 but don't call initiateStripeCheckout
+      setIsProcessingPayment(false);
+      return;
+    }
+
     goToStep(3);
     initiateStripeCheckout();
   };
@@ -773,11 +783,30 @@ export default function Checkout() {
                 </div>
 
                 <div className={styles["payment-loader"]}>
-                  <div className={styles.spinner}></div>
-                  <h2>Redirecting to Secure Payment...</h2>
-                  <p style={{ color: "var(--color-muted-fg)" }}>
-                    Please do not close or refresh this window.
-                  </p>
+                  {(() => {
+                    const testConfig = JSON.parse(localStorage.getItem("stride_admin_test_config") || "{}");
+                    if (testConfig.skipStripeRedirect) {
+                      return (
+                        <>
+                          <div className={`${styles.spinner} ${styles.paused}`} style={{ borderTopColor: "var(--color-muted-fg)", animation: "none" }}></div>
+                          <h2>Stripe Redirect Skipped</h2>
+                          <p style={{ color: "var(--color-muted-fg)", marginBottom: "1.5rem" }}>
+                            Testing Lab Mode: Redirection to Stripe has been disabled by the administrator.
+                          </p>
+                          <Link to="/" className={styles["btn-outline"]} style={{ textDecoration: "none" }}>Return to Home</Link>
+                        </>
+                      );
+                    }
+                    return (
+                      <>
+                        <div className={styles.spinner}></div>
+                        <h2>Redirecting to Secure Payment...</h2>
+                        <p style={{ color: "var(--color-muted-fg)" }}>
+                          Please do not close or refresh this window.
+                        </p>
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
             )}

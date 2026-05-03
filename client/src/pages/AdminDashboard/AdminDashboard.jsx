@@ -152,7 +152,9 @@ export default function AdminDashboard() {
       allowAddToCart: false,
       allowBuyNow: false,
       allowReviews: false,
-      allowWishlist: false
+      allowWishlist: false,
+      allowChatbot: true,
+      skipStripeRedirect: false
     };
   });
 
@@ -2808,6 +2810,36 @@ export default function AdminDashboard() {
                           type="checkbox" 
                           checked={testConfig.allowWishlist}
                           onChange={(e) => setTestConfig({...testConfig, allowWishlist: e.target.checked})}
+                        />
+                        <span className={styles["slider"]}></span>
+                      </label>
+                    </div>
+
+                    <div className={styles["testing-item"]}>
+                      <div className={styles["testing-info"]}>
+                        <strong className={styles["testing-title"]}>Show Support Chatbot</strong>
+                        <p className={styles["testing-desc"]}>Toggle visibility of the floating AI Support widget.</p>
+                      </div>
+                      <label className={styles["switch"]}>
+                        <input 
+                          type="checkbox" 
+                          checked={testConfig.allowChatbot}
+                          onChange={(e) => setTestConfig({...testConfig, allowChatbot: e.target.checked})}
+                        />
+                        <span className={styles["slider"]}></span>
+                      </label>
+                    </div>
+
+                    <div className={styles["testing-item"]}>
+                      <div className={styles["testing-info"]}>
+                        <strong className={styles["testing-title"]}>Skip Stripe Redirect</strong>
+                        <p className={styles["testing-desc"]}>When enabled, checkout stops before redirecting to Stripe.</p>
+                      </div>
+                      <label className={styles["switch"]}>
+                        <input 
+                          type="checkbox" 
+                          checked={testConfig.skipStripeRedirect}
+                          onChange={(e) => setTestConfig({...testConfig, skipStripeRedirect: e.target.checked})}
                         />
                         <span className={styles["slider"]}></span>
                       </label>
