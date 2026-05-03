@@ -567,6 +567,7 @@ export default function AdminDashboard() {
   const switchView = (target) => {
     setSearchParams({ view: target });
     setIsSidebarOpen(false);
+    setIsAvatarDropdownOpen(false);
     setSearchQuery("");
     setTableSearchQuery("");
   };
@@ -1910,7 +1911,10 @@ export default function AdminDashboard() {
                     <button
                       className={`${styles["avatar-dropdown-item"]} ${styles["avatar-logout-item"]}`}
                       id="avatar-logout-btn"
-                      onClick={() => setActiveModal("logout")}
+                      onClick={() => {
+                        setActiveModal("logout");
+                        setIsAvatarDropdownOpen(false);
+                      }}
                     >
                       <i className="bi bi-box-arrow-right"></i>
                       <span>Logout</span>
@@ -2923,7 +2927,7 @@ export default function AdminDashboard() {
                         }}
                       />
                       <div
-                        className={`${styles.swatch} ${isDefault ? styles["swatch-text"] : ""}`}
+                        className={`${styles.swatch} ${isDefault ? styles["swatch-default"] : ""}`}
                         style={{
                           backgroundColor: isDefault
                             ? ""
@@ -2931,7 +2935,7 @@ export default function AdminDashboard() {
                         }}
                       >
                         {isDefault ? (
-                          "Default"
+                          <span className={styles["def-text"]}>DEFAULT</span>
                         ) : (
                           <i className="bi bi-check"></i>
                         )}
@@ -3146,8 +3150,7 @@ export default function AdminDashboard() {
         }}
       >
         <div
-          className={styles["modal-content"]}
-          style={{ maxWidth: "420px", textAlign: "center" }}
+          className={`${styles["modal-content"]} ${styles["modal-sm"]}`}
         >
           <h3 className={styles["modal-title"]}>Delete Product?</h3>
           <p className={styles["modal-text"]}>
@@ -3182,8 +3185,7 @@ export default function AdminDashboard() {
         }}
       >
         <div
-          className={styles["modal-content"]}
-          style={{ maxWidth: "420px", textAlign: "center" }}
+          className={`${styles["modal-content"]} ${styles["modal-sm"]}`}
         >
           <h3 className={styles["modal-title"]}>Delete Order?</h3>
           <p className={styles["modal-text"]}>
@@ -3215,8 +3217,7 @@ export default function AdminDashboard() {
         }}
       >
         <div
-          className={styles["modal-content"]}
-          style={{ maxWidth: "420px", textAlign: "center" }}
+          className={`${styles["modal-content"]} ${styles["modal-sm"]}`}
         >
           <h3 className={styles["modal-title"]}>Delete Option?</h3>
           <p className={styles["modal-text"]}>
@@ -3247,8 +3248,7 @@ export default function AdminDashboard() {
         }}
       >
         <div
-          className={styles["modal-content"]}
-          style={{ maxWidth: "420px", textAlign: "center" }}
+          className={`${styles["modal-content"]} ${styles["modal-sm"]}`}
         >
           <h3 className={styles["modal-title"]}>Delete Offer?</h3>
           <p className={styles["modal-text"]}>
@@ -3273,6 +3273,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
+      {/* Logout Confirmation Modal */}
       <div
         className={`${styles["modal-overlay"]} ${activeModal === "logout" ? styles.active : ""}`}
         onClick={(e) => {
@@ -3280,7 +3281,8 @@ export default function AdminDashboard() {
         }}
       >
         <div
-          className={styles["modal-content"]}
+          className={`${styles["modal-content"]} ${styles["modal-sm"]}`}
+          onClick={(e) => e.stopPropagation()}
         >
           <h3 className={styles["modal-title"]}>Logout?</h3>
           <p className={styles["modal-text"]}>
@@ -3299,6 +3301,7 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
+      {/* Delete Account Modal */}
       <div
         className={`${styles["modal-overlay"]} ${activeModal === "deleteAccount" ? styles.active : ""}`}
         onClick={(e) => {
@@ -3306,7 +3309,8 @@ export default function AdminDashboard() {
         }}
       >
         <div
-          className={styles["modal-content"]}
+          className={`${styles["modal-content"]} ${styles["modal-sm"]}`}
+          onClick={(e) => e.stopPropagation()}
         >
           <h3 className={styles["modal-title"]}>Delete Account?</h3>
           <p className={styles["modal-text"]}>
@@ -3338,7 +3342,7 @@ export default function AdminDashboard() {
           if (e.target === e.currentTarget) setActiveModal(null);
         }}
       >
-        <div className={styles["modal-content"]} style={{ maxWidth: "500px" }}>
+        <div className={styles["modal-content"]}>
           <div className={styles["modal-header"]}>
             <h3 className={styles["modal-title"]} id="delivery-modal-title" style={{ margin: 0 }}>
               {deliveryForm.id ? "Edit Delivery Option" : "Add Delivery Option"}
@@ -3434,7 +3438,7 @@ export default function AdminDashboard() {
           if (e.target === e.currentTarget) setActiveModal(null);
         }}
       >
-        <div className={styles["modal-content"]} style={{ maxWidth: "500px" }}>
+        <div className={styles["modal-content"]}>
           <div className={styles["modal-header"]}>
             <h3 className={styles["modal-title"]} style={{ margin: 0 }}>
               Create New Coupon
@@ -3557,7 +3561,7 @@ export default function AdminDashboard() {
           if (e.target === e.currentTarget) setActiveModal(null);
         }}
       >
-        <div className={styles["modal-content"]} style={{ maxWidth: "500px" }}>
+        <div className={styles["modal-content"]}>
           <div className={styles["modal-header"]}>
             <h3 className={styles["modal-title"]} style={{ margin: 0 }}>
               Create Flash Sale
@@ -3638,7 +3642,7 @@ export default function AdminDashboard() {
           if (e.target === e.currentTarget) setActiveModal(null);
         }}
       >
-        <div className={styles["modal-content"]} style={{ maxWidth: "600px" }}>
+        <div className={styles["modal-content"]}>
           <div className={styles["modal-header"]}>
             <h3 className={styles["modal-title"]} style={{ margin: 0 }}>
               Order Details
@@ -3796,7 +3800,7 @@ export default function AdminDashboard() {
           if (e.target === e.currentTarget) setActiveModal(null);
         }}
       >
-        <div className={styles["modal-content"]} style={{ maxWidth: "600px" }}>
+        <div className={styles["modal-content"]}>
           <div className={styles["modal-header"]}>
             <h3 className={styles["modal-title"]} style={{ margin: 0 }}>
               Manage Storefront Sidebar
@@ -3953,111 +3957,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Logout Modal */}
-      <div
-        className={`${styles["modal-overlay"]} ${activeModal === "logout" ? styles.active : ""}`}
-        onClick={(e) => {
-          if (e.target === e.currentTarget) setActiveModal(null);
-        }}
-      >
-        <div
-          className={styles["modal-content"]}
-          style={{ maxWidth: "420px", textAlign: "center" }}
-        >
-          <div style={{ marginBottom: "1.5rem" }}>
-            <div
-              style={{
-                width: "60px",
-                height: "60px",
-                borderRadius: "50%",
-                backgroundColor: "rgba(239, 68, 68, 0.1)",
-                color: "#ef4444",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "0 auto",
-                fontSize: "1.5rem",
-              }}
-            >
-              <i className="bi bi-box-arrow-right"></i>
-            </div>
-          </div>
-          <h3 className={styles["modal-title"]}>Confirm Logout</h3>
-          <p className={styles["modal-text"]}>
-            Are you sure you want to log out of the admin panel?
-          </p>
-          <div className={styles["modal-actions"]}>
-            <button
-              className={styles["btn-outline"]}
-              onClick={() => setActiveModal(null)}
-            >
-              Stay
-            </button>
-            <button
-              className={styles["btn-danger"]}
-              onClick={async () => {
-                await signOut(window.auth);
-                navigate("/login", { replace: true });
-              }}
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </div>
 
-      {/* Logout Modal */}
-      <div
-        className={`${styles["modal-overlay"]} ${activeModal === "logout" ? styles.active : ""}`}
-        onClick={(e) => {
-          if (e.target === e.currentTarget) setActiveModal(null);
-        }}
-      >
-        <div
-          className={styles["modal-content"]}
-          style={{ maxWidth: "420px", textAlign: "center" }}
-        >
-          <div className={styles["modal-header"]} style={{ border: "none", justifyContent: "center" }}>
-            <div
-              style={{
-                width: "60px",
-                height: "60px",
-                borderRadius: "50%",
-                backgroundColor: "rgba(239, 68, 68, 0.1)",
-                color: "#ef4444",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "0 auto",
-                fontSize: "1.5rem",
-              }}
-            >
-              <i className="bi bi-box-arrow-right"></i>
-            </div>
-          </div>
-          <h3 className={styles["modal-title"]}>Confirm Logout</h3>
-          <p className={styles["modal-text"]}>
-            Are you sure you want to log out of the admin panel?
-          </p>
-          <div className={styles["modal-actions"]}>
-            <button
-              className={styles["btn-outline"]}
-              onClick={() => setActiveModal(null)}
-            >
-              Stay
-            </button>
-            <button
-              className={styles["btn-danger"]}
-              onClick={async () => {
-                await signOut(window.auth);
-                navigate("/login", { replace: true });
-              }}
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </div>
     </React.Fragment>
   );
 }
