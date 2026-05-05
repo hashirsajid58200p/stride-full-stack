@@ -1856,7 +1856,7 @@ export default function AdminDashboard() {
               <i className="bi bi-x-lg"></i>
             </button>
           </div>
-          <form className={styles["modal-form"]} onSubmit={handleProductSubmit}>
+          <form className={`${styles["modal-form"]} custom-scrollbar`} onSubmit={handleProductSubmit}>
             <div className={styles["form-row"]}>
               <div className={styles["form-group"]}>
                 <label>Product Brand</label>
@@ -2351,7 +2351,7 @@ export default function AdminDashboard() {
               <i className="bi bi-x-lg"></i>
             </button>
           </div>
-          <form className={styles["modal-form"]} onSubmit={handleDeliverySubmit}>
+          <form className={`${styles["modal-form"]} custom-scrollbar`} onSubmit={handleDeliverySubmit}>
             <div className={styles["form-group"]}>
               <label>Method Name</label>
               <input
@@ -2447,7 +2447,7 @@ export default function AdminDashboard() {
               <i className="bi bi-x-lg"></i>
             </button>
           </div>
-          <form className={styles["modal-form"]} onSubmit={handleOfferSubmit}>
+          <form className={`${styles["modal-form"]} custom-scrollbar`} onSubmit={handleOfferSubmit}>
             <div className={styles["form-group"]}>
               <label>Coupon Type</label>
               <select
@@ -2570,7 +2570,7 @@ export default function AdminDashboard() {
               <i className="bi bi-x-lg"></i>
             </button>
           </div>
-          <form className={styles["modal-form"]} onSubmit={handleFlashSubmit}>
+          <form className={`${styles["modal-form"]} custom-scrollbar`} onSubmit={handleFlashSubmit}>
             <div className={styles["form-group"]}>
               <label>Target Product</label>
               <select
@@ -2655,7 +2655,7 @@ export default function AdminDashboard() {
             const order = orders.find((o) => o.id === targetId);
             if (!order) return null;
             return (
-              <div className={styles["modal-form"]}>
+              <div className={`${styles["modal-form"]} custom-scrollbar`}>
                 <div className={styles["order-details-grid"]}>
                   <div
                     style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}

@@ -1292,9 +1292,9 @@ body {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   position: relative;
   max-height: 90vh;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
+  overflow: hidden; /* Ensure scrollbar stays inside */
 }
 
 .modal-sm {
@@ -1317,22 +1317,6 @@ body {
   transform: translateY(0);
 }
 
-.modal-content::-webkit-scrollbar {
-  width: 6px;
-}
-
-.modal-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.modal-content::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 10px;
-}
-
-.modal-content::-webkit-scrollbar-thumb:hover {
-  background: var(--color-muted-fg);
-}
 
 .modal-header {
   padding: 1.5rem 2rem;
@@ -1377,6 +1361,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1.75rem;
+  overflow-y: auto;
+  flex: 1;
 }
 
 /* Custom Select Arrow */
