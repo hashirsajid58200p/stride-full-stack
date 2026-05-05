@@ -1897,11 +1897,11 @@ export default function AdminDashboard() {
                     className={styles["form-input"]}
                     required
                     rows="3"
-                    value={productForm.description}
+                    value={productForm.desc}
                     onChange={(e) =>
                       setProductForm({
                         ...productForm,
-                        description: e.target.value,
+                        desc: e.target.value,
                       })
                     }
                     placeholder="Enter product details..."
@@ -2039,23 +2039,48 @@ export default function AdminDashboard() {
 
                 <div className={styles["form-row"]}>
                   <div className={styles["form-group"]}>
-                    <label>Category</label>
+                    <label>Primary Tags</label>
+                    <div className={styles["standard-tags-group"]} style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginTop: "0.5rem" }}>
+                      {["Men", "Women", "Universal", "New Arrival", "On Sale", "Featured", "Limited Edition"].map((tag) => (
+                        <label key={tag} style={{ color: "var(--color-fg)", display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.9rem", cursor: "pointer" }}>
+                          <input
+                            type="checkbox"
+                            checked={productForm.standardTags.includes(tag)}
+                            onChange={(e) => {
+                              const newTags = e.target.checked
+                                ? [...productForm.standardTags, tag]
+                                : productForm.standardTags.filter((t) => t !== tag);
+                              // Radio behavior for gender tags
+                              const genderTags = ["Men", "Women", "Universal"];
+                              let filtered = newTags;
+                              if (e.target.checked && genderTags.includes(tag)) {
+                                filtered = newTags.filter((t) => !genderTags.includes(t) || t === tag);
+                              }
+                              setProductForm({ ...productForm, standardTags: filtered });
+                            }}
+                          />
+                          {tag}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles["form-row"]}>
+                  <div className={styles["form-group"]}>
+                    <label>Additional Tags</label>
                     <input
                       type="text"
                       className={styles["form-input"]}
-                      required
-                      value={productForm.category}
+                      value={productForm.tags}
                       onChange={(e) =>
-                        setProductForm({
-                          ...productForm,
-                          category: e.target.value,
-                        })
+                        setProductForm({ ...productForm, tags: e.target.value })
                       }
-                      placeholder="e.g. Running, Lifestyle"
+                      placeholder="e.g. Running, Lifestyle, Retro"
                     />
                   </div>
                   <div className={styles["form-group"]}>
-                    <label>Price ($)</label>
+                    <label>Base Price ($)</label>
                     <input
                       type="number"
                       className={styles["form-input"]}
