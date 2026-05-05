@@ -951,7 +951,7 @@ export default function AdminDashboard() {
   // Color Blocks Handlers
   const addColorBlock = (color) => {
     if (colorBlocks.some((b) => b.color === color)) return; // Prevents duplicates
-    const defaultSizes = { 7: "", 8: "", 9: "", 10: "", 11: "", 12: "" };
+    const defaultSizes = { 7: "100", 8: "100", 9: "100", 10: "100", 11: "100", 12: "100" };
     setColorBlocks((prev) => [
       ...prev,
       { color, file: null, existingUrl: "", sizes: defaultSizes },
