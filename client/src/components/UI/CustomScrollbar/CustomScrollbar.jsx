@@ -12,12 +12,14 @@ const CustomScrollbar = ({ children, className = "" }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [startY, setStartY] = useState(0);
   const [startScrollTop, setStartScrollTop] = useState(0);
+  const [isScrollable, setIsScrollable] = useState(false);
 
   const handleResize = useCallback(() => {
     if (contentRef.current) {
       const { clientHeight, scrollHeight } = contentRef.current;
       const height = Math.max((clientHeight / scrollHeight) * clientHeight, 20);
       setThumbHeight(height);
+      setIsScrollable(scrollHeight > clientHeight);
     }
   }, []);
 
@@ -25,7 +27,12 @@ const CustomScrollbar = ({ children, className = "" }) => {
     if (contentRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
       const trackHeight = clientHeight;
-      const newPos = (scrollTop / (scrollHeight - clientHeight)) * (trackHeight - thumbHeight);
+      const maxScrollTop = scrollHeight - clientHeight;
+      if (maxScrollTop <= 0) {
+        setScrollPos(0);
+        return;
+      }
+      const newPos = (scrollTop / maxScrollTop) * (trackHeight - thumbHeight);
       setScrollPos(newPos);
     }
   }, [thumbHeight]);
@@ -82,24 +89,26 @@ const CustomScrollbar = ({ children, className = "" }) => {
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
   return (
-    <div className={`${styles.container} ${className}`}>
+    <div className={`${styles.container} ${className}`} style={{ flex: 1, minHeight: 0 }}>
       <div 
         className={styles.scrollableArea} 
         ref={contentRef}
       >
         {children}
       </div>
-      <div className={styles.track} ref={scrollTrackRef}>
-        <div 
-          className={styles.thumb} 
-          ref={scrollThumbRef}
-          style={{ 
-            height: `${thumbHeight}px`,
-            transform: `translateY(${scrollPos}px)`
-          }}
-          onMouseDown={handleMouseDown}
-        />
-      </div>
+      {isScrollable && (
+        <div className={styles.track} ref={scrollTrackRef}>
+          <div 
+            className={styles.thumb} 
+            ref={scrollThumbRef}
+            style={{ 
+              height: `${thumbHeight}px`,
+              transform: `translateY(${scrollPos}px)`
+            }}
+            onMouseDown={handleMouseDown}
+          />
+        </div>
+      )}
     </div>
   );
 };
