@@ -258,7 +258,7 @@ const OverviewSection = ({
                 <div key={o.id} className={styles["offer-item"]}>
                   <div className={styles["offer-text"]}>
                     <span>
-                      {o.code}{" "}
+                      {o.products?.name || o.code || (o.target_product_id ? "Unknown Product" : "Global Store Offer")}{" "}
                       <span style={{ color: "var(--color-accent)" }}>
                         ({o.discount_percentage}% OFF)
                       </span>
