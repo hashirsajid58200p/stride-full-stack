@@ -89,7 +89,7 @@ const CustomScrollbar = ({ children, className = "" }) => {
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
   return (
-    <div className={`${styles.container} ${className}`} style={{ flex: 1, minHeight: 0 }}>
+    <div className={`${styles.container} ${className}`}>
       <div 
         className={styles.scrollableArea} 
         ref={contentRef}

@@ -1941,95 +1941,91 @@ export default function AdminDashboard() {
                     {colorBlocks.map((block, bIdx) => (
                       <div key={bIdx} className={styles["color-block"]}>
                         <div className={styles["color-block-header"]}>
-                          <div className={styles["color-indicator-row"]}>
+                          <div className={styles["color-block-title"]}>
                             <div
                               className={styles["color-indicator-dot"]}
                               style={{
                                 backgroundColor: getColorHexFallback(block.color),
+                                width: '12px',
+                                height: '12px',
+                                borderRadius: '50%',
+                                display: 'inline-block',
+                                marginRight: '8px'
                               }}
                             ></div>
                             <span>{block.color} Variant</span>
                           </div>
                           <button
                             type="button"
-                            className={styles["remove-block-btn"]}
+                            className={styles["remove-color-btn"]}
                             onClick={() => setColorBlocks(prev => prev.filter((_, i) => i !== bIdx))}
                           >
                             <i className="bi bi-trash"></i>
                           </button>
                         </div>
 
-                        <div className={styles["color-block-body"]}>
-                          <div className={styles["image-upload-zone"]}>
-                            <input
-                              type="file"
-                              accept="image/*"
-                              id={`file-${bIdx}`}
-                              onChange={(e) =>
-                                updateColorBlockFile(bIdx, e.target.files[0])
+                        <div className={styles["color-image-upload-area"]}>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className={styles["color-file-input"]}
+                            onChange={(e) =>
+                              updateColorBlockFile(bIdx, e.target.files[0])
+                            }
+                          />
+                          {(block.file || block.existingUrl) && (
+                            <img
+                              src={
+                                block.file
+                                  ? URL.createObjectURL(block.file)
+                                  : block.existingUrl
                               }
-                              hidden
+                              alt="Preview"
+                              className={styles["color-preview-img"]}
+                              style={{ display: 'block' }}
                             />
-                            <label
-                              htmlFor={`file-${bIdx}`}
-                              className={styles["upload-placeholder"]}
-                            >
-                              {block.file || block.existingUrl ? (
-                                <img
-                                  src={
-                                    block.file
-                                      ? URL.createObjectURL(block.file)
-                                      : block.existingUrl
-                                  }
-                                  alt="Preview"
-                                />
-                              ) : (
-                                <>
-                                  <i className="bi bi-cloud-arrow-up"></i>
-                                  <span>Upload Image</span>
-                                </>
-                              )}
-                            </label>
-                          </div>
+                          )}
+                        </div>
 
-                          <div className={styles["size-qty-section"]}>
-                             <label style={{ marginBottom: '0.5rem', display: 'block' }}>Inventory for {block.color}</label>
-                            <div className={styles["size-qty-grid"]}>
-                              {["7", "8", "9", "10", "11", "12"].map((sz) => {
-                                const isChecked = block.sizes[sz] !== null && block.sizes[sz] !== false;
-                                return (
-                                  <div key={sz} className={styles["size-row"]}>
-                                    <label>
-                                      <input
-                                        type="checkbox"
-                                        className={styles["size-check"]}
-                                        checked={isChecked}
-                                        onChange={(e) =>
-                                          updateColorBlockSize(
-                                            bIdx,
-                                            sz,
-                                            e.target.checked ? "100" : false,
-                                          )
-                                        }
-                                      />{" "}
-                                      Size {sz}
-                                    </label>
+                        <div className={styles["size-qty-section"]}>
+                          <label style={{ marginBottom: '0.5rem', display: 'block', fontSize: '0.9rem', fontWeight: 600 }}>
+                            Stock for {block.color}
+                          </label>
+                          <div className={styles["size-qty-grid"]}>
+                            {["7", "8", "9", "10", "11", "12"].map((sz) => {
+                              const isChecked = block.sizes[sz] !== null && block.sizes[sz] !== false;
+                              return (
+                                <div key={sz} className={styles["size-row"]}>
+                                  <label>
                                     <input
-                                      type="number"
-                                      className={styles["qty-input"]}
-                                      placeholder="Qty"
-                                      min="0"
-                                      value={block.sizes[sz] || ""}
+                                      type="checkbox"
+                                      className={styles["size-check"]}
+                                      checked={isChecked}
                                       onChange={(e) =>
-                                        updateColorBlockSize(bIdx, sz, e.target.value)
+                                        updateColorBlockSize(
+                                          bIdx,
+                                          sz,
+                                          e.target.checked ? "100" : false,
+                                        )
                                       }
-                                      disabled={!isChecked}
-                                      required={isChecked}
-                                    />
-                                  </div>
-                                );
-                              })}
-                            </div>
+                                    />{" "}
+                                    Size {sz}
+                                  </label>
+                                  <input
+                                    type="number"
+                                    className={styles["qty-input"]}
+                                    placeholder="Qty"
+                                    min="0"
+                                    value={block.sizes[sz] || ""}
+                                    onChange={(e) =>
+                                      updateColorBlockSize(bIdx, sz, e.target.value)
+                                    }
+                                    disabled={!isChecked}
+                                    required={isChecked}
+                                  />
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
                       </div>
