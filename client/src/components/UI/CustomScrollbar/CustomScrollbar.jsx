@@ -19,7 +19,7 @@ const CustomScrollbar = ({ children, className = "" }) => {
       const { clientHeight, scrollHeight } = contentRef.current;
       const height = Math.max((clientHeight / scrollHeight) * clientHeight, 20);
       setThumbHeight(height);
-      setIsScrollable(scrollHeight > clientHeight);
+      setIsScrollable(scrollHeight > clientHeight + 1); // +1 for rounding safety
     }
   }, []);
 
@@ -36,6 +36,10 @@ const CustomScrollbar = ({ children, className = "" }) => {
       setScrollPos(newPos);
     }
   }, [thumbHeight]);
+
+  useEffect(() => {
+    handleScroll();
+  }, [thumbHeight, isScrollable, handleScroll]);
 
   useEffect(() => {
     const content = contentRef.current;
