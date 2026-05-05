@@ -13,6 +13,7 @@ import OrdersSection from "./sections/OrdersSection";
 import DeliverySection from "./sections/DeliverySection";
 import TestingLabSection from "./sections/TestingLabSection";
 import CustomScrollbar from "../../components/UI/CustomScrollbar";
+import CustomCheckbox from "../../components/UI/CustomCheckbox";
 
 
 // We rely on the globally loaded Chart.js script from index.html
@@ -2000,21 +2001,18 @@ export default function AdminDashboard() {
                               const isChecked = block.sizes[sz] !== null && block.sizes[sz] !== false;
                               return (
                                 <div key={sz} className={styles["size-row"]}>
-                                  <label>
-                                    <input
-                                      type="checkbox"
-                                      className={styles["size-check"]}
-                                      checked={isChecked}
-                                      onChange={(e) =>
-                                        updateColorBlockSize(
-                                          bIdx,
-                                          sz,
-                                          e.target.checked ? "100" : false,
-                                        )
-                                      }
-                                    />{" "}
-                                    Size {sz}
-                                  </label>
+                                  <CustomCheckbox
+                                    id={`size-${bIdx}-${sz}`}
+                                    label={`Size ${sz}`}
+                                    checked={isChecked}
+                                    onChange={(e) =>
+                                      updateColorBlockSize(
+                                        bIdx,
+                                        sz,
+                                        e.target.checked ? "100" : false,
+                                      )
+                                    }
+                                  />
                                   <input
                                     type="number"
                                     className={styles["qty-input"]}
@@ -2040,27 +2038,26 @@ export default function AdminDashboard() {
                 <div className={styles["form-row"]}>
                   <div className={styles["form-group"]}>
                     <label>Primary Tags</label>
-                    <div className={styles["standard-tags-group"]} style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginTop: "0.5rem" }}>
+                    <div className={styles["standard-tags-group"]} style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap", marginTop: "0.5rem" }}>
                       {["Men", "Women", "Universal", "New Arrival", "On Sale", "Featured", "Limited Edition"].map((tag) => (
-                        <label key={tag} style={{ color: "var(--color-fg)", display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.9rem", cursor: "pointer" }}>
-                          <input
-                            type="checkbox"
-                            checked={productForm.standardTags.includes(tag)}
-                            onChange={(e) => {
-                              const newTags = e.target.checked
-                                ? [...productForm.standardTags, tag]
-                                : productForm.standardTags.filter((t) => t !== tag);
-                              // Radio behavior for gender tags
-                              const genderTags = ["Men", "Women", "Universal"];
-                              let filtered = newTags;
-                              if (e.target.checked && genderTags.includes(tag)) {
-                                filtered = newTags.filter((t) => !genderTags.includes(t) || t === tag);
-                              }
-                              setProductForm({ ...productForm, standardTags: filtered });
-                            }}
-                          />
-                          {tag}
-                        </label>
+                        <CustomCheckbox
+                          key={tag}
+                          id={`tag-${tag}`}
+                          label={tag}
+                          checked={productForm.standardTags.includes(tag)}
+                          onChange={(e) => {
+                            const newTags = e.target.checked
+                              ? [...productForm.standardTags, tag]
+                              : productForm.standardTags.filter((t) => t !== tag);
+                            // Radio behavior for gender tags
+                            const genderTags = ["Men", "Women", "Universal"];
+                            let filtered = newTags;
+                            if (e.target.checked && genderTags.includes(tag)) {
+                              filtered = newTags.filter((t) => !genderTags.includes(t) || t === tag);
+                            }
+                            setProductForm({ ...productForm, standardTags: filtered });
+                          }}
+                        />
                       ))}
                     </div>
                   </div>

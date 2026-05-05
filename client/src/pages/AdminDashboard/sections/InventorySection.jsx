@@ -1,5 +1,6 @@
 import React from 'react';
 import Pagination from '../../../components/UI/Pagination';
+import CustomCheckbox from '../../../components/UI/CustomCheckbox';
 
 const InventorySection = ({
   styles,
@@ -70,34 +71,19 @@ const InventorySection = ({
           flexWrap: "wrap",
         }}
       >
-        <label
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
-        >
-          <input
-            type="checkbox"
-            checked={
-              selectedInventory.length > 0 &&
-              selectedInventory.length >=
-                products.reduce(
-                  (sum, p) => sum + (p.product_sizes?.length || 0),
-                  0,
-                )
-            }
-            onChange={handleInventorySelectAll}
-            style={{
-              width: "18px",
-              height: "18px",
-              accentColor: "var(--color-accent)",
-            }}
-          />
-          Select All
-        </label>
+        <CustomCheckbox
+          id="selectAllInventory"
+          label="Select All"
+          checked={
+            selectedInventory.length > 0 &&
+            selectedInventory.length >=
+              products.reduce(
+                (sum, p) => sum + (p.product_sizes?.length || 0),
+                0,
+              )
+          }
+          onChange={handleInventorySelectAll}
+        />
         <div style={{ flexGrow: 1 }}></div>
         <input
           type="number"
@@ -138,16 +124,10 @@ const InventorySection = ({
               paginated.map((p, idx) => (
                 <tr key={`${p.id}-${p.size}-${idx}`}>
                   <td>
-                    <input
-                      type="checkbox"
+                    <CustomCheckbox
+                      id={`inv-${p.id}-${p.size}-${idx}`}
                       checked={selectedInventory.includes(`${p.id}|${p.size}`)}
                       onChange={() => handleInventoryCheck(p.id, p.size)}
-                      style={{
-                        width: "16px",
-                        height: "16px",
-                        accentColor: "var(--color-accent)",
-                        cursor: "pointer",
-                      }}
                     />
                   </td>
                   <td>

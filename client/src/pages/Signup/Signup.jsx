@@ -7,6 +7,7 @@ import {
 } from "firebase/auth";
 import { getDatabase, ref, set, get } from "firebase/database";
 import styles from "./Signup.module.css";
+import CustomCheckbox from "../../components/UI/CustomCheckbox";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -219,27 +220,21 @@ export default function Signup() {
 
             <div className={styles["form-options"]}>
               <div className={styles["checkbox-group"]}>
-                <input
-                  type="checkbox"
+                <CustomCheckbox
                   id="newsletter"
+                  label="Subscribe to newsletter"
                   checked={formData.newsletter}
                   onChange={handleInputChange}
                 />
-                <label htmlFor="newsletter">Subscribe to newsletter</label>
               </div>
 
               <div className={styles["checkbox-group"]}>
-                <input
-                  type="checkbox"
+                <CustomCheckbox
                   id="terms"
-                  required
+                  label="I have read, understood and agree to be bound by Stride's Privacy Policy and Terms of Use"
                   checked={formData.terms}
                   onChange={handleInputChange}
                 />
-                <label htmlFor="terms">
-                  I have read, understood and agree to be bound by Stride's
-                  Privacy Policy and Terms of Use
-                </label>
               </div>
             </div>
 

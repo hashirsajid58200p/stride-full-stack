@@ -9,6 +9,7 @@ import {
 } from "firebase/auth";
 import { getDatabase, ref, get } from "firebase/database";
 import styles from "./Login.module.css";
+import CustomCheckbox from "../../components/UI/CustomCheckbox";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -219,13 +220,12 @@ export default function Login() {
 
             <div className={styles["form-options"]}>
               <div className={styles["checkbox-group"]}>
-                <input
-                  type="checkbox"
+                <CustomCheckbox
                   id="rememberMe"
+                  label="Remember me"
                   checked={formData.rememberMe}
                   onChange={handleInputChange}
                 />
-                <label htmlFor="rememberMe">Remember me</label>
               </div>
               <Link to="/forgot-password" className={styles["forgot-link"]}>
                 Forgot Password?

@@ -5,6 +5,7 @@ import SkeletonAnimation from "../../components/UI/SkeletonAnimation";
 import styles from "./Products.module.css";
 import { useCurrency } from "../../context/CurrencyContext";
 import Pagination from "../../components/UI/Pagination";
+import CustomCheckbox from "../../components/UI/CustomCheckbox";
 
 const DEFAULT_SIDEBAR = {
   categories: ["Men", "Women", "Universal", "New Arrival"],
@@ -546,14 +547,13 @@ export default function Products() {
               <label>Available Sizes</label>
               <div className={styles["checkbox-grid"]}>
                 {["7", "8", "9", "10", "11", "12"].map((size) => (
-                  <label key={size} className={styles["check-item"]}>
-                    <input
-                      type="checkbox"
-                      checked={draftFilters.sizes.includes(size)}
-                      onChange={() => handleDraftSizeToggle(size)}
-                    />
-                    Size {size}
-                  </label>
+                  <CustomCheckbox
+                    key={size}
+                    id={`filter-size-${size}`}
+                    label={`Size ${size}`}
+                    checked={draftFilters.sizes.includes(size)}
+                    onChange={() => handleDraftSizeToggle(size)}
+                  />
                 ))}
               </div>
             </div>
