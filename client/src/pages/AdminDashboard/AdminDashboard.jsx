@@ -952,7 +952,11 @@ export default function AdminDashboard() {
 
   // Color Blocks Handlers
   const addColorBlock = (color) => {
-    if (colorBlocks.some((b) => b.color === color)) return; // Prevents duplicates
+    if (colorBlocks.some((b) => b.color === color)) {
+      // Toggle off: remove the color block
+      setColorBlocks((prev) => prev.filter((b) => b.color !== color));
+      return;
+    }
     const defaultSizes = { 7: "100", 8: "100", 9: "100", 10: "100", 11: "100", 12: "100" };
     setColorBlocks((prev) => [
       ...prev,
