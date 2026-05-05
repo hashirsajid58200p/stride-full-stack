@@ -152,15 +152,20 @@ a {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+  background: var(--color-accent);
   border-radius: 0 !important; /* Sharp edges */
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--color-muted-fg);
+  background: var(--color-accent);
+  filter: brightness(0.9);
+}
+
+.custom-scrollbar::-webkit-scrollbar-button {
+  display: none; /* Hide up/down arrows */
 }
 
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-border) transparent;
+  scrollbar-color: var(--color-accent) transparent;
 }
