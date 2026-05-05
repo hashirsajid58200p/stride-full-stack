@@ -4,6 +4,7 @@ import ProductCards from "../../components/ECommerce/ProductCards";
 import SkeletonAnimation from "../../components/UI/SkeletonAnimation";
 import styles from "./Products.module.css";
 import { useCurrency } from "../../context/CurrencyContext";
+import Pagination from "../../components/UI/Pagination";
 
 const DEFAULT_SIDEBAR = {
   categories: ["Men", "Women", "Universal", "New Arrival"],
@@ -422,33 +423,11 @@ export default function Products() {
             {/* PAGINATION UI */}
             {!isLoading && totalPages > 1 && (
               <div className={styles.pagination}>
-                <button
-                  className={styles["page-nav-btn"]}
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  <i className="bi bi-chevron-left"></i>
-                </button>
-
-                <div className={styles["page-numbers"]}>
-                  {[...Array(totalPages)].map((_, idx) => (
-                    <button
-                      key={idx + 1}
-                      className={`${styles["page-num"]} ${currentPage === idx + 1 ? styles.active : ""}`}
-                      onClick={() => handlePageChange(idx + 1)}
-                    >
-                      {idx + 1}
-                    </button>
-                  ))}
-                </div>
-
-                <button
-                  className={styles["page-nav-btn"]}
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                >
-                  <i className="bi bi-chevron-right"></i>
-                </button>
+                <Pagination 
+                  totalPages={totalPages} 
+                  current={currentPage} 
+                  onPageChange={handlePageChange} 
+                />
               </div>
             )}
 

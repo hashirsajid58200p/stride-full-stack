@@ -2449,47 +2449,4 @@ input[placeholder="Stock Qty"]::placeholder {
   transform: translateX(24px);
 }
 
-/* Pagination Styles */
-.pagination-row td {
-  padding: 1.5rem !important;
-  border-bottom: none !important;
-}
 
-.pagination-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.page-btn {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  border: 1px solid var(--color-border);
-  background: var(--color-secondary);
-  color: var(--color-fg);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.page-btn:hover:not(:disabled) {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-  background: var(--color-bg);
-}
-
-.page-btn.active {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  color: #fff;
-}
-
-.page-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}

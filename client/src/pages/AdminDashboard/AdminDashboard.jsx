@@ -5,6 +5,13 @@ import { auth } from "../../firebaseConfig";
 import styles from "./AdminDashboard.module.css";
 import LiveChat from "../../components/Admin/LiveChat/LiveChat";
 import ProfileSettings from "../../components/ECommerce/ProfileSettings/ProfileSettings";
+import OverviewSection from "./sections/OverviewSection";
+import ProductsSection from "./sections/ProductsSection";
+import InventorySection from "./sections/InventorySection";
+import OffersSection from "./sections/OffersSection";
+import OrdersSection from "./sections/OrdersSection";
+import DeliverySection from "./sections/DeliverySection";
+import TestingLabSection from "./sections/TestingLabSection";
 
 // We rely on the globally loaded Chart.js script from index.html
 // as requested to maintain the exact architecture of the vanilla build.
@@ -14,6 +21,7 @@ const CLOUDINARY_UPLOAD_PRESET = "ml_default";
 
 // Replicates the colorShades logic used in vanilla
 const colorOptions = [
+  "Default",
   "Red",
   "Blue",
   "Yellow",
@@ -57,7 +65,6 @@ const colorOptions = [
   "OffWhite",
   "Silver",
   "Slate",
-  "Default",
 ];
 
 const getColorHexFallback = (colorStr) => {
@@ -1312,251 +1319,6 @@ export default function AdminDashboard() {
   // RENDER HELPERS
   // ==========================================
 
-  const Pagination = ({ totalPages, current, onPageChange }) => {
-    if (totalPages <= 1) return null;
-
-    const pages = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pages.push(i);
-    }
-
-    return (
-      <div className={styles["pagination-container"]}>
-        <button 
-          className={styles["page-btn"]} 
-          disabled={current === 1}
-          onClick={() => onPageChange(current - 1)}
-        >
-          <i className="bi bi-chevron-left"></i>
-        </button>
-        {pages.map(p => (
-          <button 
-            key={p} 
-            className={`${styles["page-btn"]} ${current === p ? styles.active : ""}`}
-            onClick={() => onPageChange(p)}
-          >
-            {p}
-          </button>
-        ))}
-        <button 
-          className={styles["page-btn"]} 
-          disabled={current === totalPages}
-          onClick={() => onPageChange(current + 1)}
-        >
-          <i className="bi bi-chevron-right"></i>
-        </button>
-      </div>
-    );
-  };
-
-  const renderOrdersTable = (data) => {
-    if (data.length === 0)
-      return (
-        <tr>
-          <td
-            colSpan="7"
-            style={{ textAlign: "center", color: "var(--color-muted-fg)" }}
-          >
-            No orders found.
-          </td>
-        </tr>
-      );
-
-    return data.map((o) => (
-      <tr key={o.id}>
-        <td className={styles["font-semibold"]}>
-          #{o.id.substring(0, 8).toUpperCase()}
-        </td>
-        <td style={{ lineHeight: 1.2 }}>{o.full_name}</td>
-        <td className={styles["text-muted"]}>
-          {new Date(o.created_at).toLocaleDateString()}
-        </td>
-        <td>{o.items_count} items</td>
-        <td className={styles["font-semibold"]}>
-          {window.formatPrice
-            ? window.formatPrice(o.total_amount)
-            : `$${o.total_amount}`}
-        </td>
-        <td>
-          <span className={`${styles.badge} ${getStatusBadge(o.status)}`}>
-            {o.status}
-          </span>
-        </td>
-        <td>
-          <div className={styles["table-actions"]}>
-            <button
-              className={styles["btn-outline"]}
-              onClick={() => {
-                setTargetId(o.id);
-                setActiveModal("orderDetails");
-              }}
-            >
-              View Details
-            </button>
-            <button
-              className={styles["btn-danger-outline"]}
-              onClick={() => {
-                setTargetId(o.id);
-                setActiveModal("deleteOrder");
-              }}
-            >
-              <i className="bi bi-trash"></i>
-            </button>
-          </div>
-        </td>
-      </tr>
-    ));
-  };
-
-  const renderProductsTable = (data) => {
-    if (data.length === 0)
-      return (
-        <tr>
-          <td
-            colSpan="7"
-            style={{ textAlign: "center", color: "var(--color-muted-fg)" }}
-          >
-            No products found.
-          </td>
-        </tr>
-      );
-
-    return data.map((p) => (
-      <tr key={p.id}>
-        <td className={styles["text-muted"]}>
-          {p.id.substring(0, 8).toUpperCase()}
-        </td>
-        <td>
-          <div className={styles["table-product-cell"]}>
-            <img
-              src={p.main_image_url}
-              alt={p.name}
-              className={styles["table-product-img"]}
-            />
-            <span className={styles["table-product-name"]}>{p.name}</span>
-          </div>
-        </td>
-        <td>{p.brand}</td>
-        <td className={styles["font-semibold"]}>
-          {window.formatPrice
-            ? window.formatPrice(p.price)
-            : `$${p.price.toFixed(2)}`}
-        </td>
-        <td>{p.totalStock} units</td>
-        <td>
-          <span className={`${styles.badge} ${getStatusBadge(p.status)}`}>
-            {p.status}
-          </span>
-        </td>
-        <td>
-          <div className={styles["table-actions"]}>
-            <button
-              className={styles["btn-outline"]}
-              onClick={() => handleProductModalOpen(p)}
-            >
-              <i className="bi bi-pencil"></i>
-            </button>
-            <button
-              className={styles["btn-danger-outline"]}
-              onClick={() => {
-                setTargetId(p.id);
-                setTargetName(p.name);
-                setActiveModal("deleteProduct");
-              }}
-            >
-              <i className="bi bi-trash"></i>
-            </button>
-          </div>
-        </td>
-      </tr>
-    ));
-  };
-
-  const renderInventoryTable = (data) => {
-    if (data.length === 0)
-      return (
-        <tr>
-          <td
-            colSpan="5"
-            style={{ textAlign: "center", color: "var(--color-muted-fg)" }}
-          >
-            No inventory data found.
-          </td>
-        </tr>
-      );
-
-    return data.map((p, idx) => (
-      <tr key={`${p.id}-${p.size}-${idx}`}>
-        <td>
-          <input
-            type="checkbox"
-            checked={selectedInventory.includes(`${p.id}|${p.size}`)}
-            onChange={() => handleInventoryCheck(p.id, p.size)}
-            style={{
-              width: "16px",
-              height: "16px",
-              accentColor: "var(--color-accent)",
-              cursor: "pointer",
-            }}
-          />
-        </td>
-        <td>
-          <div className={styles["table-product-cell"]}>
-            <img
-              src={p.img}
-              alt={p.name}
-              className={styles["table-product-img"]}
-            />
-            <span className={styles["table-product-name"]}>{p.name}</span>
-          </div>
-        </td>
-        <td className={`${styles["font-semibold"]} ${styles["text-muted"]}`}>
-          Size {p.size} <br />
-          <span style={{ fontSize: "0.75rem", fontWeight: "normal" }}>
-            Colors: {p.colors}
-          </span>
-        </td>
-        <td>
-          <span
-            className={`${styles.badge} ${p.stock > 0 ? (p.stock < 10 ? styles["badge-warning"] : styles["badge-success"]) : styles["badge-danger"]}`}
-          >
-            {p.stock} units
-          </span>
-        </td>
-        <td>
-          <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-            <input
-              type="number"
-              id={`restock-${p.id}-${p.size}`}
-              min="0"
-              placeholder="Stock Qty"
-              className={styles["qty-input"]}
-            />
-            <button
-              className={`${styles.btn} ${styles["btn-primary"]} ${styles["btn-sm"]}`}
-              onClick={() =>
-                handleSingleStockUpdate(
-                  p.id,
-                  p.size,
-                  `restock-${p.id}-${p.size}`,
-                )
-              }
-            >
-              Set Stock
-            </button>
-            <button
-              className={`${styles.btn} ${styles["btn-danger-outline"]} ${styles["btn-sm"]}`}
-              onClick={() => handleMarkEmpty(p.id, p.size)}
-            >
-              Mark Empty
-            </button>
-          </div>
-        </td>
-      </tr>
-    ));
-  };
-
-
   const deleteNotification = async (id) => {
     if (!window.supabase) return;
     try {
@@ -1943,912 +1705,113 @@ export default function AdminDashboard() {
 
             {/* DASHBOARD VIEW */}
             {activeView === "dashboard" && (
-              <>
-                <div className={styles["stats-row"]} id="overview-stats-container">
-                  <div className={styles["stat-card"]}>
-                    <div className={styles["stat-info"]}>
-                      <p className={styles["stat-label"]}>
-                        Total Inventory Value{" "}
-                        <span className={styles["stat-period"]}>Live</span>
-                      </p>
-                      <div className={styles["stat-value-row"]}>
-                        <h3 className={styles["stat-value"]}>
-                          {window.formatPrice
-                            ? window.formatPrice(totalInventoryValue)
-                            : `$${totalInventoryValue}`}
-                        </h3>
-                      </div>
-                    </div>
-                    <div
-                      className={`${styles["stat-icon-wrapper"]} ${styles["text-accent"]}`}
-                    >
-                      <i className="bi bi-cash-stack"></i>
-                    </div>
-                  </div>
-                  <div className={styles["stat-card"]}>
-                    <div className={styles["stat-info"]}>
-                      <p className={styles["stat-label"]}>
-                        Total Products{" "}
-                        <span className={styles["stat-period"]}>
-                          In Catalog
-                        </span>
-                      </p>
-                      <div className={styles["stat-value-row"]}>
-                        <h3 className={styles["stat-value"]}>
-                          {products.length}
-                        </h3>
-                      </div>
-                    </div>
-                    <div
-                      className={`${styles["stat-icon-wrapper"]} ${styles["text-blue"]}`}
-                    >
-                      <i className="bi bi-box-seam"></i>
-                    </div>
-                  </div>
-                  <div className={styles["stat-card"]}>
-                    <div className={styles["stat-info"]}>
-                      <p className={styles["stat-label"]}>
-                        Low Stock Items{" "}
-                        <span className={styles["stat-period"]}>
-                          Needs Attention
-                        </span>
-                      </p>
-                      <div className={styles["stat-value-row"]}>
-                        <h3
-                          className={`${styles["stat-value"]} ${lowStockCount > 0 ? styles["text-red"] : ""}`}
-                        >
-                          {lowStockCount}
-                        </h3>
-                      </div>
-                    </div>
-                    <div
-                      className={`${styles["stat-icon-wrapper"]} ${styles["text-orange"]}`}
-                    >
-                      <i className="bi bi-exclamation-triangle"></i>
-                    </div>
-                  </div>
-                  <div className={styles["stat-card"]}>
-                    <div className={styles["stat-info"]}>
-                      <p className={styles["stat-label"]}>
-                        Active Offers{" "}
-                        <span className={styles["stat-period"]}>Running</span>
-                      </p>
-                      <div className={styles["stat-value-row"]}>
-                        <h3 className={styles["stat-value"]} id="dash-active-offers">
-                          {offers.length}
-                        </h3>
-                      </div>
-                    </div>
-                    <div
-                      className={`${styles["stat-icon-wrapper"]} ${styles["text-purple"]}`}
-                    >
-                      <i className="bi bi-tags"></i>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={styles["charts-row"]}>
-                  <div
-                    className={`${styles["chart-card"]} ${styles["main-chart"]}`}
-                  >
-                    <div className={styles["card-header"]}>
-                      <h3 className={styles["card-title"]}>Sales Analytic</h3>
-                    </div>
-                    <div className={styles["chart-metrics"]}>
-                      <div className={styles.metric}>
-                        <p className={styles["metric-label"]}>Income</p>
-                        <p className={styles["metric-value"]}>
-                          <span>
-                            {window.formatPrice
-                              ? window.formatPrice(totalIncome)
-                              : `$${totalIncome}`}
-                          </span>
-                          <span
-                            className={`${styles.trend} ${styles.positive}`}
-                          >
-                            Live <i className="bi bi-graph-up-arrow"></i>
-                          </span>
-                        </p>
-                      </div>
-                      <div className={styles.metric}>
-                        <p className={styles["metric-label"]}>
-                          Estimated Expenses (40%)
-                        </p>
-                        <p className={styles["metric-value"]}>
-                          <span>
-                            {window.formatPrice
-                              ? window.formatPrice(totalIncome * 0.4)
-                              : `$${totalIncome * 0.4}`}
-                          </span>
-                          <span
-                            className={`${styles.trend} ${styles.negative}`}
-                          >
-                            Live <i className="bi bi-graph-down-arrow"></i>
-                          </span>
-                        </p>
-                      </div>
-                      <div className={styles.metric}>
-                        <p className={styles["metric-label"]}>Net Balance</p>
-                        <p className={styles["metric-value"]}>
-                          <span>
-                            {window.formatPrice
-                              ? window.formatPrice(totalIncome * 0.6)
-                              : `$${totalIncome * 0.6}`}
-                          </span>
-                          <span
-                            className={`${styles.trend} ${styles.positive}`}
-                          >
-                            Live <i className="bi bi-graph-up-arrow"></i>
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                    <div className={styles["chart-placeholder"]}>
-                      <canvas id="salesLineChart"></canvas>
-                    </div>
-                  </div>
-                  <div
-                    className={`${styles["chart-card"]} ${styles["target-chart"]}`}
-                  >
-                    <div className={styles["card-header"]}>
-                      <h3 className={styles["card-title"]}>
-                        Inventory by Category
-                      </h3>
-                    </div>
-                    <div className={styles["target-content"]}>
-                      <div
-                        style={{
-                          position: "relative",
-                          width: "100%",
-                          maxWidth: "250px",
-                          aspectRatio: 1,
-                        }}
-                      >
-                        <canvas id="categoryPieChart"></canvas>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={styles["bottom-row"]}>
-                  <div
-                    className={`${styles["bottom-card"]} ${styles["top-selling"]}`}
-                  >
-                    <div className={styles["card-header"]}>
-                      <h3 className={styles["card-title"]}>
-                        Top Products Overview
-                      </h3>
-                    </div>
-                    <div
-                      className={styles["product-cards-scroll"]}
-                      ref={scrollRef}
-                    >
-                      {products.slice(0, 5).map((p) => (
-                        <div
-                          key={p.id}
-                          className={styles["admin-product-card"]}
-                        >
-                          <div className={styles["prod-img"]}>
-                            <img src={p.main_image_url} alt={p.name} />
-                          </div>
-                          <div className={styles["prod-info"]}>
-                            <h4>{p.name}</h4>
-                            <p>{p.totalStock} Pcs in Stock</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    <div
-                      className={`${styles["header-nav"]} ${styles["move-arrows"]}`}
-                    >
-                      <div
-                        className={styles["nav-arrow"]}
-                        onClick={() =>
-                          scrollRef.current.scrollBy({
-                            left: -250,
-                            behavior: "smooth",
-                          })
-                        }
-                      >
-                        <i className="bi bi-chevron-left"></i>
-                      </div>
-                      <div
-                        className={styles["nav-arrow"]}
-                        onClick={() =>
-                          scrollRef.current.scrollBy({
-                            left: 250,
-                            behavior: "smooth",
-                          })
-                        }
-                      >
-                        <i className="bi bi-chevron-right"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    className={`${styles["bottom-card"]} ${styles["current-offer"]}`}
-                  >
-                    <div className={styles["card-header"]}>
-                      <h3 className={styles["card-title"]}>Current Offers</h3>
-                      <button
-                        className={`${styles.btn} ${styles["btn-primary"]} ${styles["btn-sm"]}`}
-                        onClick={() => switchView("offers")}
-                      >
-                        Manage
-                      </button>
-                    </div>
-                    <div className={styles["offer-list"]}>
-                      {offers.length === 0 ? (
-                        <p
-                          className={styles["text-muted"]}
-                          style={{ fontSize: "0.85rem" }}
-                        >
-                          No active offers.
-                        </p>
-                      ) : (
-                        offers.slice(0, 4).map((o) => (
-                          <div key={o.id} className={styles["offer-item"]}>
-                            <div className={styles["offer-text"]}>
-                              <span>
-                                {o.code}{" "}
-                                <span style={{ color: "var(--color-accent)" }}>
-                                  ({o.discount_percentage}% OFF)
-                                </span>
-                              </span>
-                              <span className={styles.date}>
-                                Valid till: {o.valid_until}
-                              </span>
-                            </div>
-                            <div className={styles["progress-track"]}>
-                              <div
-                                className={`${styles["progress-fill"]} ${styles["bg-accent"]}`}
-                                style={{ width: "100%" }}
-                              ></div>
-                            </div>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </>
+              <OverviewSection 
+                styles={styles}
+                totalInventoryValue={totalInventoryValue}
+                products={products}
+                lowStockCount={lowStockCount}
+                offers={offers}
+                totalIncome={totalIncome}
+                scrollRef={scrollRef}
+                switchView={switchView}
+              />
             )}
 
-            {/* PRODUCTS VIEW */}
             {activeView === "products" && (
-              <div className={styles["data-table-card"]}>
-                <div className={styles["card-header"]}>
-                  <div>
-                    <h3 className={styles["card-title"]}>Product Inventory</h3>
-                    <p className={styles["card-subtitle"]}>
-                      Manage your catalog, pricing, and stock.
-                    </p>
-                  </div>
-                  <div className={`${styles["search-bar"]} ${styles["table-search"]}`}>
-                    <i className={`bi bi-search ${styles["search-icon"]}`}></i>
-                    <input
-                      type="text"
-                      placeholder="Search products by name, brand, or ID..."
-                      value={tableSearchQuery}
-                      onChange={(e) => setTableSearchQuery(e.target.value)}
-                    />
-                  </div>
-                  <div className={styles["header-actions"]} style={{ display: "flex", gap: "1rem" }}>
-                    <button
-                      className={styles["btn-outline"]}
-                      onClick={() => setActiveModal("sidebar")}
-                    >
-                      <i className="bi bi-layout-sidebar"></i> Manage Sidebar
-                    </button>
-                    <button
-                      className={styles["btn-primary"]}
-                      onClick={() => handleProductModalOpen(null)}
-                    >
-                      <i className="bi bi-plus-lg"></i> Add New Product
-                    </button>
-                  </div>
-                </div>
-                <div className={styles["table-responsive"]}>
-                  <table className={styles["admin-table"]}>
-                    <thead>
-                      <tr>
-                        <th>Product ID</th>
-                        <th>Product Details</th>
-                        <th>Brand</th>
-                        <th>Price</th>
-                        <th>Stock</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(() => {
-                        const filtered = products.filter(p => 
-                          tableSearchQuery === "" ||
-                          p.name.toLowerCase().includes(tableSearchQuery.toLowerCase()) ||
-                          p.brand.toLowerCase().includes(tableSearchQuery.toLowerCase()) ||
-                          p.id.toLowerCase().includes(tableSearchQuery.toLowerCase())
-                        );
-                        const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-                        const paginated = filtered.slice((currentPage.products - 1) * ITEMS_PER_PAGE, currentPage.products * ITEMS_PER_PAGE);
-                        return (
-                          <>
-                            {renderProductsTable(paginated)}
-                            <tr className={styles["pagination-row"]}>
-                              <td colSpan="7">
-                                <Pagination 
-                                  totalPages={totalPages} 
-                                  current={currentPage.products} 
-                                  onPageChange={(p) => setCurrentPage(prev => ({ ...prev, products: p }))} 
-                                />
-                              </td>
-                            </tr>
-                          </>
-                        );
-                      })()}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              <ProductsSection 
+                styles={styles}
+                products={products}
+                tableSearchQuery={tableSearchQuery}
+                setTableSearchQuery={setTableSearchQuery}
+                currentPage={currentPage.products}
+                setCurrentPage={(p) => setCurrentPage(prev => ({ ...prev, products: p }))}
+                ITEMS_PER_PAGE={ITEMS_PER_PAGE}
+                handleProductModalOpen={handleProductModalOpen}
+                setTargetId={setTargetId}
+                setTargetName={setTargetName}
+                setActiveModal={setActiveModal}
+                getStatusBadge={getStatusBadge}
+              />
             )}
 
-            {/* INVENTORY VIEW */}
             {activeView === "inventory" && (
-              <div className={styles["data-table-card"]}>
-                <div
-                  className={styles["card-header"]}
-                  style={{ marginBottom: 0 }}
-                >
-                  <div>
-                    <h3 className={styles["card-title"]}>
-                      Inventory Management
-                    </h3>
-                  </div>
-                  <div className={`${styles["search-bar"]} ${styles["table-search"]}`}>
-                    <i className={`bi bi-search ${styles["search-icon"]}`}></i>
-                    <input
-                      type="text"
-                      placeholder="Search inventory..."
-                      value={tableSearchQuery}
-                      onChange={(e) => setTableSearchQuery(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "1rem",
-                    alignItems: "center",
-                    marginTop: "1.5rem",
-                    background: "var(--color-bg)",
-                    padding: "1rem",
-                    borderRadius: "8px",
-                    border: "1px solid var(--color-border)",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <label
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                      fontWeight: 600,
-                      cursor: "pointer",
-                    }}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={
-                        selectedInventory.length > 0 &&
-                        selectedInventory.length >=
-                          products.reduce(
-                            (sum, p) => sum + (p.product_sizes?.length || 0),
-                            0,
-                          )
-                      }
-                      onChange={handleInventorySelectAll}
-                      style={{
-                        width: "18px",
-                        height: "18px",
-                        accentColor: "var(--color-accent)",
-                      }}
-                    />
-                    Select All
-                  </label>
-                  <div style={{ flexGrow: 1 }}></div>
-                  <input
-                    type="number"
-                    placeholder="Stock Qty"
-                    min="0"
-                    className={styles["qty-input"]}
-                    style={{ width: "120px", padding: "0.5rem" }}
-                    value={bulkStock}
-                    onChange={(e) => setBulkStock(e.target.value)}
-                  />
-                  <button
-                    className={`${styles.btn} ${styles["btn-primary"]} ${styles["btn-sm"]}`}
-                    onClick={handleBulkUpdate}
-                    disabled={isSubmitting}
-                  >
-                    Update Selected
-                  </button>
-                </div>
-                <div className={styles["table-responsive"]}>
-                  <table className={styles["admin-table"]}>
-                    <thead>
-                      <tr>
-                        <th></th>
-                        <th>Product Details</th>
-                        <th>Color / Size</th>
-                        <th>Current Stock</th>
-                        <th>Manage Stock</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(() => {
-                        const filtered = [];
-                        products.forEach((p) => {
-                          const pName = p.name.toLowerCase();
-                          const pBrand = p.brand?.toLowerCase() || "";
-                          const q = tableSearchQuery.toLowerCase();
-                          if (pName.includes(q) || pBrand.includes(q) || p.id.toLowerCase().includes(q)) {
-                            const displayImg = p.product_colors?.length > 0 ? p.product_colors[0].image_url : p.main_image_url;
-                            const availableColors = p.product_colors?.length > 0 ? p.product_colors.map((c) => c.color_name).join(", ") : "Default";
-                            p.product_sizes?.forEach((ps) => {
-                              filtered.push({ ...p, img: displayImg, colors: availableColors, size: ps.size, stock: ps.stock_quantity });
-                            });
-                          }
-                        });
-                        const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-                        const paginated = filtered.slice((currentPage.inventory - 1) * ITEMS_PER_PAGE, currentPage.inventory * ITEMS_PER_PAGE);
-                        return (
-                          <>
-                            {renderInventoryTable(paginated)}
-                            <tr className={styles["pagination-row"]}>
-                              <td colSpan="5">
-                                <Pagination 
-                                  totalPages={totalPages} 
-                                  current={currentPage.inventory} 
-                                  onPageChange={(p) => setCurrentPage(prev => ({ ...prev, inventory: p }))} 
-                                />
-                              </td>
-                            </tr>
-                          </>
-                        );
-                      })()}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              <InventorySection 
+                styles={styles}
+                products={products}
+                tableSearchQuery={tableSearchQuery}
+                setTableSearchQuery={setTableSearchQuery}
+                currentPage={currentPage.inventory}
+                setCurrentPage={(p) => setCurrentPage(prev => ({ ...prev, inventory: p }))}
+                ITEMS_PER_PAGE={ITEMS_PER_PAGE}
+                selectedInventory={selectedInventory}
+                handleInventoryCheck={handleInventoryCheck}
+                handleInventorySelectAll={handleInventorySelectAll}
+                bulkStock={bulkStock}
+                setBulkStock={setBulkStock}
+                handleBulkUpdate={handleBulkUpdate}
+                isSubmitting={isSubmitting}
+                handleSingleStockUpdate={handleSingleStockUpdate}
+                handleMarkEmpty={handleMarkEmpty}
+              />
             )}
 
-            {/* OFFERS VIEW */}
             {activeView === "offers" && (
-              <>
-                <div
-                  className={`${styles["data-table-card"]} ${styles["mb-3"]}`}
-                >
-                  <div className={styles["card-header"]}>
-                    <div>
-                      <h3 className={styles["card-title"]}>
-                        Direct Product Discounts (Flash Sales)
-                      </h3>
-                    </div>
-                    <button
-                      className={styles["btn-primary"]}
-                      onClick={() => {
-                        setFlashForm({ targetId: "", discount: "", date: "" });
-                        setActiveModal("flash");
-                      }}
-                    >
-                      <i className="bi bi-lightning-charge-fill"></i> Create
-                      Flash Sale
-                    </button>
-                  </div>
-                  <div className={styles["table-responsive"]}>
-                    <table className={styles["admin-table"]}>
-                      <thead>
-                        <tr>
-                          <th>Target Product</th>
-                          <th>Discount</th>
-                          <th>Valid Until</th>
-                          <th>Status</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(() => {
-                          const filtered = offers.filter((o) => o.type === "flash_sale");
-                          const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-                          const paginated = filtered.slice((currentPage.offers - 1) * ITEMS_PER_PAGE, currentPage.offers * ITEMS_PER_PAGE);
-                          return (
-                            <>
-                              {paginated.length === 0 ? (
-                                <tr><td colSpan="5" style={{ textAlign: "center", color: "var(--color-muted-fg)" }}>No flash sales found.</td></tr>
-                              ) : (
-                                paginated.map((c) => (
-                                  <tr key={c.id}>
-                                    <td className={styles["font-semibold"]}>
-                                      {c.target_product_id ? c.products?.name : "ALL PRODUCTS"}
-                                    </td>
-                                    <td className={`${styles["text-accent"]} ${styles["font-semibold"]}`}>{c.discount_percentage}% OFF</td>
-                                    <td className={styles["text-muted"]}>{c.valid_until}</td>
-                                    <td><span className={`${styles.badge} ${getStatusBadge(c.status)}`}>{c.status}</span></td>
-                                    <td>
-                                      <button className={styles["btn-danger-outline"]} onClick={() => { setTargetId(c.id); setActiveModal("deleteOffer"); }}>
-                                        <i className="bi bi-trash"></i>
-                                      </button>
-                                    </td>
-                                  </tr>
-                                ))
-                              )}
-                              <tr className={styles["pagination-row"]}>
-                                <td colSpan="5">
-                                  <Pagination 
-                                    totalPages={totalPages} 
-                                    current={currentPage.offers} 
-                                    onPageChange={(p) => setCurrentPage(prev => ({ ...prev, offers: p }))} 
-                                  />
-                                </td>
-                              </tr>
-                            </>
-                          );
-                        })()}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                <div className={styles["data-table-card"]}>
-                  <div className={styles["card-header"]}>
-                    <div>
-                      <h3 className={styles["card-title"]}>Discount Coupons</h3>
-                    </div>
-                    <button
-                      className={styles["btn-primary"]}
-                      onClick={() => {
-                        setOfferForm({
-                          type: "coupon",
-                          targetId: "",
-                          code: "",
-                          discount: "",
-                          limit: "",
-                          date: "",
-                        });
-                        setActiveModal("offer");
-                      }}
-                    >
-                      <i className="bi bi-tag-fill"></i> Create Coupon
-                    </button>
-                  </div>
-                  <div className={styles["table-responsive"]}>
-                    <table className={styles["admin-table"]}>
-                      <thead>
-                        <tr>
-                          <th>Coupon Code</th>
-                          <th>Type</th>
-                          <th>Discount</th>
-                          <th>Valid Until</th>
-                          <th>Usage Limit</th>
-                          <th>Status</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(() => {
-                          const filtered = offers.filter((o) => o.type === "coupon" || o.type === "product");
-                          const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-                          const paginated = filtered.slice((currentPage.offers - 1) * ITEMS_PER_PAGE, currentPage.offers * ITEMS_PER_PAGE);
-                          return (
-                            <>
-                              {paginated.length === 0 ? (
-                                <tr><td colSpan="7" style={{ textAlign: "center", color: "var(--color-muted-fg)" }}>No coupons found.</td></tr>
-                              ) : (
-                                paginated.map((c) => (
-                                  <tr key={c.id}>
-                                    <td className={styles["font-semibold"]}>{c.code}</td>
-                                    <td className={styles["text-muted"]}>
-                                      {c.type === "coupon" ? "General Coupon" : `Coupon for ${c.products?.name}`}
-                                    </td>
-                                    <td className={`${styles["text-accent"]} ${styles["font-semibold"]}`}>{c.discount_percentage}% OFF</td>
-                                    <td className={styles["text-muted"]}>{c.valid_until}</td>
-                                    <td>{c.usage_limit || "∞"}</td>
-                                    <td><span className={`${styles.badge} ${getStatusBadge(c.status)}`}>{c.status}</span></td>
-                                    <td>
-                                      <button className={styles["btn-danger-outline"]} onClick={() => { setTargetId(c.id); setActiveModal("deleteOffer"); }}>
-                                        <i className="bi bi-trash"></i>
-                                      </button>
-                                    </td>
-                                  </tr>
-                                ))
-                              )}
-                              <tr className={styles["pagination-row"]}>
-                                <td colSpan="7">
-                                  <Pagination 
-                                    totalPages={totalPages} 
-                                    current={currentPage.offers} 
-                                    onPageChange={(p) => setCurrentPage(prev => ({ ...prev, offers: p }))} 
-                                  />
-                                </td>
-                              </tr>
-                            </>
-                          );
-                        })()}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </>
+              <OffersSection 
+                styles={styles}
+                offers={offers}
+                currentPage={currentPage.offers}
+                setCurrentPage={(p) => setCurrentPage(prev => ({ ...prev, offers: p }))}
+                ITEMS_PER_PAGE={ITEMS_PER_PAGE}
+                setFlashForm={setFlashForm}
+                setOfferForm={setOfferForm}
+                setActiveModal={setActiveModal}
+                setTargetId={setTargetId}
+                getStatusBadge={getStatusBadge}
+              />
             )}
 
-            {/* ORDERS VIEW */}
             {activeView === "orders" && (
-              <div className={styles["data-table-card"]}>
-                <div className={styles["card-header"]}>
-                  <div>
-                    <h3 className={styles["card-title"]}>Recent Orders</h3>
-                  </div>
-                  <div className={`${styles["search-bar"]} ${styles["table-search"]}`}>
-                    <i className={`bi bi-search ${styles["search-icon"]}`}></i>
-                    <input
-                      type="text"
-                      placeholder="Search orders by ID or customer..."
-                      value={tableSearchQuery}
-                      onChange={(e) => setTableSearchQuery(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className={styles["table-responsive"]}>
-                  <table className={styles["admin-table"]}>
-                    <thead>
-                      <tr>
-                        <th>Order ID</th>
-                        <th>Customer Name</th>
-                        <th>Date</th>
-                        <th>Items</th>
-                        <th>Total Amount</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(() => {
-                        const filtered = orders.filter((o) => {
-                          const q = tableSearchQuery.toLowerCase();
-                          return (
-                            o.id.toLowerCase().includes(q) ||
-                            (o.full_name || "").toLowerCase().includes(q) ||
-                            (o.email || "").toLowerCase().includes(q)
-                          );
-                        });
-                        const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-                        const paginated = filtered.slice((currentPage.orders - 1) * ITEMS_PER_PAGE, currentPage.orders * ITEMS_PER_PAGE);
-                        return (
-                          <>
-                            {renderOrdersTable(paginated)}
-                            <tr className={styles["pagination-row"]}>
-                              <td colSpan="7">
-                                <Pagination 
-                                  totalPages={totalPages} 
-                                  current={currentPage.orders} 
-                                  onPageChange={(p) => setCurrentPage(prev => ({ ...prev, orders: p }))} 
-                                />
-                              </td>
-                            </tr>
-                          </>
-                        );
-                      })()}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              <OrdersSection 
+                styles={styles}
+                orders={orders}
+                tableSearchQuery={tableSearchQuery}
+                setTableSearchQuery={setTableSearchQuery}
+                currentPage={currentPage.orders}
+                setCurrentPage={(p) => setCurrentPage(prev => ({ ...prev, orders: p }))}
+                ITEMS_PER_PAGE={ITEMS_PER_PAGE}
+                setTargetId={setTargetId}
+                setActiveModal={setActiveModal}
+                getStatusBadge={getStatusBadge}
+              />
             )}
 
-            {/* DELIVERY VIEW */}
             {activeView === "delivery" && (
-              <div className={styles["data-table-card"]}>
-                <div className={styles["card-header"]}>
-                  <div>
-                    <h3 className={styles["card-title"]}>Delivery Options</h3>
-                  </div>
-                  <div className={`${styles["search-bar"]} ${styles["table-search"]}`}>
-                    <i className={`bi bi-search ${styles["search-icon"]}`}></i>
-                    <input
-                      type="text"
-                      placeholder="Search delivery methods..."
-                      value={tableSearchQuery}
-                      onChange={(e) => setTableSearchQuery(e.target.value)}
-                    />
-                  </div>
-                  <button
-                    className={styles["btn-primary"]}
-                    onClick={() => {
-                      setDeliveryForm({
-                        id: "",
-                        name: "",
-                        cost: "",
-                        isFree: false,
-                        time: "",
-                      });
-                      setActiveModal("delivery");
-                    }}
-                  >
-                    <i className="bi bi-plus-lg"></i> Add Delivery Option
-                  </button>
-                </div>
-                <div className={styles["table-responsive"]}>
-                  <table className={styles["admin-table"]}>
-                    <thead>
-                      <tr>
-                        <th>Method Name</th>
-                        <th>Cost ($)</th>
-                        <th>Estimated Time</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(() => {
-                        const filtered = deliveries.filter(d => 
-                          tableSearchQuery === "" ||
-                          d.name.toLowerCase().includes(tableSearchQuery.toLowerCase())
-                        );
-                        const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-                        const paginated = filtered.slice((currentPage.delivery - 1) * ITEMS_PER_PAGE, currentPage.delivery * ITEMS_PER_PAGE);
-                        
-                        if (paginated.length === 0) {
-                          return (
-                            <tr><td colSpan="5" style={{ textAlign: "center", color: "var(--color-muted-fg)" }}>No delivery options found.</td></tr>
-                          );
-                        }
-
-                        return (
-                          <>
-                            {paginated.map((d) => (
-                              <tr key={d.id}>
-                                <td className={styles["font-semibold"]}>{d.name}</td>
-                                <td className={`${styles["text-accent"]} ${styles["font-semibold"]}`}>
-                                  {parseFloat(d.cost) === 0 ? "Free" : window.formatPrice ? window.formatPrice(d.cost) : `$${d.cost}`}
-                                </td>
-                                <td className={styles["text-muted"]}>{d.estimated_time}</td>
-                                <td><span className={`${styles.badge} ${styles["badge-success"]}`}>Active</span></td>
-                                <td>
-                                  <div className={styles["table-actions"]}>
-                                    <button className={styles["btn-outline"]} style={{ borderColor: "var(--color-accent)", color: "var(--color-accent)" }} onClick={() => {
-                                      setDeliveryForm({ id: d.id, name: d.name, cost: d.cost, isFree: parseFloat(d.cost) === 0, time: d.estimated_time });
-                                      setActiveModal("delivery");
-                                    }}><i className="bi bi-pencil"></i></button>
-                                    <button className={styles["btn-danger-outline"]} onClick={() => { setTargetId(d.id); setActiveModal("deleteDelivery"); }}><i className="bi bi-trash"></i></button>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))}
-                            <tr className={styles["pagination-row"]}>
-                              <td colSpan="5">
-                                <Pagination 
-                                  totalPages={totalPages} 
-                                  current={currentPage.delivery} 
-                                  onPageChange={(p) => setCurrentPage(prev => ({ ...prev, delivery: p }))} 
-                                />
-                              </td>
-                            </tr>
-                          </>
-                        );
-                      })()}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              <DeliverySection 
+                styles={styles}
+                deliveries={deliveries}
+                tableSearchQuery={tableSearchQuery}
+                setTableSearchQuery={setTableSearchQuery}
+                currentPage={currentPage.delivery}
+                setCurrentPage={(p) => setCurrentPage(prev => ({ ...prev, delivery: p }))}
+                ITEMS_PER_PAGE={ITEMS_PER_PAGE}
+                setDeliveryForm={setDeliveryForm}
+                setActiveModal={setActiveModal}
+                setTargetId={setTargetId}
+              />
             )}
 
-            {/* LIVE CHAT VIEW */}
             {activeView === "live-chat" && (
               <div className={styles["view-section"]} style={{ display: "block" }}>
                 <LiveChat />
               </div>
             )}
 
-            {/* TESTING LAB VIEW */}
             {activeView === "testing" && (
-              <div className={styles["charts-row"]} style={{ gridTemplateColumns: "1fr" }}>
-                <div className={styles["chart-card"]}>
-                  <div className={styles["card-header"]}>
-                    <h3 className={styles["card-title"]}>Feature Access Control</h3>
-                  </div>
-                  
-                  <div className={styles["testing-grid"]}>
-                    <div className={styles["testing-item"]}>
-                      <div className={styles["testing-info"]}>
-                        <strong className={styles["testing-title"]}>Allow Add to Cart</strong>
-                        <p className={styles["testing-desc"]}>When disabled, admin cannot add products to the cart.</p>
-                      </div>
-                      <label className={styles["switch"]}>
-                        <input 
-                          type="checkbox" 
-                          checked={testConfig.allowAddToCart}
-                          onChange={(e) => setTestConfig({...testConfig, allowAddToCart: e.target.checked})}
-                        />
-                        <span className={styles["slider"]}></span>
-                      </label>
-                    </div>
-
-                    <div className={styles["testing-item"]}>
-                      <div className={styles["testing-info"]}>
-                        <strong className={styles["testing-title"]}>Allow Buy Now / Checkout</strong>
-                        <p className={styles["testing-desc"]}>When disabled, admin is blocked from the checkout screen.</p>
-                      </div>
-                      <label className={styles["switch"]}>
-                        <input 
-                          type="checkbox" 
-                          checked={testConfig.allowBuyNow}
-                          onChange={(e) => setTestConfig({...testConfig, allowBuyNow: e.target.checked})}
-                        />
-                        <span className={styles["slider"]}></span>
-                      </label>
-                    </div>
-
-                    <div className={styles["testing-item"]}>
-                      <div className={styles["testing-info"]}>
-                        <strong className={styles["testing-title"]}>Allow Writing Reviews</strong>
-                        <p className={styles["testing-desc"]}>When disabled, admin cannot submit product reviews.</p>
-                      </div>
-                      <label className={styles["switch"]}>
-                        <input 
-                          type="checkbox" 
-                          checked={testConfig.allowReviews}
-                          onChange={(e) => setTestConfig({...testConfig, allowReviews: e.target.checked})}
-                        />
-                        <span className={styles["slider"]}></span>
-                      </label>
-                    </div>
-
-                    <div className={styles["testing-item"]}>
-                      <div className={styles["testing-info"]}>
-                        <strong className={styles["testing-title"]}>Allow Wishlist Action</strong>
-                        <p className={styles["testing-desc"]}>When disabled, admin cannot add products to the wishlist.</p>
-                      </div>
-                      <label className={styles["switch"]}>
-                        <input 
-                          type="checkbox" 
-                          checked={testConfig.allowWishlist}
-                          onChange={(e) => setTestConfig({...testConfig, allowWishlist: e.target.checked})}
-                        />
-                        <span className={styles["slider"]}></span>
-                      </label>
-                    </div>
-
-                    <div className={styles["testing-item"]}>
-                      <div className={styles["testing-info"]}>
-                        <strong className={styles["testing-title"]}>Enable Support Chat</strong>
-                        <p className={styles["testing-desc"]}>Toggle the floating AI Support widget on/off.</p>
-                      </div>
-                      <label className={styles["switch"]}>
-                        <input 
-                          type="checkbox" 
-                          checked={testConfig.enableChatbot}
-                          onChange={(e) => setTestConfig({...testConfig, enableChatbot: e.target.checked})}
-                        />
-                        <span className={styles["slider"]}></span>
-                      </label>
-                    </div>
-
-                    <div className={styles["testing-item"]}>
-                      <div className={styles["testing-info"]}>
-                        <strong className={styles["testing-title"]}>Enable Stripe Checkout</strong>
-                        <p className={styles["testing-desc"]}>Allow redirection to Stripe for payments.</p>
-                      </div>
-                      <label className={styles["switch"]}>
-                        <input 
-                          type="checkbox" 
-                          checked={testConfig.enableStripeCheckout}
-                          onChange={(e) => setTestConfig({...testConfig, enableStripeCheckout: e.target.checked})}
-                        />
-                        <span className={styles["slider"]}></span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <TestingLabSection 
+                styles={styles}
+                testConfig={testConfig}
+                setTestConfig={setTestConfig}
+              />
             )}
 
             {activeView === "profile" && (
