@@ -1040,8 +1040,20 @@ body {
 }
 
 @media (hover: hover) {
-  .admin-table tbody tr:hover td {
+  .admin-table tbody tr:not(.pagination-row):hover td {
     background-color: var(--color-bg);
+    cursor: default;
+  }
+  
+  /* Rounded corners for the hover effect */
+  .admin-table tbody tr:not(.pagination-row):hover td:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+  }
+  
+  .admin-table tbody tr:not(.pagination-row):hover td:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
   }
 }
 
