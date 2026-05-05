@@ -1357,12 +1357,11 @@ body {
 }
 
 .modal-form {
-  padding: 2rem;
+  padding: 0; /* Let CustomScrollbar handle padding if needed or wrap it */
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
-  overflow-y: auto;
   flex: 1;
+  overflow: hidden;
 }
 
 /* Custom Select Arrow */

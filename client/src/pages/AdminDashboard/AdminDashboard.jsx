@@ -12,6 +12,8 @@ import OffersSection from "./sections/OffersSection";
 import OrdersSection from "./sections/OrdersSection";
 import DeliverySection from "./sections/DeliverySection";
 import TestingLabSection from "./sections/TestingLabSection";
+import CustomScrollbar from "../../components/UI/CustomScrollbar";
+
 
 // We rely on the globally loaded Chart.js script from index.html
 // as requested to maintain the exact architecture of the vanilla build.
@@ -1837,6 +1839,7 @@ export default function AdminDashboard() {
       </datalist>
 
       {/* Product Add/Edit Modal */}
+      {/* Product Add/Edit Modal */}
       <div
         className={`${styles["modal-overlay"]} ${activeModal === "product" ? styles.active : ""}`}
         id="productModal"
@@ -1856,286 +1859,231 @@ export default function AdminDashboard() {
               <i className="bi bi-x-lg"></i>
             </button>
           </div>
-          <form className={`${styles["modal-form"]} custom-scrollbar`} onSubmit={handleProductSubmit}>
-            <div className={styles["form-row"]}>
-              <div className={styles["form-group"]}>
-                <label>Product Brand</label>
-                <input
-                  type="text"
-                  className={styles["form-input"]}
-                  required
-                  list="brand-list"
-                  value={productForm.brand}
-                  onChange={(e) =>
-                    setProductForm({ ...productForm, brand: e.target.value })
-                  }
-                  placeholder="e.g. Nike, Adidas"
-                />
-              </div>
-              <div className={styles["form-group"]}>
-                <label>Product Name</label>
-                <input
-                  type="text"
-                  className={styles["form-input"]}
-                  required
-                  value={productForm.name}
-                  onChange={(e) =>
-                    setProductForm({ ...productForm, name: e.target.value })
-                  }
-                  placeholder="e.g. Air Max 270"
-                />
-              </div>
-            </div>
-            <div className={`${styles["form-group"]} ${styles["full-width"]}`}>
-              <label>Product Description</label>
-              <textarea
-                className={`${styles["form-input"]} ${styles["hide-scrollbar"]}`}
-                rows="3"
-                value={productForm.desc}
-                onChange={(e) =>
-                  setProductForm({ ...productForm, desc: e.target.value })
-                }
-                placeholder="Enter product details..."
-              ></textarea>
-            </div>
-
-            <div className={`${styles["form-group"]} ${styles["full-width"]}`}>
-              <label>Available Colors & Images</label>
-              <div className={styles["color-checkbox-group"]} id="color-swatches-container">
-                {colorOptions.map((c) => {
-                  const isChecked = colorBlocks.some((b) => b.color === c);
-                  const isDefault = c === "Default";
-                  return (
-                    <label
-                      key={c}
-                      className={styles["color-swatch-item"]}
-                      title={c}
-                    >
-                      <input
-                        type="checkbox"
-                        className={styles["color-input"]}
-                        checked={isChecked}
-                        onChange={(e) => {
-                          if (e.target.checked) addColorBlock(c);
-                          else
-                            setColorBlocks((prev) =>
-                              prev.filter((b) => b.color !== c),
-                            );
-                        }}
-                      />
-                      <div
-                        className={`${styles.swatch} ${isDefault ? styles["swatch-default"] : ""}`}
-                        style={{
-                          backgroundColor: isDefault
-                            ? ""
-                            : getColorHexFallback(c),
-                        }}
-                      >
-                        {isDefault ? (
-                          <span className={styles["def-text"]}>DEFAULT</span>
-                        ) : (
-                          <i className="bi bi-check"></i>
-                        )}
-                      </div>
-                    </label>
-                  );
-                })}
-              </div>
-              <div className={styles["dynamic-uploads"]} id="color-uploads-container">
-                {colorBlocks.map((block, bIdx) => (
-                  <div key={block.color} className={styles["color-block"]}>
-                    <div className={styles["color-block-header"]}>
-                      <h4 className={styles["color-block-title"]}>
-                        <span
-                          className={`${styles.swatch} ${block.color === "Default" ? styles["swatch-text"] : ""}`}
-                          style={{
-                            width: "24px",
-                            height: "24px",
-                            backgroundColor:
-                              block.color === "Default"
-                                ? ""
-                                : getColorHexFallback(block.color),
-                          }}
-                        ></span>
-                        {block.color} Variant
-                      </h4>
-                      <button
-                        type="button"
-                        className={styles["remove-color-btn"]}
-                        onClick={() =>
-                          setColorBlocks((prev) =>
-                            prev.filter((b) => b.color !== block.color),
-                          )
-                        }
-                      >
-                        <i className="bi bi-x-lg"></i>
-                      </button>
-                    </div>
-                    <div className={styles["color-image-upload-area"]}>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className={styles["color-file-input"]}
-                        required={!block.existingUrl}
-                        onChange={(e) =>
-                          updateColorBlockFile(bIdx, e.target.files[0])
-                        }
-                      />
-                      {(block.file || block.existingUrl) && (
-                        <img
-                          className={styles["color-preview-img"]}
-                          src={
-                            block.file
-                              ? URL.createObjectURL(block.file)
-                              : block.existingUrl
-                          }
-                          alt="preview"
-                          style={{ display: "block" }}
-                        />
-                      )}
-                    </div>
-                    <div
-                      className={styles["form-group"]}
-                      style={{ marginTop: "0.5rem" }}
-                    >
-                      <label>Inventory for {block.color}</label>
-                      <div className={styles["size-qty-grid"]}>
-                        {["7", "8", "9", "10", "11", "12"].map((sz) => {
-                          const isChecked = block.sizes[sz] !== null;
-                          return (
-                            <div key={sz} className={styles["size-row"]}>
-                              <label>
-                                <input
-                                  type="checkbox"
-                                  className={styles["size-check"]}
-                                  checked={isChecked}
-                                  onChange={(e) =>
-                                    updateColorBlockSize(
-                                      bIdx,
-                                      sz,
-                                      e.target.checked ? "" : false,
-                                    )
-                                  }
-                                />{" "}
-                                Size {sz}
-                              </label>
-                              <input
-                                type="number"
-                                className={styles["qty-input"]}
-                                placeholder="Qty"
-                                min="0"
-                                value={block.sizes[sz] || ""}
-                                onChange={(e) =>
-                                  updateColorBlockSize(bIdx, sz, e.target.value)
-                                }
-                                disabled={!isChecked}
-                                required={isChecked}
-                              />
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
+          <div className={styles["modal-form"]}>
+            <CustomScrollbar>
+              <form onSubmit={handleProductSubmit} style={{ padding: "2rem", display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+                <div className={styles["form-row"]}>
+                  <div className={styles["form-group"]}>
+                    <label>Product Brand</label>
+                    <input
+                      type="text"
+                      className={styles["form-input"]}
+                      required
+                      value={productForm.brand}
+                      onChange={(e) =>
+                        setProductForm({ ...productForm, brand: e.target.value })
+                      }
+                      placeholder="e.g. Nike, Adidas"
+                    />
                   </div>
-                ))}
-              </div>
-            </div>
-
-            <div className={styles["form-row"]}>
-              <div className={styles["form-group"]}>
-                <label>Primary Tags</label>
-                <div
-                  className={styles["standard-tags-group"]}
-                  style={{
-                    display: "flex",
-                    gap: "1rem",
-                    flexWrap: "wrap",
-                    marginTop: "0.5rem",
-                  }}
-                >
-                  {[
-                    "Men",
-                    "Women",
-                    "Universal",
-                    "New Arrival",
-                    "On Sale",
-                    "Featured",
-                    "Limited Edition",
-                  ].map((tag) => (
-                    <label key={tag} style={{ color: "var(--color-fg)" }}>
-                      <input
-                        type="checkbox"
-                        checked={productForm.standardTags.includes(tag)}
-                        onChange={(e) => {
-                          const newTags = e.target.checked
-                            ? [...productForm.standardTags, tag]
-                            : productForm.standardTags.filter((t) => t !== tag);
-                          // Radio behavior for gender tags
-                          const genderTags = ["Men", "Women", "Universal"];
-                          let filtered = newTags;
-                          if (e.target.checked && genderTags.includes(tag)) {
-                            filtered = newTags.filter(
-                              (t) => !genderTags.includes(t) || t === tag,
-                            );
-                          }
-                          setProductForm({
-                            ...productForm,
-                            standardTags: filtered,
-                          });
-                        }}
-                        style={{ marginRight: "0.5rem" }}
-                      />
-                      {tag}
-                    </label>
-                  ))}
+                  <div className={styles["form-group"]}>
+                    <label>Product Name</label>
+                    <input
+                      type="text"
+                      className={styles["form-input"]}
+                      required
+                      value={productForm.name}
+                      onChange={(e) =>
+                        setProductForm({ ...productForm, name: e.target.value })
+                      }
+                      placeholder="e.g. Air Max 270"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className={styles["form-group"]}>
-                <label>Additional Tags</label>
-                <input
-                  type="text"
-                  className={styles["form-input"]}
-                  value={productForm.tags}
-                  onChange={(e) =>
-                    setProductForm({ ...productForm, tags: e.target.value })
-                  }
-                  placeholder="e.g. Running, Lifestyle, Retro"
-                />
-              </div>
-            </div>
 
-            <div className={`${styles["form-group"]} ${styles["full-width"]}`} style={{ marginTop: "1rem" }}>
-              <label>Price ($)</label>
-              <input
-                type="number"
-                className={styles["form-input"]}
-                step="0.01"
-                min="0"
-                required
-                value={productForm.price}
-                onInput={(e) => { if(e.target.value < 0) e.target.value = 0; }}
-                onChange={(e) =>
-                  setProductForm({ ...productForm, price: e.target.value })
-                }
-                placeholder="149.99"
-              />
-            </div>
+                <div className={styles["form-group"]}>
+                  <label>Product Description</label>
+                  <textarea
+                    className={styles["form-input"]}
+                    required
+                    rows="3"
+                    value={productForm.description}
+                    onChange={(e) =>
+                      setProductForm({
+                        ...productForm,
+                        description: e.target.value,
+                      })
+                    }
+                    placeholder="Enter product details..."
+                  ></textarea>
+                </div>
 
-            <div className={styles["modal-footer"]} style={{ marginTop: "2rem" }}>
-              <button
-                type="submit"
-                className={`${styles["btn-primary"]} ${styles["full-width"]}`}
-                id="productSubmitBtn"
-                disabled={isSubmitting}
-              >
-                {isSubmitting
-                  ? "Processing..."
-                  : productForm.id
-                    ? "Update Product"
-                    : "Save Product to Stride"}
-              </button>
-            </div>
-          </form>
+                <div className={styles["form-group"]}>
+                  <label>Available Colors & Images</label>
+                  <div className={styles["color-checkbox-group"]}>
+                    {colorOptions.map((color) => (
+                      <div key={color} className={styles["color-swatch-item"]}>
+                        <input
+                          type="checkbox"
+                          id={`color-${color}`}
+                          className={styles["color-input"]}
+                          checked={colorBlocks.some((b) => b.color === color)}
+                          onChange={() => addColorBlock(color)}
+                        />
+                        <label
+                          htmlFor={`color-${color}`}
+                          className={`${styles.swatch} ${styles[`color-${color.toLowerCase().replace(/\s/g, "")}`]} ${color === "Default" ? styles["swatch-default"] : ""}`}
+                          style={{
+                            backgroundColor: getColorHexFallback(color),
+                          }}
+                          title={color}
+                        >
+                          {color === "Default" && (
+                            <span className={styles["def-text"]}>Default</span>
+                          )}
+                          <i className="bi bi-check"></i>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className={styles["dynamic-uploads"]}>
+                    {colorBlocks.map((block, bIdx) => (
+                      <div key={bIdx} className={styles["color-block"]}>
+                        <div className={styles["color-block-header"]}>
+                          <div className={styles["color-indicator-row"]}>
+                            <div
+                              className={styles["color-indicator-dot"]}
+                              style={{
+                                backgroundColor: getColorHexFallback(block.color),
+                              }}
+                            ></div>
+                            <span>{block.color} Variant</span>
+                          </div>
+                          <button
+                            type="button"
+                            className={styles["remove-block-btn"]}
+                            onClick={() => setColorBlocks(prev => prev.filter((_, i) => i !== bIdx))}
+                          >
+                            <i className="bi bi-trash"></i>
+                          </button>
+                        </div>
+
+                        <div className={styles["color-block-body"]}>
+                          <div className={styles["image-upload-zone"]}>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              id={`file-${bIdx}`}
+                              onChange={(e) =>
+                                updateColorBlockFile(bIdx, e.target.files[0])
+                              }
+                              hidden
+                            />
+                            <label
+                              htmlFor={`file-${bIdx}`}
+                              className={styles["upload-placeholder"]}
+                            >
+                              {block.file || block.existingUrl ? (
+                                <img
+                                  src={
+                                    block.file
+                                      ? URL.createObjectURL(block.file)
+                                      : block.existingUrl
+                                  }
+                                  alt="Preview"
+                                />
+                              ) : (
+                                <>
+                                  <i className="bi bi-cloud-arrow-up"></i>
+                                  <span>Upload Image</span>
+                                </>
+                              )}
+                            </label>
+                          </div>
+
+                          <div className={styles["size-qty-section"]}>
+                             <label style={{ marginBottom: '0.5rem', display: 'block' }}>Inventory for {block.color}</label>
+                            <div className={styles["size-qty-grid"]}>
+                              {["7", "8", "9", "10", "11", "12"].map((sz) => {
+                                const isChecked = block.sizes[sz] !== null && block.sizes[sz] !== false;
+                                return (
+                                  <div key={sz} className={styles["size-row"]}>
+                                    <label>
+                                      <input
+                                        type="checkbox"
+                                        className={styles["size-check"]}
+                                        checked={isChecked}
+                                        onChange={(e) =>
+                                          updateColorBlockSize(
+                                            bIdx,
+                                            sz,
+                                            e.target.checked ? "100" : false,
+                                          )
+                                        }
+                                      />{" "}
+                                      Size {sz}
+                                    </label>
+                                    <input
+                                      type="number"
+                                      className={styles["qty-input"]}
+                                      placeholder="Qty"
+                                      min="0"
+                                      value={block.sizes[sz] || ""}
+                                      onChange={(e) =>
+                                        updateColorBlockSize(bIdx, sz, e.target.value)
+                                      }
+                                      disabled={!isChecked}
+                                      required={isChecked}
+                                    />
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className={styles["form-row"]}>
+                  <div className={styles["form-group"]}>
+                    <label>Category</label>
+                    <input
+                      type="text"
+                      className={styles["form-input"]}
+                      required
+                      value={productForm.category}
+                      onChange={(e) =>
+                        setProductForm({
+                          ...productForm,
+                          category: e.target.value,
+                        })
+                      }
+                      placeholder="e.g. Running, Lifestyle"
+                    />
+                  </div>
+                  <div className={styles["form-group"]}>
+                    <label>Price ($)</label>
+                    <input
+                      type="number"
+                      className={styles["form-input"]}
+                      step="0.01"
+                      min="0"
+                      required
+                      value={productForm.price}
+                      onChange={(e) =>
+                        setProductForm({ ...productForm, price: e.target.value })
+                      }
+                      placeholder="149.99"
+                    />
+                  </div>
+                </div>
+
+                <div className={styles["modal-footer"]} style={{ marginTop: "1rem" }}>
+                  <button
+                    type="submit"
+                    className={`${styles["btn-primary"]} ${styles["full-width"]}`}
+                    id="submitProductBtn"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Processing..." : productForm.id ? "Update Product" : "Publish Product"}
+                  </button>
+                </div>
+              </form>
+            </CustomScrollbar>
+          </div>
         </div>
       </div>
 
@@ -2351,79 +2299,83 @@ export default function AdminDashboard() {
               <i className="bi bi-x-lg"></i>
             </button>
           </div>
-          <form className={`${styles["modal-form"]} custom-scrollbar`} onSubmit={handleDeliverySubmit}>
-            <div className={styles["form-group"]}>
-              <label>Method Name</label>
-              <input
-                type="text"
-                className={styles["form-input"]}
-                required
-                value={deliveryForm.name}
-                onChange={(e) =>
-                  setDeliveryForm({ ...deliveryForm, name: e.target.value })
-                }
-                placeholder="e.g. Express Delivery"
-              />
-            </div>
-            <div className={styles["form-group"]}>
-              <label style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                Cost
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: "normal", fontSize: "0.85rem", cursor: "pointer" }}>
+          <div className={styles["modal-form"]}>
+            <CustomScrollbar>
+              <form onSubmit={handleDeliverySubmit} style={{ padding: "2rem", display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+                <div className={styles["form-group"]}>
+                  <label>Method Name</label>
                   <input
-                    type="checkbox"
-                    id="delivery-is-free-react"
-                    style={{ width: "auto", cursor: "pointer" }}
-                    checked={deliveryForm.isFree}
+                    type="text"
+                    className={styles["form-input"]}
+                    required
+                    value={deliveryForm.name}
                     onChange={(e) =>
-                      setDeliveryForm({
-                        ...deliveryForm,
-                        isFree: e.target.checked,
-                        cost: e.target.checked ? "0" : "",
-                      })
+                      setDeliveryForm({ ...deliveryForm, name: e.target.value })
                     }
+                    placeholder="e.g. Express Delivery"
                   />
-                  <label htmlFor="delivery-is-free-react" style={{ margin: 0, cursor: "pointer", textTransform: "none" }}>Set as Free</label>
                 </div>
-              </label>
-              <input
-                type="number"
-                className={styles["form-input"]}
-                required={!deliveryForm.isFree}
-                disabled={deliveryForm.isFree}
-                step="0.01"
-                min="0"
-                value={deliveryForm.cost}
-                onInput={(e) => { if(e.target.value < 0) e.target.value = 0; }}
-                onChange={(e) =>
-                  setDeliveryForm({ ...deliveryForm, cost: e.target.value })
-                }
-                placeholder="e.g. 15.00"
-              />
-            </div>
-            <div className={styles["form-group"]}>
-              <label>Estimated Time</label>
-              <input
-                type="text"
-                className={styles["form-input"]}
-                required
-                value={deliveryForm.time}
-                onChange={(e) =>
-                  setDeliveryForm({ ...deliveryForm, time: e.target.value })
-                }
-                placeholder="e.g. 1-2 Business Days"
-              />
-            </div>
-            <div className={styles["modal-footer"]} style={{ marginTop: "1rem" }}>
-              <button
-                type="submit"
-                className={`${styles["btn-primary"]} ${styles["full-width"]}`}
-                id="submitDeliveryBtn"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Processing..." : "Save Delivery Option"}
-              </button>
-            </div>
-          </form>
+                <div className={styles["form-group"]}>
+                  <label style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    Cost
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: "normal", fontSize: "0.85rem", cursor: "pointer" }}>
+                      <input
+                        type="checkbox"
+                        id="delivery-is-free-react"
+                        style={{ width: "auto", cursor: "pointer" }}
+                        checked={deliveryForm.isFree}
+                        onChange={(e) =>
+                          setDeliveryForm({
+                            ...deliveryForm,
+                            isFree: e.target.checked,
+                            cost: e.target.checked ? "0" : "",
+                          })
+                        }
+                      />
+                      <label htmlFor="delivery-is-free-react" style={{ margin: 0, cursor: "pointer", textTransform: "none" }}>Set as Free</label>
+                    </div>
+                  </label>
+                  <input
+                    type="number"
+                    className={styles["form-input"]}
+                    required={!deliveryForm.isFree}
+                    disabled={deliveryForm.isFree}
+                    step="0.01"
+                    min="0"
+                    value={deliveryForm.cost}
+                    onInput={(e) => { if(e.target.value < 0) e.target.value = 0; }}
+                    onChange={(e) =>
+                      setDeliveryForm({ ...deliveryForm, cost: e.target.value })
+                    }
+                    placeholder="e.g. 15.00"
+                  />
+                </div>
+                <div className={styles["form-group"]}>
+                  <label>Estimated Time</label>
+                  <input
+                    type="text"
+                    className={styles["form-input"]}
+                    required
+                    value={deliveryForm.time}
+                    onChange={(e) =>
+                      setDeliveryForm({ ...deliveryForm, time: e.target.value })
+                    }
+                    placeholder="e.g. 1-2 Business Days"
+                  />
+                </div>
+                <div className={styles["modal-footer"]} style={{ marginTop: "1rem" }}>
+                  <button
+                    type="submit"
+                    className={`${styles["btn-primary"]} ${styles["full-width"]}`}
+                    id="submitDeliveryBtn"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Processing..." : "Save Delivery Option"}
+                  </button>
+                </div>
+              </form>
+            </CustomScrollbar>
+          </div>
         </div>
       </div>
 
@@ -2447,106 +2399,110 @@ export default function AdminDashboard() {
               <i className="bi bi-x-lg"></i>
             </button>
           </div>
-          <form className={`${styles["modal-form"]} custom-scrollbar`} onSubmit={handleOfferSubmit}>
-            <div className={styles["form-group"]}>
-              <label>Coupon Type</label>
-              <select
-                className={`${styles["form-input"]} ${styles["custom-select-arrow"]}`}
-                value={offerForm.type}
-                onChange={(e) =>
-                  setOfferForm({ ...offerForm, type: e.target.value })
-                }
-              >
-                <option value="coupon">General Cart Coupon</option>
-                <option value="product">Specific Product Coupon</option>
-              </select>
-            </div>
-            {offerForm.type === "product" && (
-              <div className={styles["form-group"]}>
-                <label>Select Target Product</label>
-                <select
-                  className={`${styles["form-input"]} ${styles["custom-select-arrow"]}`}
-                  required
-                  value={offerForm.targetId}
-                  onChange={(e) =>
-                    setOfferForm({ ...offerForm, targetId: e.target.value })
-                  }
-                >
-                  <option value="">Select Product</option>
-                  {products.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name} ({p.brand})
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-            <div className={styles["form-group"]}>
-              <label>Coupon Code</label>
-              <input
-                type="text"
-                className={styles["form-input"]}
-                required
-                value={offerForm.code}
-                onChange={(e) =>
-                  setOfferForm({ ...offerForm, code: e.target.value })
-                }
-                placeholder="e.g. SUMMER24"
-              />
-            </div>
-            <div className={styles["form-row"]}>
-              <div className={styles["form-group"]}>
-                <label>Discount Percentage (%)</label>
-                <input
-                  type="number"
-                  className={styles["form-input"]}
-                  required
-                  min="1"
-                  max="100"
-                  value={offerForm.discount}
-                  onChange={(e) =>
-                    setOfferForm({ ...offerForm, discount: e.target.value })
-                  }
-                  placeholder="e.g. 15"
-                />
-              </div>
-              <div className={styles["form-group"]}>
-                <label>Usage Limit</label>
-                <input
-                  type="number"
-                  className={styles["form-input"]}
-                  min="1"
-                  value={offerForm.limit}
-                  onChange={(e) =>
-                    setOfferForm({ ...offerForm, limit: e.target.value })
-                  }
-                  placeholder="e.g. 100"
-                />
-              </div>
-            </div>
-            <div className={styles["form-group"]}>
-              <label>Valid Until</label>
-              <input
-                type="date"
-                className={styles["form-input"]}
-                required
-                value={offerForm.date}
-                onChange={(e) =>
-                  setOfferForm({ ...offerForm, date: e.target.value })
-                }
-              />
-            </div>
-            <div className={styles["modal-footer"]} style={{ marginTop: "1rem" }}>
-              <button
-                type="submit"
-                className={`${styles["btn-primary"]} ${styles["full-width"]}`}
-                id="submitOfferBtn"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Processing..." : "Create Coupon"}
-              </button>
-            </div>
-          </form>
+          <div className={styles["modal-form"]}>
+            <CustomScrollbar>
+              <form onSubmit={handleOfferSubmit} style={{ padding: "2rem", display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+                <div className={styles["form-group"]}>
+                  <label>Coupon Type</label>
+                  <select
+                    className={`${styles["form-input"]} ${styles["custom-select-arrow"]}`}
+                    value={offerForm.type}
+                    onChange={(e) =>
+                      setOfferForm({ ...offerForm, type: e.target.value })
+                    }
+                  >
+                    <option value="coupon">General Cart Coupon</option>
+                    <option value="product">Specific Product Coupon</option>
+                  </select>
+                </div>
+                {offerForm.type === "product" && (
+                  <div className={styles["form-group"]}>
+                    <label>Select Target Product</label>
+                    <select
+                      className={`${styles["form-input"]} ${styles["custom-select-arrow"]}`}
+                      required
+                      value={offerForm.targetId}
+                      onChange={(e) =>
+                        setOfferForm({ ...offerForm, targetId: e.target.value })
+                      }
+                    >
+                      <option value="">Select Product</option>
+                      {products.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.name} ({p.brand})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                <div className={styles["form-group"]}>
+                  <label>Coupon Code</label>
+                  <input
+                    type="text"
+                    className={styles["form-input"]}
+                    required
+                    value={offerForm.code}
+                    onChange={(e) =>
+                      setOfferForm({ ...offerForm, code: e.target.value })
+                    }
+                    placeholder="e.g. SUMMER24"
+                  />
+                </div>
+                <div className={styles["form-row"]}>
+                  <div className={styles["form-group"]}>
+                    <label>Discount Percentage (%)</label>
+                    <input
+                      type="number"
+                      className={styles["form-input"]}
+                      required
+                      min="1"
+                      max="100"
+                      value={offerForm.discount}
+                      onChange={(e) =>
+                        setOfferForm({ ...offerForm, discount: e.target.value })
+                      }
+                      placeholder="e.g. 15"
+                    />
+                  </div>
+                  <div className={styles["form-group"]}>
+                    <label>Usage Limit</label>
+                    <input
+                      type="number"
+                      className={styles["form-input"]}
+                      min="1"
+                      value={offerForm.limit}
+                      onChange={(e) =>
+                        setOfferForm({ ...offerForm, limit: e.target.value })
+                      }
+                      placeholder="e.g. 100"
+                    />
+                  </div>
+                </div>
+                <div className={styles["form-group"]}>
+                  <label>Valid Until</label>
+                  <input
+                    type="date"
+                    className={styles["form-input"]}
+                    required
+                    value={offerForm.date}
+                    onChange={(e) =>
+                      setOfferForm({ ...offerForm, date: e.target.value })
+                    }
+                  />
+                </div>
+                <div className={styles["modal-footer"]} style={{ marginTop: "1rem" }}>
+                  <button
+                    type="submit"
+                    className={`${styles["btn-primary"]} ${styles["full-width"]}`}
+                    id="submitOfferBtn"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Processing..." : "Create Coupon"}
+                  </button>
+                </div>
+              </form>
+            </CustomScrollbar>
+          </div>
         </div>
       </div>
 
@@ -2570,65 +2526,69 @@ export default function AdminDashboard() {
               <i className="bi bi-x-lg"></i>
             </button>
           </div>
-          <form className={`${styles["modal-form"]} custom-scrollbar`} onSubmit={handleFlashSubmit}>
-            <div className={styles["form-group"]}>
-              <label>Target Product</label>
-              <select
-                className={`${styles["form-input"]} ${styles["custom-select-arrow"]}`}
-                required
-                value={flashForm.targetId}
-                onChange={(e) =>
-                  setFlashForm({ ...flashForm, targetId: e.target.value })
-                }
-              >
-                <option value="">Select Product</option>
-                {products.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name} ({p.brand})
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className={styles["form-row"]}>
-              <div className={styles["form-group"]}>
-                <label>Discount Percentage (%)</label>
-                <input
-                  type="number"
-                  className={styles["form-input"]}
-                  required
-                  min="1"
-                  max="100"
-                  value={flashForm.discount}
-                  onChange={(e) =>
-                    setFlashForm({ ...flashForm, discount: e.target.value })
-                  }
-                  placeholder="e.g. 15"
-                />
-              </div>
-              <div className={styles["form-group"]}>
-                <label>Valid Until</label>
-                <input
-                  type="date"
-                  className={styles["form-input"]}
-                  required
-                  value={flashForm.date}
-                  onChange={(e) =>
-                    setFlashForm({ ...flashForm, date: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-            <div className={styles["modal-footer"]} style={{ marginTop: "1rem" }}>
-              <button
-                type="submit"
-                className={`${styles["btn-primary"]} ${styles["full-width"]}`}
-                id="submitFlashBtn"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Processing..." : "Create Flash Sale"}
-              </button>
-            </div>
-          </form>
+          <div className={styles["modal-form"]}>
+            <CustomScrollbar>
+              <form onSubmit={handleFlashSubmit} style={{ padding: "2rem", display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+                <div className={styles["form-group"]}>
+                  <label>Target Product</label>
+                  <select
+                    className={`${styles["form-input"]} ${styles["custom-select-arrow"]}`}
+                    required
+                    value={flashForm.targetId}
+                    onChange={(e) =>
+                      setFlashForm({ ...flashForm, targetId: e.target.value })
+                    }
+                  >
+                    <option value="">Select Product</option>
+                    {products.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name} ({p.brand})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className={styles["form-row"]}>
+                  <div className={styles["form-group"]}>
+                    <label>Discount Percentage (%)</label>
+                    <input
+                      type="number"
+                      className={styles["form-input"]}
+                      required
+                      min="1"
+                      max="100"
+                      value={flashForm.discount}
+                      onChange={(e) =>
+                        setFlashForm({ ...flashForm, discount: e.target.value })
+                      }
+                      placeholder="e.g. 15"
+                    />
+                  </div>
+                  <div className={styles["form-group"]}>
+                    <label>Valid Until</label>
+                    <input
+                      type="date"
+                      className={styles["form-input"]}
+                      required
+                      value={flashForm.date}
+                      onChange={(e) =>
+                        setFlashForm({ ...flashForm, date: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className={styles["modal-footer"]} style={{ marginTop: "1rem" }}>
+                  <button
+                    type="submit"
+                    className={`${styles["btn-primary"]} ${styles["full-width"]}`}
+                    id="submitFlashBtn"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Processing..." : "Create Flash Sale"}
+                  </button>
+                </div>
+              </form>
+            </CustomScrollbar>
+          </div>
         </div>
       </div>
 
@@ -2655,135 +2615,139 @@ export default function AdminDashboard() {
             const order = orders.find((o) => o.id === targetId);
             if (!order) return null;
             return (
-              <div className={`${styles["modal-form"]} custom-scrollbar`}>
-                <div className={styles["order-details-grid"]}>
-                  <div
-                    style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}
-                  >
-                    <div
-                      className={styles["order-info-box"]}
-                      style={{ flex: 1 }}
-                    >
-                      <h4>Customer</h4>
-                      <p>{order.full_name}</p>
-                      <p
-                        style={{
-                          fontSize: "0.85rem",
-                          color: "var(--color-muted-fg)",
-                          fontWeight: "normal",
-                        }}
+              <div className={styles["modal-form"]}>
+                <CustomScrollbar>
+                  <div style={{ padding: "2rem", display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+                    <div className={styles["order-details-grid"]}>
+                      <div
+                        style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}
                       >
-                        {order.email}
-                      </p>
-                    </div>
-                    <div
-                      className={styles["order-info-box"]}
-                      style={{ flex: 1 }}
-                    >
-                      <h4>Order Info</h4>
-                      <p>ID: #{order.id.substring(0, 8).toUpperCase()}</p>
-                      <p
-                        style={{
-                          fontSize: "0.85rem",
-                          color: "var(--color-muted-fg)",
-                          fontWeight: "normal",
-                        }}
-                      >
-                        Placed:{" "}
-                        {new Date(order.created_at).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                  <div>
-                    <h4
-                      style={{
-                        marginBottom: "0.5rem",
-                        color: "var(--color-fg)",
-                      }}
-                    >
-                      Purchased Items
-                    </h4>
-                    <div className={styles["order-item-list"]}>
-                      {order.items.map((item, idx) => (
-                        <div key={idx} className={styles["order-item-row"]}>
-                          <img
-                            src={item.img}
-                            className={styles["order-item-img"]}
-                            alt={item.name}
-                          />
-                          <div className={styles["order-item-details"]}>
-                            <h5>
-                              {item.name}{" "}
-                              <span
-                                style={{
-                                  fontWeight: "normal",
-                                  color: "var(--color-muted-fg)",
-                                }}
-                              >
-                                ({item.color})
-                              </span>
-                            </h5>
-                            <p>
-                              Size: {item.size} | Qty: {item.quantity}
-                            </p>
-                          </div>
-                          <div
+                        <div
+                          className={styles["order-info-box"]}
+                          style={{ flex: 1 }}
+                        >
+                          <h4>Customer</h4>
+                          <p>{order.full_name}</p>
+                          <p
                             style={{
-                              fontWeight: 700,
-                              color: "var(--color-fg)",
+                              fontSize: "0.85rem",
+                              color: "var(--color-muted-fg)",
+                              fontWeight: "normal",
                             }}
                           >
-                            {window.formatPrice
-                              ? window.formatPrice(item.price * item.quantity)
-                              : `$${item.price * item.quantity}`}
-                          </div>
+                            {order.email}
+                          </p>
                         </div>
-                      ))}
-                    </div>
-                    <div
-                      style={{
-                        textAlign: "right",
-                        marginTop: "1rem",
-                        fontSize: "1.2rem",
-                        fontWeight: 800,
-                        color: "var(--color-fg)",
-                      }}
-                    >
-                      Total:{" "}
-                      {window.formatPrice
-                        ? window.formatPrice(order.total_amount)
-                        : `$${order.total_amount}`}
+                        <div
+                          className={styles["order-info-box"]}
+                          style={{ flex: 1 }}
+                        >
+                          <h4>Order Info</h4>
+                          <p>ID: #{order.id.substring(0, 8).toUpperCase()}</p>
+                          <p
+                            style={{
+                              fontSize: "0.85rem",
+                              color: "var(--color-muted-fg)",
+                              fontWeight: "normal",
+                            }}
+                          >
+                            Placed:{" "}
+                            {new Date(order.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div style={{ marginTop: '1rem' }}>
+                        <h4
+                          style={{
+                            marginBottom: "0.5rem",
+                            color: "var(--color-fg)",
+                          }}
+                        >
+                          Purchased Items
+                        </h4>
+                        <div className={styles["order-item-list"]}>
+                          {order.items.map((item, idx) => (
+                            <div key={idx} className={styles["order-item-row"]}>
+                              <img
+                                src={item.img}
+                                className={styles["order-item-img"]}
+                                alt={item.name}
+                              />
+                              <div className={styles["order-item-details"]}>
+                                <h5>
+                                  {item.name}{" "}
+                                  <span
+                                    style={{
+                                      fontWeight: "normal",
+                                      color: "var(--color-muted-fg)",
+                                    }}
+                                  >
+                                    ({item.color})
+                                  </span>
+                                </h5>
+                                <p>
+                                  Size: {item.size} | Qty: {item.quantity}
+                                </p>
+                              </div>
+                              <div
+                                style={{
+                                  fontWeight: 700,
+                                  color: "var(--color-fg)",
+                                }}
+                              >
+                                {window.formatPrice
+                                  ? window.formatPrice(item.price * item.quantity)
+                                  : `$${item.price * item.quantity}`}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <div
+                          style={{
+                            textAlign: "right",
+                            marginTop: "1rem",
+                            fontSize: "1.2rem",
+                            fontWeight: 800,
+                            color: "var(--color-fg)",
+                          }}
+                        >
+                          Total:{" "}
+                          {window.formatPrice
+                            ? window.formatPrice(order.total_amount)
+                            : `$${order.total_amount}`}
+                        </div>
+                      </div>
+                      <div className={styles["status-updater"]} style={{ marginTop: '1rem' }}>
+                        <div className={styles["form-group"]}>
+                          <label>Update Order Status</label>
+                          <select
+                            id="modal-status-select"
+                            className={`${styles["form-input"]} ${styles["custom-select-arrow"]}`}
+                            defaultValue={order.status}
+                          >
+                            <option value="Pending">Pending</option>
+                            <option value="Processing">Processing</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                          </select>
+                        </div>
+                        <button
+                          className={styles["btn-primary"]}
+                          style={{ height: "48px" }}
+                          onClick={() =>
+                            handleOrderStatusUpdate(
+                              order.id,
+                              document.getElementById("modal-status-select").value,
+                            )
+                          }
+                        >
+                          Save Status
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <div className={styles["status-updater"]}>
-                    <div className={styles["form-group"]}>
-                      <label>Update Order Status</label>
-                      <select
-                        id="modal-status-select"
-                        className={`${styles["form-input"]} ${styles["custom-select-arrow"]}`}
-                        defaultValue={order.status}
-                      >
-                        <option value="Pending">Pending</option>
-                        <option value="Processing">Processing</option>
-                        <option value="Shipped">Shipped</option>
-                        <option value="Delivered">Delivered</option>
-                        <option value="Cancelled">Cancelled</option>
-                      </select>
-                    </div>
-                    <button
-                      className={styles["btn-primary"]}
-                      style={{ height: "48px" }}
-                      onClick={() =>
-                        handleOrderStatusUpdate(
-                          order.id,
-                          document.getElementById("modal-status-select").value,
-                        )
-                      }
-                    >
-                      Save Status
-                    </button>
-                  </div>
-                </div>
+                </CustomScrollbar>
               </div>
             );
           })()}
@@ -2810,146 +2774,150 @@ export default function AdminDashboard() {
             </button>
           </div>
           <div className={styles["modal-form"]}>
-            <p
-              className={styles["text-muted"]}
-              style={{ marginTop: "-1rem", fontSize: "0.9rem" }}
-            >
-              Control exactly which Categories and Brands appear in the customer
-              sidebar. Drag and drop the pills to reorder them!
-            </p>
-
-            <div className={styles["form-group"]}>
-              <label>Sidebar Categories</label>
-              <div style={{ display: "flex", gap: "0.5rem" }}>
-                <input
-                  type="text"
-                  className={styles["form-input"]}
-                  style={{ flex: 1 }}
-                  placeholder="e.g. Running"
-                  value={newCat}
-                  onChange={(e) => setNewCat(e.target.value)}
-                />
-                <button
-                  className={styles["btn-primary"]}
-                  onClick={() => {
-                    if (
-                      newCat.trim() &&
-                      !sidebarConfig.categories.includes(newCat.trim())
-                    ) {
-                      setSidebarConfig((prev) => ({
-                        ...prev,
-                        categories: [...prev.categories, newCat.trim()],
-                      }));
-                      setNewCat("");
-                    }
-                  }}
+            <CustomScrollbar>
+              <div style={{ padding: "2rem", display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+                <p
+                  className={styles["text-muted"]}
+                  style={{ marginTop: "-1rem", fontSize: "0.9rem" }}
                 >
-                  Add
-                </button>
-              </div>
-              <div className={styles["filter-pill-container"]}>
-                {sidebarConfig.categories.map((c, i) => (
-                  <div
-                    key={c}
-                    className={styles["filter-pill"]}
-                    draggable="true"
-                    onDragStart={(e) => onDragStart(e, i, "category")}
-                    onDragOver={onDragOver}
-                    onDrop={(e) => onDrop(e, i, "category")}
-                  >
-                    <i
-                      className="bi bi-grip-vertical"
-                      style={{ cursor: "grab", color: "var(--color-muted-fg)" }}
-                    ></i>{" "}
-                    {c}
+                  Control exactly which Categories and Brands appear in the customer
+                  sidebar. Drag and drop the pills to reorder them!
+                </p>
+
+                <div className={styles["form-group"]}>
+                  <label>Sidebar Categories</label>
+                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                    <input
+                      type="text"
+                      className={styles["form-input"]}
+                      style={{ flex: 1 }}
+                      placeholder="e.g. Running"
+                      value={newCat}
+                      onChange={(e) => setNewCat(e.target.value)}
+                    />
                     <button
-                      onClick={() =>
-                        setSidebarConfig((prev) => ({
-                          ...prev,
-                          categories: prev.categories.filter(
-                            (_, idx) => idx !== i,
-                          ),
-                        }))
-                      }
+                      className={styles["btn-primary"]}
+                      onClick={() => {
+                        if (
+                          newCat.trim() &&
+                          !sidebarConfig.categories.includes(newCat.trim())
+                        ) {
+                          setSidebarConfig((prev) => ({
+                            ...prev,
+                            categories: [...prev.categories, newCat.trim()],
+                          }));
+                          setNewCat("");
+                        }
+                      }}
                     >
-                      <i className="bi bi-x-circle-fill"></i>
+                      Add
                     </button>
                   </div>
-                ))}
-              </div>
-            </div>
+                  <div className={styles["filter-pill-container"]}>
+                    {sidebarConfig.categories.map((c, i) => (
+                      <div
+                        key={c}
+                        className={styles["filter-pill"]}
+                        draggable="true"
+                        onDragStart={(e) => onDragStart(e, i, "category")}
+                        onDragOver={onDragOver}
+                        onDrop={(e) => onDrop(e, i, "category")}
+                      >
+                        <i
+                          className="bi bi-grip-vertical"
+                          style={{ cursor: "grab", color: "var(--color-muted-fg)" }}
+                        ></i>{" "}
+                        {c}
+                        <button
+                          onClick={() =>
+                            setSidebarConfig((prev) => ({
+                              ...prev,
+                              categories: prev.categories.filter(
+                                (_, idx) => idx !== i,
+                              ),
+                            }))
+                          }
+                        >
+                          <i className="bi bi-x-circle-fill"></i>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-            <hr
-              className={styles["section-divider"]}
-              style={{ margin: "1rem 0" }}
-            />
-
-            <div className={styles["form-group"]}>
-              <label>Sidebar Brands</label>
-              <div style={{ display: "flex", gap: "0.5rem" }}>
-                <input
-                  type="text"
-                  className={styles["form-input"]}
-                  style={{ flex: 1 }}
-                  placeholder="e.g. Reebok"
-                  value={newBrand}
-                  onChange={(e) => setNewBrand(e.target.value)}
+                <hr
+                  className={styles["section-divider"]}
+                  style={{ margin: "1rem 0" }}
                 />
-                <button
-                  className={styles["btn-primary"]}
-                  onClick={() => {
-                    if (
-                      newBrand.trim() &&
-                      !sidebarConfig.brands.includes(newBrand.trim())
-                    ) {
-                      setSidebarConfig((prev) => ({
-                        ...prev,
-                        brands: [...prev.brands, newBrand.trim()],
-                      }));
-                      setNewBrand("");
-                    }
-                  }}
-                >
-                  Add
-                </button>
-              </div>
-              <div className={styles["filter-pill-container"]}>
-                {sidebarConfig.brands.map((b, i) => (
-                  <div
-                    key={b}
-                    className={styles["filter-pill"]}
-                    draggable="true"
-                    onDragStart={(e) => onDragStart(e, i, "brand")}
-                    onDragOver={onDragOver}
-                    onDrop={(e) => onDrop(e, i, "brand")}
-                  >
-                    <i
-                      className="bi bi-grip-vertical"
-                      style={{ cursor: "grab", color: "var(--color-muted-fg)" }}
-                    ></i>{" "}
-                    {b}
+
+                <div className={styles["form-group"]}>
+                  <label>Sidebar Brands</label>
+                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                    <input
+                      type="text"
+                      className={styles["form-input"]}
+                      style={{ flex: 1 }}
+                      placeholder="e.g. Reebok"
+                      value={newBrand}
+                      onChange={(e) => setNewBrand(e.target.value)}
+                    />
                     <button
-                      onClick={() =>
-                        setSidebarConfig((prev) => ({
-                          ...prev,
-                          brands: prev.brands.filter((_, idx) => idx !== i),
-                        }))
-                      }
+                      className={styles["btn-primary"]}
+                      onClick={() => {
+                        if (
+                          newBrand.trim() &&
+                          !sidebarConfig.brands.includes(newBrand.trim())
+                        ) {
+                          setSidebarConfig((prev) => ({
+                            ...prev,
+                            brands: [...prev.brands, newBrand.trim()],
+                          }));
+                          setNewBrand("");
+                        }
+                      }}
                     >
-                      <i className="bi bi-x-circle-fill"></i>
+                      Add
                     </button>
                   </div>
-                ))}
-              </div>
-            </div>
+                  <div className={styles["filter-pill-container"]}>
+                    {sidebarConfig.brands.map((b, i) => (
+                      <div
+                        key={b}
+                        className={styles["filter-pill"]}
+                        draggable="true"
+                        onDragStart={(e) => onDragStart(e, i, "brand")}
+                        onDragOver={onDragOver}
+                        onDrop={(e) => onDrop(e, i, "brand")}
+                      >
+                        <i
+                          className="bi bi-grip-vertical"
+                          style={{ cursor: "grab", color: "var(--color-muted-fg)" }}
+                        ></i>{" "}
+                        {b}
+                        <button
+                          onClick={() =>
+                            setSidebarConfig((prev) => ({
+                              ...prev,
+                              brands: prev.brands.filter((_, idx) => idx !== i),
+                            }))
+                          }
+                        >
+                          <i className="bi bi-x-circle-fill"></i>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-            <button
-              className={`${styles["btn-primary"]} ${styles["full-width"]}`}
-              onClick={saveSidebarSettings}
-              style={{ marginTop: "1rem" }}
-            >
-              Save Sidebar Settings
-            </button>
+                <button
+                  className={`${styles["btn-primary"]} ${styles["full-width"]}`}
+                  onClick={saveSidebarSettings}
+                  style={{ marginTop: "1rem" }}
+                >
+                  Save Sidebar Settings
+                </button>
+              </div>
+            </CustomScrollbar>
           </div>
         </div>
       </div>
