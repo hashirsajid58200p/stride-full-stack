@@ -1418,17 +1418,26 @@ select.custom-select-arrow {
 }
 
 .def-text {
-  font-size: 0.45rem;
-  font-weight: 800;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 8px;
+  font-weight: 900;
   color: var(--color-fg);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: -0.2px;
   line-height: 1;
   text-align: center;
   pointer-events: none;
+  width: 100%;
 }
 
 .swatch i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   color: white;
   font-size: 1.1rem;
   opacity: 0;
