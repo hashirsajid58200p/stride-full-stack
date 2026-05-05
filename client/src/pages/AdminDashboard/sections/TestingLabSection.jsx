@@ -101,6 +101,21 @@ const TestingLabSection = ({ styles, testConfig, setTestConfig }) => {
             <span className={styles["slider"]}></span>
           </label>
         </div>
+
+        <div className={styles["testing-item"]}>
+          <div className={styles["testing-info"]}>
+            <strong className={styles["testing-title"]}>Admin Content Bypass</strong>
+            <p className={styles["testing-desc"]}>When enabled, Admin can right-click and download images/videos.</p>
+          </div>
+          <label className={styles["switch"]}>
+            <input 
+              type="checkbox" 
+              checked={testConfig.allowContentDownload}
+              onChange={(e) => setTestConfig({...testConfig, allowContentDownload: e.target.checked})}
+            />
+            <span className={styles["slider"]}></span>
+          </label>
+        </div>
       </div>
     </div>
   );

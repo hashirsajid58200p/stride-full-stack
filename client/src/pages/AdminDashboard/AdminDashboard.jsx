@@ -164,7 +164,8 @@ export default function AdminDashboard() {
       allowReviews: false,
       allowWishlist: false,
       enableChatbot: true,
-      enableStripeCheckout: true
+      enableStripeCheckout: true,
+      allowContentDownload: false
     };
   });
 

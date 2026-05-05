@@ -66,6 +66,43 @@ function App() {
     document.title = titleMap[location.pathname] || "Stride";
   }, [location.pathname]);
 
+  // Content Protection & Download Bypasser Logic
+  useEffect(() => {
+    const handleContextMenu = (e) => {
+      const config = JSON.parse(localStorage.getItem("stride_admin_test_config") || "{}");
+      // If bypass is NOT enabled (allowContentDownload is false or missing)
+      if (!config.allowContentDownload) {
+        const isProtectedElement = 
+          e.target.tagName === 'IMG' || 
+          e.target.tagName === 'VIDEO' || 
+          e.target.tagName === 'SOURCE' ||
+          e.target.closest('img') || 
+          e.target.closest('video');
+
+        if (isProtectedElement) {
+          e.preventDefault();
+        }
+      }
+    };
+
+    const handleDragStart = (e) => {
+      const config = JSON.parse(localStorage.getItem("stride_admin_test_config") || "{}");
+      if (!config.allowContentDownload) {
+        if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') {
+          e.preventDefault();
+        }
+      }
+    };
+
+    window.addEventListener('contextmenu', handleContextMenu);
+    window.addEventListener('dragstart', handleDragStart);
+
+    return () => {
+      window.removeEventListener('contextmenu', handleContextMenu);
+      window.removeEventListener('dragstart', handleDragStart);
+    };
+  }, []);
+
   return (
     <div className="App">
       <Loader />
