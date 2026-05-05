@@ -189,7 +189,6 @@
 .dropdown-item:hover {
   background-color: var(--color-secondary);
   color: var(--color-accent);
-  transform: translateX(5px);
 }
 
 .dropdown-item.active {
