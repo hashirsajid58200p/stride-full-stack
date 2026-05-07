@@ -76,13 +76,11 @@
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0;
 }
 
 .form-group label {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--color-fg);
+  display: none;
 }
 
 .form-group input {
@@ -305,9 +303,6 @@
   }
   .signup-form {
     gap: 0.8rem;
-  }
-  .form-group label {
-    display: none;
   }
   .form-group input {
     padding: 0.875rem 1rem;
