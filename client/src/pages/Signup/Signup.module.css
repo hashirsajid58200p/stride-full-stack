@@ -271,7 +271,8 @@
     flex: 1;
   }
   .form-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr; /* Keep 2 columns on tablet too */
+    gap: 1rem;
   }
 }
 
@@ -303,6 +304,10 @@
   }
   .signup-form {
     gap: 0.8rem;
+  }
+  .form-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
   }
   .form-group input {
     padding: 0.875rem 1rem;
