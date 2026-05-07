@@ -335,4 +335,74 @@
     flex-direction: column;
     align-items: stretch;
   }
+  .uploadButtonsRow {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+  }
+  .btnOutline,
+  .btnDangerOutline {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Avatar Gallery Styles */
+.avatarGalleryWrapper {
+  margin-bottom: 0.5rem;
+}
+
+.galleryTitle {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-muted-fg);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.avatarGallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.avatarItem {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+  background-color: var(--color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.avatarItem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatarItem:hover {
+  transform: scale(1.1);
+  border-color: var(--color-accent);
+}
+
+.avatarItem.activeAvatar {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-accent);
+}
+
+.uploadButtonsRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
 }
