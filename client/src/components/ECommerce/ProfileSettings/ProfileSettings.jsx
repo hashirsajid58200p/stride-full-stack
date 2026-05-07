@@ -141,7 +141,40 @@ export default function ProfileSettings({ user, dbUser, setDbUser, onDeleteAccou
     } catch (err) { if (window.showToast) window.showToast("Failed to remove image.", "error"); }
   };
 
-  const initials = dbUser.fullName.split(" ").map((n) => n[0]).join("").toUpperCase();
+  const handleAvatarSelect = async (avatarUrl) => {
+    setIsUploading(true);
+    const existingUrl = dbUser.avatarUrl;
+    try {
+      await updateProfile(user, { photoURL: avatarUrl });
+      if (existingUrl) await deleteOldImageFromCloudinary(existingUrl);
+      setDbUser((prev) => ({ ...prev, avatarUrl: avatarUrl }));
+      const extraData = { ...dbUser, avatarUrl: avatarUrl };
+      localStorage.setItem(
+        `stride_profile_${user.uid}`,
+        JSON.stringify(extraData),
+      );
+      if (window.showToast)
+        window.showToast("Avatar updated successfully!", "success");
+    } catch (err) {
+      if (window.showToast) window.showToast("Failed to update avatar.", "error");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const avatars = [
+    "/images/avatars/male_01.jpg",
+    "/images/avatars/male_02.jpg",
+    "/images/avatars/male_03.jpg",
+    "/images/avatars/male_04.jpg",
+    "/images/avatars/female_01.jpg",
+  ];
+
+  const initials = dbUser.fullName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase();
 
   return (
     <div className={styles.profileCard}>
@@ -149,20 +182,50 @@ export default function ProfileSettings({ user, dbUser, setDbUser, onDeleteAccou
       <div className={styles.profileUploadSection}>
         <div className={styles.profilePreviewWrapper}>
           <div className={styles.profilePreview}>
-            {dbUser.avatarUrl ? <img src={dbUser.avatarUrl} alt="Avatar" /> : initials}
+            {dbUser.avatarUrl ? (
+              <img src={dbUser.avatarUrl} alt="Avatar" />
+            ) : (
+              initials
+            )}
           </div>
           <ProfileLoader isVisible={isUploading} />
         </div>
         <div className={styles.uploadActions}>
-          <button type="button" className={styles.btnOutline} onClick={() => setUploadModal(true)}>
-            <i className="bi bi-upload"></i> Upload Image
-          </button>
-          {dbUser.avatarUrl && (
-            <button type="button" className={styles.btnDangerOutline} onClick={handleDeleteImage}>
-              <i className="bi bi-trash"></i> Remove Image
+          <div className={styles.avatarGalleryWrapper}>
+            <span className={styles.galleryTitle}>Choose from Avatars</span>
+            <div className={styles.avatarGallery}>
+              {avatars.map((avatar, idx) => (
+                <div
+                  key={idx}
+                  className={`${styles.avatarItem} ${dbUser.avatarUrl === avatar ? styles.activeAvatar : ""}`}
+                  onClick={() => handleAvatarSelect(avatar)}
+                >
+                  <img src={avatar} alt={`Avatar ${idx + 1}`} />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className={styles.uploadButtonsRow}>
+            <button
+              type="button"
+              className={styles.btnOutline}
+              onClick={() => setUploadModal(true)}
+            >
+              <i className="bi bi-upload"></i> Upload Image
             </button>
-          )}
-          <p className={styles.textMuted}>Recommended size: 200x200px. Max size 2MB.</p>
+            {dbUser.avatarUrl && (
+              <button
+                type="button"
+                className={styles.btnDangerOutline}
+                onClick={handleDeleteImage}
+              >
+                <i className="bi bi-trash"></i> Remove
+              </button>
+            )}
+          </div>
+          <p className={styles.textMuted}>
+            Recommended size: 200x200px. Max size 2MB.
+          </p>
         </div>
       </div>
 

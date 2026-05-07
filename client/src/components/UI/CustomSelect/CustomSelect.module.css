@@ -1,0 +1,112 @@
+.custom-select-container {
+  position: relative;
+  width: 100%;
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-fg);
+  margin-bottom: 0.5rem;
+}
+
+/* Global design choice: if the user hides labels on mobile/desktop, 
+   the component will handle it via the parent's CSS */
+
+.select-display {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-fg);
+  font-size: 0.95rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  outline: none;
+  user-select: none;
+}
+
+.select-display:hover {
+  border-color: var(--color-accent);
+}
+
+.select-display.active {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+}
+
+.placeholder {
+  color: var(--color-muted-fg);
+}
+
+.icon {
+  font-size: 0.8rem;
+  color: var(--color-accent);
+  transition: transform 0.3s ease;
+}
+
+.select-display.active .icon {
+  transform: rotate(180deg);
+}
+
+.options-dropdown {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  right: 0;
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  max-height: 200px;
+  overflow-y: auto;
+  animation: slideDown 0.2s ease-out;
+}
+
+.option {
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  color: var(--color-fg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.option:hover {
+  background-color: var(--color-bg);
+  color: var(--color-accent);
+  padding-left: 1.25rem;
+}
+
+.option.selected {
+  background-color: var(--color-accent);
+  color: var(--color-accent-fg);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .select-display {
+    padding: 0.7rem 0.8rem;
+    font-size: 0.8rem;
+  }
+  .option {
+    padding: 0.7rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}

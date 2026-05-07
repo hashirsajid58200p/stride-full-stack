@@ -8,6 +8,7 @@ import {
 import { getDatabase, ref, set, get } from "firebase/database";
 import styles from "./Signup.module.css";
 import CustomCheckbox from "../../components/UI/CustomCheckbox";
+import CustomSelect from "../../components/UI/CustomSelect/CustomSelect";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -203,18 +204,18 @@ export default function Signup() {
 
             <div className={styles["form-row"]}>
               <div className={styles["form-group"]}>
-                <label htmlFor="gender">Gender</label>
-                <select
+                <CustomSelect
                   id="gender"
-                  required
+                  label="Gender"
                   value={formData.gender}
                   onChange={handleInputChange}
-                  className={styles["form-select"]}
-                >
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                </select>
+                  options={[
+                    { value: "male", label: "Male" },
+                    { value: "female", label: "Female" },
+                    { value: "prefer_not_to_say", label: "Prefer not to say" },
+                  ]}
+                  placeholder="Choose Gender"
+                />
               </div>
               <div className={styles["form-group"]}>
                 <label htmlFor="email">Email</label>
