@@ -312,8 +312,11 @@
     width: 100%;
   }
   .form-group input {
-    padding: 0.875rem 1rem;
-    font-size: 0.95rem;
+    padding: 0.75rem 0.875rem;
+    font-size: 0.85rem;
+  }
+  .form-group input::placeholder {
+    font-size: 0.85rem;
   }
   .login-link {
     margin-top: 1rem;
