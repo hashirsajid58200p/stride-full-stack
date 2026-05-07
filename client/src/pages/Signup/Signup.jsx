@@ -18,6 +18,7 @@ export default function Signup() {
     address: "",
     postalCode: "",
     password: "",
+    gender: "male", // Default to male
     newsletter: false,
     terms: false,
   });
@@ -60,8 +61,29 @@ export default function Signup() {
       );
       const user = userCredential.user;
 
-      // 2. Attach Full Name
-      await updateProfile(user, { displayName: formData.fullName });
+      // 2. Assign Avatar based on Gender
+      const maleAvatars = [
+        "/images/avatars/male_01.jpg",
+        "/images/avatars/male_02.jpg",
+        "/images/avatars/male_03.jpg",
+        "/images/avatars/male_04.jpg",
+      ];
+      const femaleAvatars = ["/images/avatars/female_01.jpg"];
+
+      let selectedAvatar = "/images/avatars/male_01.jpg";
+      if (formData.gender === "male") {
+        selectedAvatar =
+          maleAvatars[Math.floor(Math.random() * maleAvatars.length)];
+      } else if (formData.gender === "female") {
+        selectedAvatar =
+          femaleAvatars[Math.floor(Math.random() * femaleAvatars.length)];
+      }
+
+      // 3. Attach Full Name & Avatar
+      await updateProfile(user, {
+        displayName: formData.fullName,
+        photoURL: selectedAvatar,
+      });
 
       // 3. Write default role to RTDB
       const userRef = ref(db, `users/${user.uid}`);
@@ -120,6 +142,10 @@ export default function Signup() {
       if (!snapshot.exists()) {
         const userRef = ref(db, `users/${user.uid}`);
         await set(userRef, { role: "client" });
+
+        // For Google users, we use their Google profile picture by default
+        // No extra action needed here as Firebase handles photoURL automatically
+        // but we ensure it's kept in sync if needed.
       }
 
       if (window.showToast)
@@ -175,16 +201,32 @@ export default function Signup() {
               </div>
             </div>
 
-            <div className={styles["form-group"]}>
-              <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                required
-                placeholder="Email Address"
-                value={formData.email}
-                onChange={handleInputChange}
-              />
+            <div className={styles["form-row"]}>
+              <div className={styles["form-group"]}>
+                <label htmlFor="gender">Gender</label>
+                <select
+                  id="gender"
+                  required
+                  value={formData.gender}
+                  onChange={handleInputChange}
+                  className={styles["form-select"]}
+                >
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div className={styles["form-group"]}>
+                <label htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  required
+                  placeholder="Email Address"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                />
+              </div>
             </div>
 
             <div className={styles["form-row"]}>
