@@ -364,18 +364,19 @@ export default function Header() {
                     <i className="bi bi-cart"></i>
                     <span className={styles["cart-badge"]}>{cartCount}</span>
                   </button>
-
-                  <button
-                    className={`${styles["mobile-menu-btn"]} ${styles["icon-btn"]}`}
-                    onClick={handleMobileMenu}
-                    aria-label="Menu"
-                  >
-                    <i className="bi bi-list"></i>
-                  </button>
                 </div>
               </div>
 
-              {/* Account Dropdown - Always visible */}
+              {/* Hamburger Menu - Outside and before Avatar */}
+              <button
+                className={`${styles["mobile-menu-btn"]} ${styles["icon-btn"]}`}
+                onClick={handleMobileMenu}
+                aria-label="Menu"
+              >
+                <i className="bi bi-list"></i>
+              </button>
+
+              {/* Account Dropdown - Always visible and Last */}
               <div
                 className={styles["account-container"]}
                 ref={accountDropdownRef}

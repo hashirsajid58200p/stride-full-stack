@@ -626,10 +626,11 @@
   /* Expandable Logic */
   .expand-toggle-btn {
     display: flex !important;
-    background-color: var(--color-secondary) !important;
-    border-radius: 50% !important;
+    background: transparent !important;
+    border: none !important;
     z-index: 5;
-    border: 1px solid var(--color-border) !important;
+    width: 24px !important;
+    padding: 0 !important;
   }
 
   .expandable-wrapper {
@@ -656,19 +657,17 @@
     overflow: hidden;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: var(--nav-shadow);
-    margin-right: 8px;
   }
 
   .expanded .expandable-icons {
     max-width: 250px;
     opacity: 1;
     visibility: visible;
+    margin-right: 4px;
   }
 
   .expanded .expand-toggle-btn {
-    background-color: var(--color-accent) !important;
-    color: #fff !important;
-    border-color: var(--color-accent) !important;
+    color: var(--color-accent) !important;
   }
   .cart-badge {
     width: 14px;
