@@ -354,7 +354,15 @@ export default function Header() {
                 <span className={styles["cart-badge"]}>{cartCount}</span>
               </button>
 
-              {/* Account Dropdown */}
+              <button
+                className={`${styles["mobile-menu-btn"]} ${styles["icon-btn"]}`}
+                onClick={handleMobileMenu}
+                aria-label="Menu"
+              >
+                <i className="bi bi-list"></i>
+              </button>
+
+              {/* Account Dropdown - Moved to Last position */}
               <div
                 className={styles["account-container"]}
                 ref={accountDropdownRef}
@@ -445,14 +453,6 @@ export default function Header() {
                   </div>
                 )}
               </div>
-
-              <button
-                className={`${styles["mobile-menu-btn"]} ${styles["icon-btn"]}`}
-                onClick={handleMobileMenu}
-                aria-label="Menu"
-              >
-                <i className="bi bi-list"></i>
-              </button>
             </div>
           </div>
         </div>
