@@ -623,6 +623,18 @@
     font-size: 1.15rem;
   }
 
+  .logo-link {
+    transition: all 0.4s ease;
+  }
+
+  .hide-on-expand {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    pointer-events: none;
+    transform: translateX(-20px);
+  }
+
   /* Expandable Logic */
   .expand-toggle-btn {
     display: flex !important;

@@ -248,7 +248,7 @@ export default function Header() {
           <div className={styles["nav-content"]}>
             {/* Nav Left - Logo */}
             <div className={styles["nav-left"]}>
-              <Link to="/" className={styles["logo-link"]} title="Home">
+              <Link to="/" className={`${styles["logo-link"]} ${isIconsExpanded ? styles["hide-on-expand"] : ""}`} title="Home">
                 <img
                   src={
                     theme === "dark"
