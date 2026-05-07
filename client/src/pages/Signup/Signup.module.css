@@ -284,13 +284,14 @@
     margin: 0;
   }
   .split-card-left {
-    padding: 2rem 1.25rem;
+    padding: 1.5rem 2.25rem;
   }
   .split-card-right {
     display: none;
   }
   .title {
     font-size: 1.8rem;
+    margin-bottom: 0.25rem;
   }
   .subtitle {
     font-size: 0.95rem;
@@ -300,7 +301,10 @@
     height: 28px;
   }
   .signup-header {
-    margin-bottom: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .signup-form {
+    gap: 0.8rem;
   }
   .form-group label {
     font-size: 0.8rem;

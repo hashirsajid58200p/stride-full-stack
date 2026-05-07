@@ -307,13 +307,14 @@
     margin: 0;
   }
   .split-card-left {
-    padding: 2rem 1.25rem;
+    padding: 1.5rem 2.25rem;
   }
   .split-card-right {
     display: none;
   }
   .title {
     font-size: 1.8rem;
+    margin-bottom: 0.25rem;
   }
   .subtitle {
     font-size: 0.95rem;
@@ -323,11 +324,20 @@
     height: 28px;
   }
   .login-header {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .login-form {
+    gap: 1rem;
+  }
+  .social-login {
+    gap: 0.75rem;
   }
   .social-btn {
     font-size: 0.85rem;
     padding: 0.75rem;
+  }
+  .signup-link {
+    margin-top: 1rem;
   }
 }
 
