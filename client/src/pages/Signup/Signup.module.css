@@ -307,11 +307,11 @@
     gap: 0.8rem;
   }
   .form-group label {
-    font-size: 0.8rem;
+    display: none;
   }
   .form-group input {
-    padding: 0.7rem 0.875rem;
-    font-size: 0.9rem;
+    padding: 0.875rem 1rem;
+    font-size: 0.95rem;
   }
   .login-link {
     margin-top: 1rem;

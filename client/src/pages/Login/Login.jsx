@@ -190,6 +190,7 @@ export default function Login() {
                 type="email"
                 id="email"
                 required
+                placeholder="Email Address"
                 value={formData.email}
                 onChange={handleInputChange}
                 className={errors.email ? styles.invalid : ""}
@@ -207,6 +208,7 @@ export default function Login() {
                 type="password"
                 id="password"
                 required
+                placeholder="Password"
                 value={formData.password}
                 onChange={handleInputChange}
                 className={errors.password ? styles.invalid : ""}

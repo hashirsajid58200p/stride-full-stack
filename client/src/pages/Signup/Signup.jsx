@@ -157,6 +157,7 @@ export default function Signup() {
                   type="text"
                   id="fullName"
                   required
+                  placeholder="Full Name"
                   value={formData.fullName}
                   onChange={handleInputChange}
                 />
@@ -167,6 +168,7 @@ export default function Signup() {
                   type="tel"
                   id="mobile"
                   required
+                  placeholder="Mobile Number"
                   value={formData.mobile}
                   onChange={handleInputChange}
                 />
@@ -179,6 +181,7 @@ export default function Signup() {
                 type="email"
                 id="email"
                 required
+                placeholder="Email Address"
                 value={formData.email}
                 onChange={handleInputChange}
               />
@@ -191,6 +194,7 @@ export default function Signup() {
                   type="text"
                   id="address"
                   required
+                  placeholder="Address"
                   value={formData.address}
                   onChange={handleInputChange}
                 />
@@ -201,6 +205,7 @@ export default function Signup() {
                   type="text"
                   id="postalCode"
                   required
+                  placeholder="Postal Code"
                   value={formData.postalCode}
                   onChange={handleInputChange}
                 />
@@ -213,6 +218,7 @@ export default function Signup() {
                 type="password"
                 id="password"
                 required
+                placeholder="Password"
                 value={formData.password}
                 onChange={handleInputChange}
               />
