@@ -163,12 +163,12 @@
   cursor: not-allowed;
 }
 
-/* Sign In Link (Left Aligned) */
+/* Sign In Link (Centered) */
 .login-link {
-  text-align: left;
+  text-align: center;
   font-size: 0.875rem;
   color: var(--color-muted-fg);
-  margin-top: 0.5rem;
+  margin-top: 1.5rem;
 }
 
 .login-link a {
@@ -312,6 +312,9 @@
   .form-group input {
     padding: 0.7rem 0.875rem;
     font-size: 0.9rem;
+  }
+  .login-link {
+    margin-top: 1rem;
   }
 }
 
