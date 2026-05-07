@@ -18,6 +18,7 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [isIconsExpanded, setIsIconsExpanded] = useState(false);
 
   // Destructure cart controls from Context
   const { setIsCartOpen, cartItems } = useCart();
@@ -317,52 +318,64 @@ export default function Header() {
 
             {/* Nav Right - Icons */}
             <div className={styles["nav-right"]}>
-              <button
-                className={`${styles["icon-btn"]} ${styles["search-toggle-btn"]}`}
-                onClick={() => handleSearchModal(true)}
-                aria-label="Search"
-              >
-                <i className="bi bi-search"></i>
-              </button>
+              <div className={`${styles["expandable-wrapper"]} ${isIconsExpanded ? styles.expanded : ""}`}>
+                <button 
+                  className={`${styles["icon-btn"]} ${styles["expand-toggle-btn"]}`}
+                  onClick={() => setIsIconsExpanded(!isIconsExpanded)}
+                  aria-label={isIconsExpanded ? "Collapse Icons" : "Expand Icons"}
+                >
+                  <i className={`bi ${isIconsExpanded ? "bi-chevron-right" : "bi-chevron-left"}`}></i>
+                </button>
 
-              <button
-                className={`${styles["icon-btn"]} ${styles["theme-toggle-btn"]}`}
-                onClick={toggleTheme}
-                aria-label="Toggle Theme"
-              >
-                <i
-                  className={`bi ${theme === "dark" ? "bi-moon" : "bi-sun"}`}
-                ></i>
-              </button>
+                <div className={styles["expandable-icons"]}>
+                  <button
+                    className={`${styles["icon-btn"]} ${styles["search-toggle-btn"]}`}
+                    onClick={() => handleSearchModal(true)}
+                    aria-label="Search"
+                  >
+                    <i className="bi bi-search"></i>
+                  </button>
 
-              <a
-                href="#"
-                className={`${styles["icon-btn"]} ${styles["wishlist-btn"]}`}
-                onClick={handleWishlistClick}
-                aria-label="Wishlist"
-              >
-                <i className="bi bi-heart"></i>
-              </a>
+                  <button
+                    className={`${styles["icon-btn"]} ${styles["theme-toggle-btn"]}`}
+                    onClick={toggleTheme}
+                    aria-label="Toggle Theme"
+                  >
+                    <i
+                      className={`bi ${theme === "dark" ? "bi-moon" : "bi-sun"}`}
+                    ></i>
+                  </button>
 
-              {/* UPDATED: Cart Button now triggers setIsCartOpen(true) */}
-              <button
-                className={`${styles["icon-btn"]} ${styles["cart-btn"]}`}
-                aria-label="Shopping Cart"
-                onClick={() => setIsCartOpen(true)}
-              >
-                <i className="bi bi-cart"></i>
-                <span className={styles["cart-badge"]}>{cartCount}</span>
-              </button>
+                  <a
+                    href="#"
+                    className={`${styles["icon-btn"]} ${styles["wishlist-btn"]}`}
+                    onClick={handleWishlistClick}
+                    aria-label="Wishlist"
+                  >
+                    <i className="bi bi-heart"></i>
+                  </a>
 
-              <button
-                className={`${styles["mobile-menu-btn"]} ${styles["icon-btn"]}`}
-                onClick={handleMobileMenu}
-                aria-label="Menu"
-              >
-                <i className="bi bi-list"></i>
-              </button>
+                  {/* Cart Button */}
+                  <button
+                    className={`${styles["icon-btn"]} ${styles["cart-btn"]}`}
+                    aria-label="Shopping Cart"
+                    onClick={() => setIsCartOpen(true)}
+                  >
+                    <i className="bi bi-cart"></i>
+                    <span className={styles["cart-badge"]}>{cartCount}</span>
+                  </button>
 
-              {/* Account Dropdown - Moved to Last position */}
+                  <button
+                    className={`${styles["mobile-menu-btn"]} ${styles["icon-btn"]}`}
+                    onClick={handleMobileMenu}
+                    aria-label="Menu"
+                  >
+                    <i className="bi bi-list"></i>
+                  </button>
+                </div>
+              </div>
+
+              {/* Account Dropdown - Always visible */}
               <div
                 className={styles["account-container"]}
                 ref={accountDropdownRef}
