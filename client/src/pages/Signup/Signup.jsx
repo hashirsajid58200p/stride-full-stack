@@ -19,7 +19,7 @@ export default function Signup() {
     address: "",
     postalCode: "",
     password: "",
-    gender: "male", // Default to male
+    gender: "", // Placeholder mode
     newsletter: false,
     terms: false,
   });
@@ -78,6 +78,9 @@ export default function Signup() {
       } else if (formData.gender === "female") {
         selectedAvatar =
           femaleAvatars[Math.floor(Math.random() * femaleAvatars.length)];
+      } else {
+        // Fallback for "Prefer not to say" or empty
+        selectedAvatar = "/images/avatars/male_01.jpg";
       }
 
       // 3. Attach Full Name & Avatar
@@ -202,7 +205,42 @@ export default function Signup() {
               </div>
             </div>
 
+            <div className={styles["form-group"]}>
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                required
+                placeholder="Email Address"
+                value={formData.email}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div className={styles["form-group"]}>
+              <label htmlFor="address">Address</label>
+              <input
+                type="text"
+                id="address"
+                required
+                placeholder="Address"
+                value={formData.address}
+                onChange={handleInputChange}
+              />
+            </div>
+
             <div className={styles["form-row"]}>
+              <div className={styles["form-group"]}>
+                <label htmlFor="postalCode">Postal Code</label>
+                <input
+                  type="text"
+                  id="postalCode"
+                  required
+                  placeholder="Postal Code"
+                  value={formData.postalCode}
+                  onChange={handleInputChange}
+                />
+              </div>
               <div className={styles["form-group"]}>
                 <CustomSelect
                   id="gender"
@@ -214,43 +252,7 @@ export default function Signup() {
                     { value: "female", label: "Female" },
                     { value: "prefer_not_to_say", label: "Prefer not to say" },
                   ]}
-                  placeholder="Choose Gender"
-                />
-              </div>
-              <div className={styles["form-group"]}>
-                <label htmlFor="email">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  required
-                  placeholder="Email Address"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
-            <div className={styles["form-row"]}>
-              <div className={styles["form-group"]}>
-                <label htmlFor="address">Address</label>
-                <input
-                  type="text"
-                  id="address"
-                  required
-                  placeholder="Address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className={styles["form-group"]}>
-                <label htmlFor="postalCode">Postal Code</label>
-                <input
-                  type="text"
-                  id="postalCode"
-                  required
-                  placeholder="Postal Code"
-                  value={formData.postalCode}
-                  onChange={handleInputChange}
+                  placeholder="Gender"
                 />
               </div>
             </div>
