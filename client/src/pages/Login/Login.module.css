@@ -329,11 +329,11 @@
     gap: 0.85rem;
   }
   .form-group input {
-    padding: 0.75rem 0.875rem;
-    font-size: 0.85rem;
+    padding: 0.7rem 0.8rem;
+    font-size: 0.8rem;
   }
   .form-group input::placeholder {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
   }
   .social-login {
     gap: 0.75rem;
