@@ -1,11 +1,11 @@
 .container {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+  display: flex; /* Changed from inline-flex */
+  align-items: flex-start;
+  gap: 0.65rem;
   cursor: pointer;
   user-select: none;
   transition: opacity 0.2s;
-  line-height: 1;
+  line-height: 1.4;
 }
 
 .container:hover {
@@ -20,6 +20,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  margin-top: 2px;
 }
 
 .hiddenInput {
