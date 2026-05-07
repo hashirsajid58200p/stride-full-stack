@@ -600,11 +600,11 @@
     gap: 1px;
   }
   .icon-btn {
-    width: 28px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
   }
   .icon-btn i {
-    font-size: 1.05rem;
+    font-size: 1.15rem;
   }
   .cart-badge {
     width: 14px;
