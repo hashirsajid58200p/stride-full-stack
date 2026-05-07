@@ -280,10 +280,34 @@
 @media (max-width: 768px) {
   .split-card {
     flex-direction: column;
-    max-width: 500px;
+    max-width: 100%;
+    margin: 0;
+  }
+  .split-card-left {
+    padding: 2rem 1.25rem;
   }
   .split-card-right {
     display: none;
+  }
+  .title {
+    font-size: 1.8rem;
+  }
+  .subtitle {
+    font-size: 0.95rem;
+  }
+  .welcome-icon {
+    width: 28px;
+    height: 28px;
+  }
+  .signup-header {
+    margin-bottom: 1.2rem;
+  }
+  .form-group label {
+    font-size: 0.8rem;
+  }
+  .form-group input {
+    padding: 0.7rem 0.875rem;
+    font-size: 0.9rem;
   }
 }
 
