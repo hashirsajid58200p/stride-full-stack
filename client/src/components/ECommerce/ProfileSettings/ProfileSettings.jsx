@@ -192,7 +192,7 @@ export default function ProfileSettings({ user, dbUser, setDbUser, onDeleteAccou
         </div>
         <div className={styles.uploadActions}>
           <div className={styles.avatarGalleryWrapper}>
-            <span className={styles.galleryTitle}>Choose from Avatars</span>
+            <span className={styles.galleryTitle}>Choose from avatars</span>
             <div className={styles.avatarGallery}>
               {avatars.map((avatar, idx) => (
                 <div

@@ -22,8 +22,8 @@
 
 .profilePreviewWrapper {
   position: relative;
-  width: 150px;
-  height: 150px;
+  width: 130px;
+  height: 130px;
 }
 
 .profilePreview {
@@ -354,12 +354,10 @@
 
 .galleryTitle {
   display: block;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--color-muted-fg);
   margin-bottom: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .avatarGallery {
@@ -369,8 +367,8 @@
 }
 
 .avatarItem {
-  width: 52px;
-  height: 52px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   overflow: hidden;
   cursor: pointer;
