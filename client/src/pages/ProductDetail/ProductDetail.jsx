@@ -701,24 +701,33 @@ export default function ProductDetail() {
                     </button>
                   </div>
                   <div className={styles["size-grid"]}>
-                    {product.product_sizes &&
-                    product.product_sizes.length > 0 ? (
-                      [...product.product_sizes]
-                        .sort((a, b) => parseFloat(a.size) - parseFloat(b.size))
-                        .map((s, i) => (
+                    {(() => {
+                      const allAvailableSizes = ["7", "8", "9", "10", "11", "12"];
+                      if (product.product_sizes) {
+                        product.product_sizes.forEach(s => {
+                          if (!allAvailableSizes.includes(String(s.size))) {
+                            allAvailableSizes.push(String(s.size));
+                          }
+                        });
+                      }
+                      allAvailableSizes.sort((a, b) => parseFloat(a) - parseFloat(b));
+
+                      return allAvailableSizes.map((sz, i) => {
+                        const sizeObj = product.product_sizes?.find(s => String(s.size) === sz);
+                        const isAvailable = sizeObj && sizeObj.stock_quantity > 0;
+                        return (
                           <button
                             key={i}
-                            className={`${styles["size-btn"]} ${activeSize === s.size ? styles.active : ""}`}
-                            disabled={s.stock_quantity <= 0}
-                            title={s.stock_quantity <= 0 ? "Out of Stock" : ""}
-                            onClick={() => setActiveSize(s.size)}
+                            className={`${styles["size-btn"]} ${activeSize === sz ? styles.active : ""} ${!isAvailable ? styles["size-unavailable"] : ""}`}
+                            disabled={!isAvailable}
+                            title={!isAvailable ? "Out of Stock" : ""}
+                            onClick={() => isAvailable && setActiveSize(sz)}
                           >
-                            {s.size}
+                            {sz}
                           </button>
-                        ))
-                    ) : (
-                      <p style={{ color: "var(--color-muted-fg)" }}>Sold Out</p>
-                    )}
+                        );
+                      });
+                    })()}
                   </div>
                 </div>
 
@@ -925,6 +934,57 @@ export default function ProductDetail() {
                     <td>10</td>
                     <td>43</td>
                     <td>29.0 cm</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className={styles["size-table-container"]}>
+              <h4>Universal Shoe Size Chart</h4>
+              <table className={styles["size-table"]}>
+                <thead>
+                  <tr>
+                    <th>US</th>
+                    <th>UK</th>
+                    <th>EU</th>
+                    <th>Length (CM)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>7</td>
+                    <td>6</td>
+                    <td>40</td>
+                    <td>25.0 cm</td>
+                  </tr>
+                  <tr>
+                    <td>8</td>
+                    <td>7</td>
+                    <td>41</td>
+                    <td>26.0 cm</td>
+                  </tr>
+                  <tr>
+                    <td>9</td>
+                    <td>8</td>
+                    <td>42</td>
+                    <td>27.0 cm</td>
+                  </tr>
+                  <tr>
+                    <td>10</td>
+                    <td>9</td>
+                    <td>43</td>
+                    <td>28.0 cm</td>
+                  </tr>
+                  <tr>
+                    <td>11</td>
+                    <td>10</td>
+                    <td>44</td>
+                    <td>29.0 cm</td>
+                  </tr>
+                  <tr>
+                    <td>12</td>
+                    <td>11</td>
+                    <td>45 – 46</td>
+                    <td>30.0 cm</td>
                   </tr>
                 </tbody>
               </table>
