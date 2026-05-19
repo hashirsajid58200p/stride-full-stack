@@ -404,11 +404,11 @@
   left: -10%;
   width: 120%;
   height: 2px;
-  background-color: var(--color-muted-fg) !important;
+  background-color: #ef4444 !important;
   transform: rotate(-35deg) !important;
   transform-origin: center !important;
   pointer-events: none;
-  opacity: 0.6;
+  opacity: 0.9;
 }
 
 /* Quantity */
@@ -620,8 +620,8 @@
   margin-bottom: 2.5rem;
 }
 .size-table-container h4 {
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  margin-bottom: 0.8rem;
   color: var(--color-accent);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -630,13 +630,13 @@
 .size-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.95rem;
+  font-size: 0.82rem;
   text-align: center;
 }
 
 .size-table th,
 .size-table td {
-  padding: 1rem;
+  padding: 0.6rem 0.8rem;
   border: 1px solid var(--color-border);
   color: var(--color-fg);
 }
