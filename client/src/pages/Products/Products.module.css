@@ -368,10 +368,8 @@
 
 .form-group label {
   font-weight: 600;
-  font-size: 0.75rem;
-  color: var(--color-muted-fg);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-size: 0.85rem;
+  color: var(--color-fg);
 }
 
 .form-input {
