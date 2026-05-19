@@ -204,12 +204,76 @@ export default function Home() {
         if (!window.supabase) return;
         const { data, error } = await window.supabase
           .from("reviews")
-          .select("*, products ( name )")
-          .order("created_at", { ascending: false })
-          .limit(20);
+          .select("*, products ( name, brand, category, price )")
+          .order("created_at", { ascending: false });
 
         if (error) throw error;
-        setCustomerReviews(data || []);
+
+        if (data && data.length > 0) {
+          try {
+            const historyKey = "stride_view_history";
+            const existing = localStorage.getItem(historyKey);
+            const history = existing ? JSON.parse(existing) : [];
+
+            if (history.length === 0) {
+              // First-time user: Shuffle and show exactly 10 reviews
+              const shuffled = [...data].sort(() => 0.5 - Math.random());
+              setCustomerReviews(shuffled.slice(0, 10));
+            } else {
+              // User behavior-based scoring
+              const brandCounts = {};
+              const categoryCounts = {};
+              let totalPrice = 0;
+
+              history.forEach((p) => {
+                if (p.brand) brandCounts[p.brand] = (brandCounts[p.brand] || 0) + 1;
+                if (p.category) categoryCounts[p.category] = (categoryCounts[p.category] || 0) + 1;
+                totalPrice += p.price || 0;
+              });
+
+              const avgPrice = totalPrice / history.length;
+
+              const scoredReviews = data.map((review) => {
+                let score = 0;
+                const product = review.products;
+
+                if (product) {
+                  // Brand match (+4 points per view)
+                  if (product.brand && brandCounts[product.brand]) {
+                    score += brandCounts[product.brand] * 4;
+                  }
+                  // Category match (+4 points per view)
+                  if (product.category && categoryCounts[product.category]) {
+                    score += categoryCounts[product.category] * 4;
+                  }
+                  // Price proximity (max +5 points)
+                  if (product.price && avgPrice > 0) {
+                    const priceDiffRatio = Math.abs(product.price - avgPrice) / avgPrice;
+                    score += Math.max(0, 5 - priceDiffRatio * 5);
+                  }
+                }
+
+                // Prefer higher ratings (+3 points per star rating)
+                score += (review.rating || 5) * 3;
+
+                // Exploration noise factor to make list lively
+                score += Math.random() * 0.5;
+
+                return { review, score };
+              });
+
+              // Sort by score descending and take exactly 10 reviews
+              scoredReviews.sort((a, b) => b.score - a.score);
+              const recommendedReviews = scoredReviews.map((sr) => sr.review).slice(0, 10);
+              setCustomerReviews(recommendedReviews);
+            }
+          } catch (err) {
+            console.error("AI reviews ranking failed, fallback to first 10 reviews:", err);
+            setCustomerReviews(data.slice(0, 10));
+          }
+        } else {
+          setCustomerReviews([]);
+        }
       } catch (err) {
         console.error("Error fetching testimonials:", err);
       } finally {
