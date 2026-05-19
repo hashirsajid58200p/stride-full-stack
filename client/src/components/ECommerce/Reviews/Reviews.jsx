@@ -178,6 +178,7 @@ export default function Reviews({ productId, onRatingUpdate }) {
           user_photo_url: user.photoURL || null,
           rating: parseInt(selectedRating),
           review_text: reviewText,
+          created_at: new Date().toISOString(),
         },
       ]);
 
@@ -399,6 +400,12 @@ export default function Reviews({ productId, onRatingUpdate }) {
                         year: "numeric",
                         month: "long",
                         day: "numeric",
+                      })}{" "}
+                      at{" "}
+                      {new Date(r.created_at).toLocaleTimeString("en-US", {
+                        hour: "numeric",
+                        minute: "2-digit",
+                        hour12: true,
                       })}
                     </span>
                   </div>

@@ -341,9 +341,7 @@
 }
 
 .related-products-section .container {
-  max-width: 96% !important;
-  padding: 0 2rem !important;
-  margin: 0 auto;
+  padding: 0 var(--container-padding);
 }
 
 .featured-products-override {
