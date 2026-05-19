@@ -157,6 +157,7 @@ export default function Home() {
   }, []);
 
   // ==========================================
+  // ==========================================
   // BRAND SHOWCASE: FLAWLESS JS CIRCULAR SCROLL
   // ==========================================
   useEffect(() => {
@@ -169,8 +170,8 @@ export default function Home() {
       const track = row.querySelector(`.${styles["marquee-track"]}`);
       if (!track) return;
 
-      let isHovered = false;
-      row.style.cursor = "grab";
+      let isPaused = false;
+      row.style.cursor = "default";
 
       // Delay ensures DOM is painted and scrollWidth is accurate
       setTimeout(() => {
@@ -185,117 +186,40 @@ export default function Home() {
           row.scrollLeft = currentScroll;
         }
 
+        // Hover Pausing (Desktop)
         const handleMouseEnter = () => {
-          isHovered = true;
+          isPaused = true;
         };
         const handleMouseLeave = () => {
-          isHovered = false;
-        };
-        const handleScroll = () => {
-          if (isHovered) currentScroll = row.scrollLeft;
+          isPaused = false;
         };
 
         row.addEventListener("mouseenter", handleMouseEnter);
         row.addEventListener("mouseleave", handleMouseLeave);
-        row.addEventListener("scroll", handleScroll);
 
-        // MOUSE DRAG EVENT LISTENERS
-        let isDragging = false;
-        let startX = 0;
-        let scrollLeftStart = 0;
-
-        const handleWindowMouseMove = (e) => {
-          if (!isDragging) return;
-          const x = e.clientX;
-          const walk = (x - startX) * 2; // Sensitivity multiplier
-          let targetScroll = scrollLeftStart - walk;
-
-          if (targetScroll < 0) targetScroll += halfWidth;
-          if (targetScroll >= halfWidth * 2) targetScroll -= halfWidth;
-
-          row.scrollLeft = targetScroll;
-          currentScroll = targetScroll;
+        // Tap & Hold Pausing (Mobile)
+        const handleTouchStart = () => {
+          isPaused = true;
         };
-
-        const handleWindowMouseUp = () => {
-          if (isDragging) {
-            isDragging = false;
-            row.style.cursor = "grab";
-            setTimeout(() => {
-              isHovered = false;
-            }, 100);
-          }
-          window.removeEventListener("mousemove", handleWindowMouseMove);
-          window.removeEventListener("mouseup", handleWindowMouseUp);
-        };
-
-        const handleMouseDown = (e) => {
-          isDragging = true;
-          isHovered = true;
-          row.style.cursor = "grabbing";
-          startX = e.clientX;
-          scrollLeftStart = row.scrollLeft;
-
-          // Prevent text/image highlighting
-          e.preventDefault();
-
-          window.addEventListener("mousemove", handleWindowMouseMove);
-          window.addEventListener("mouseup", handleWindowMouseUp);
-        };
-
-        row.addEventListener("mousedown", handleMouseDown);
-
-        // TOUCH DRAG EVENT LISTENERS
-        let isTouching = false;
-
-        const handleTouchStart = (e) => {
-          isTouching = true;
-          isHovered = true;
-          startX = e.touches[0].clientX;
-          scrollLeftStart = row.scrollLeft;
-        };
-
         const handleTouchEnd = () => {
-          if (isTouching) {
-            isTouching = false;
-            setTimeout(() => {
-              isHovered = false;
-            }, 100);
-          }
-        };
-
-        const handleTouchMove = (e) => {
-          if (!isTouching) return;
-          const x = e.touches[0].clientX;
-          const walk = (x - startX) * 2;
-          let targetScroll = scrollLeftStart - walk;
-
-          if (targetScroll < 0) targetScroll += halfWidth;
-          if (targetScroll >= halfWidth * 2) targetScroll -= halfWidth;
-
-          row.scrollLeft = targetScroll;
-          currentScroll = targetScroll;
+          isPaused = false;
         };
 
         row.addEventListener("touchstart", handleTouchStart, { passive: true });
         row.addEventListener("touchend", handleTouchEnd);
-        row.addEventListener("touchmove", handleTouchMove, { passive: true });
+        row.addEventListener("touchcancel", handleTouchEnd);
 
         // Store event cleanups
         eventCleanups.push(() => {
           row.removeEventListener("mouseenter", handleMouseEnter);
           row.removeEventListener("mouseleave", handleMouseLeave);
-          row.removeEventListener("scroll", handleScroll);
-          row.removeEventListener("mousedown", handleMouseDown);
           row.removeEventListener("touchstart", handleTouchStart);
           row.removeEventListener("touchend", handleTouchEnd);
-          row.removeEventListener("touchmove", handleTouchMove);
-          window.removeEventListener("mousemove", handleWindowMouseMove);
-          window.removeEventListener("mouseup", handleWindowMouseUp);
+          row.removeEventListener("touchcancel", handleTouchEnd);
         });
 
         function autoScroll() {
-          if (!isHovered && !isDragging && !isTouching) {
+          if (!isPaused) {
             currentScroll += speed;
             if (speed > 0 && currentScroll >= halfWidth) {
               currentScroll -= halfWidth;
