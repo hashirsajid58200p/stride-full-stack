@@ -204,33 +204,10 @@ export default function Home() {
         let startX = 0;
         let scrollLeftStart = 0;
 
-        const handleMouseDown = (e) => {
-          isDragging = true;
-          row.style.cursor = "grabbing";
-          startX = e.pageX - row.offsetLeft;
-          scrollLeftStart = row.scrollLeft;
-          isHovered = true;
-        };
-
-        const handleMouseUp = () => {
-          isDragging = false;
-          row.style.cursor = "grab";
-          isHovered = false;
-        };
-
-        const handleMouseLeaveDrag = () => {
-          if (isDragging) {
-            isDragging = false;
-            row.style.cursor = "grab";
-            isHovered = false;
-          }
-        };
-
-        const handleMouseMove = (e) => {
+        const handleWindowMouseMove = (e) => {
           if (!isDragging) return;
-          e.preventDefault();
-          const x = e.pageX - row.offsetLeft;
-          const walk = (x - startX) * 1.5;
+          const x = e.clientX;
+          const walk = (x - startX) * 2; // Sensitivity multiplier
           let targetScroll = scrollLeftStart - walk;
 
           if (targetScroll < 0) targetScroll += halfWidth;
@@ -240,30 +217,57 @@ export default function Home() {
           currentScroll = targetScroll;
         };
 
+        const handleWindowMouseUp = () => {
+          if (isDragging) {
+            isDragging = false;
+            row.style.cursor = "grab";
+            setTimeout(() => {
+              isHovered = false;
+            }, 100);
+          }
+          window.removeEventListener("mousemove", handleWindowMouseMove);
+          window.removeEventListener("mouseup", handleWindowMouseUp);
+        };
+
+        const handleMouseDown = (e) => {
+          isDragging = true;
+          isHovered = true;
+          row.style.cursor = "grabbing";
+          startX = e.clientX;
+          scrollLeftStart = row.scrollLeft;
+
+          // Prevent text/image highlighting
+          e.preventDefault();
+
+          window.addEventListener("mousemove", handleWindowMouseMove);
+          window.addEventListener("mouseup", handleWindowMouseUp);
+        };
+
         row.addEventListener("mousedown", handleMouseDown);
-        row.addEventListener("mouseup", handleMouseUp);
-        row.addEventListener("mouseleave", handleMouseLeaveDrag);
-        row.addEventListener("mousemove", handleMouseMove);
 
         // TOUCH DRAG EVENT LISTENERS
         let isTouching = false;
 
         const handleTouchStart = (e) => {
           isTouching = true;
-          startX = e.touches[0].pageX - row.offsetLeft;
-          scrollLeftStart = row.scrollLeft;
           isHovered = true;
+          startX = e.touches[0].clientX;
+          scrollLeftStart = row.scrollLeft;
         };
 
         const handleTouchEnd = () => {
-          isTouching = false;
-          isHovered = false;
+          if (isTouching) {
+            isTouching = false;
+            setTimeout(() => {
+              isHovered = false;
+            }, 100);
+          }
         };
 
         const handleTouchMove = (e) => {
           if (!isTouching) return;
-          const x = e.touches[0].pageX - row.offsetLeft;
-          const walk = (x - startX) * 1.5;
+          const x = e.touches[0].clientX;
+          const walk = (x - startX) * 2;
           let targetScroll = scrollLeftStart - walk;
 
           if (targetScroll < 0) targetScroll += halfWidth;
@@ -283,12 +287,11 @@ export default function Home() {
           row.removeEventListener("mouseleave", handleMouseLeave);
           row.removeEventListener("scroll", handleScroll);
           row.removeEventListener("mousedown", handleMouseDown);
-          row.removeEventListener("mouseup", handleMouseUp);
-          row.removeEventListener("mouseleave", handleMouseLeaveDrag);
-          row.removeEventListener("mousemove", handleMouseMove);
           row.removeEventListener("touchstart", handleTouchStart);
           row.removeEventListener("touchend", handleTouchEnd);
           row.removeEventListener("touchmove", handleTouchMove);
+          window.removeEventListener("mousemove", handleWindowMouseMove);
+          window.removeEventListener("mouseup", handleWindowMouseUp);
         });
 
         function autoScroll() {
