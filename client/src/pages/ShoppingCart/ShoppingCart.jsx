@@ -58,27 +58,80 @@ export default function ShoppingCart() {
       try {
         if (!window.supabase) throw new Error("Database not connected");
 
-        // Smart logic: Recommend based on the brand of the LAST item added
-        const lastBrand = cartItems[cartItems.length - 1].brand;
-
+        // Fetch a pool of products
         const { data, error } = await window.supabase
           .from("products")
           .select("*, reviews(rating)")
-          .eq("brand", lastBrand)
-          .limit(10);
+          .limit(30);
 
         if (error) throw error;
 
-        // Filter out items already in the cart, shuffle, and pick 2
-        const cartNames = cartItems.map((item) => item.name);
-        const filtered = (data || []).filter(
-          (p) => !cartNames.includes(p.name),
-        );
-        const shuffled = filtered.sort(() => 0.5 - Math.random()).slice(0, 2);
+        const cartIds = new Set(cartItems.map((item) => item.id));
+        const cartBrands = new Set(cartItems.map((item) => item.brand));
+        const cartCategories = new Set(cartItems.map((item) => item.category));
+        
+        // Calculate average price of items currently in cart
+        const cartAvgPrice = cartItems.reduce((sum, item) => sum + item.price, 0) / cartItems.length;
 
-        setRecommendations(shuffled);
+        // Fetch User's overall browsing history
+        const historyKey = "stride_view_history";
+        const existing = localStorage.getItem(historyKey);
+        const history = existing ? JSON.parse(existing) : [];
+
+        const brandCounts = {};
+        const categoryCounts = {};
+        history.forEach((p) => {
+          if (p.brand) brandCounts[p.brand] = (brandCounts[p.brand] || 0) + 1;
+          if (p.category) categoryCounts[p.category] = (categoryCounts[p.category] || 0) + 1;
+        });
+
+        // Score each candidate product in the pool
+        const scoredRecs = (data || [])
+          .filter((p) => !cartIds.has(p.id)) // Strictly exclude items already in the cart
+          .map((product) => {
+            let score = 0;
+
+            // Brand affinity: same brand as any item in the cart (+4 points)
+            if (product.brand && cartBrands.has(product.brand)) {
+              score += 4;
+            }
+
+            // Category affinity: same category as any item in the cart (+4 points)
+            if (product.category && cartCategories.has(product.category)) {
+              score += 4;
+            }
+
+            // History Match: User's general brand / category interest (+1.5 points per past view)
+            if (product.brand && brandCounts[product.brand]) {
+              score += brandCounts[product.brand] * 1.5;
+            }
+            if (product.category && categoryCounts[product.category]) {
+              score += categoryCounts[product.category] * 1.5;
+            }
+
+            // Price proximity to cart average (max +4 points)
+            if (product.price && cartAvgPrice > 0) {
+              const priceDiffRatio = Math.abs(product.price - cartAvgPrice) / cartAvgPrice;
+              score += Math.max(0, 4 - priceDiffRatio * 4);
+            }
+
+            // Exploration noise factor
+            score += Math.random() * 0.3;
+
+            return { product, score };
+          });
+
+        // Sort by score descending and pick top 2 items
+        scoredRecs.sort((a, b) => b.score - a.score);
+        const recommended = scoredRecs.map((sr) => sr.product).slice(0, 2);
+
+        setRecommendations(recommended);
       } catch (err) {
-        console.error("Error fetching recommendations:", err);
+        console.error("AI Cart recommendations failed, fallback to basic logic:", err);
+        // Fallback to basic random slice excluding cart items
+        const cartIds = new Set(cartItems.map((item) => item.id));
+        const filtered = (data || []).filter((p) => !cartIds.has(p.id));
+        setRecommendations(filtered.slice(0, 2));
       } finally {
         setLoadingRecs(false);
       }

@@ -174,16 +174,75 @@ export default function ProductDetail() {
           if (firstAvailable) setActiveSize(firstAvailable.size);
         }
 
-        // Fetch Related Products
-        const { data: related } = await window.supabase
+        // Fetch Related Products Pool
+        const { data: relatedPool } = await window.supabase
           .from("products")
           .select("*, reviews(rating)")
           .neq("id", data.id)
-          .eq("brand", data.brand)
-          .limit(4)
-          .order("created_at", { ascending: false });
+          .limit(30);
 
-        if (related) setRelatedProducts(related);
+        if (relatedPool && relatedPool.length > 0) {
+          try {
+            const historyKey = "stride_view_history";
+            const existing = localStorage.getItem(historyKey);
+            const history = existing ? JSON.parse(existing) : [];
+
+            // 1. Build User Preferences Profile from history
+            const brandCounts = {};
+            const categoryCounts = {};
+            history.forEach((p) => {
+              if (p.brand) brandCounts[p.brand] = (brandCounts[p.brand] || 0) + 1;
+              if (p.category) categoryCounts[p.category] = (categoryCounts[p.category] || 0) + 1;
+            });
+            const historyIds = new Set(history.map((p) => p.id));
+
+            // 2. Score each candidate product in the pool
+            const scoredRelated = relatedPool.map((product) => {
+              let score = 0;
+
+              // Context Match: Same Category or Same Brand as CURRENT product (primary weight)
+              if (product.category && product.category === data.category) score += 6;
+              if (product.brand && product.brand === data.brand) score += 6;
+
+              // History Match: User's general brand / category interest (+1.5 points per past view)
+              if (product.brand && brandCounts[product.brand]) {
+                score += brandCounts[product.brand] * 1.5;
+              }
+              if (product.category && categoryCounts[product.category]) {
+                score += categoryCounts[product.category] * 1.5;
+              }
+
+              // Price proximity to CURRENT product (max +4 points)
+              if (product.price && data.price > 0) {
+                const priceDiffRatio = Math.abs(product.price - data.price) / data.price;
+                score += Math.max(0, 4 - priceDiffRatio * 4);
+              }
+
+              // Penalty for items already in history to encourage discovery
+              if (historyIds.has(product.id)) {
+                score -= 3;
+              }
+
+              // Exploration noise factor
+              score += Math.random() * 0.2;
+
+              return { product, score };
+            });
+
+            // 3. Sort by score descending and take top 4 items
+            scoredRelated.sort((a, b) => b.score - a.score);
+            const recommendedRelated = scoredRelated.map((sr) => sr.product).slice(0, 4);
+            setRelatedProducts(recommendedRelated);
+          } catch (err) {
+            console.error("AI Related Products scoring failed, fallback to brand/category match:", err);
+            const fallback = relatedPool
+              .filter((p) => p.brand === data.brand || p.category === data.category)
+              .slice(0, 4);
+            setRelatedProducts(fallback.length > 0 ? fallback : relatedPool.slice(0, 4));
+          }
+        } else {
+          setRelatedProducts([]);
+        }
 
         // Update Document Title
         document.title = `${data.name} | Stride`;
