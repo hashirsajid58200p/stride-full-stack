@@ -219,7 +219,7 @@ export default function Reviews({ productId, onRatingUpdate }) {
   const visibleReviews = isExpanded ? reviews : reviews.slice(0, 2);
 
   return (
-    <section className={styles["reviews-section"]}>
+    <section id="reviews" className={styles["reviews-section"]}>
       <div className="container">
         <div className={styles["section-header"]}>
           <h2 className={styles["section-title"]}>Customer Reviews</h2>

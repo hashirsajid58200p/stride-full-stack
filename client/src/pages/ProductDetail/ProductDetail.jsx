@@ -203,6 +203,21 @@ export default function ProductDetail() {
     }
   }, [productId, preselectedColor]);
 
+  // 1.5. Scroll to Reviews if Hash is present
+  useEffect(() => {
+    if (!loading && product) {
+      if (window.location.hash === "#reviews") {
+        const timer = setTimeout(() => {
+          const el = document.getElementById("reviews");
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }, 500); // 500ms allows standard components to lay out properly
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [loading, product]);
+
   // 2. Wishlist Sync
   const checkWishlistStatus = () => {
     if (!product || !activeColor) return;

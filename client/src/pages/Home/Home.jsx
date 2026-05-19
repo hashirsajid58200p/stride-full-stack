@@ -73,6 +73,8 @@ export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState(null);
+  const [customerReviews, setCustomerReviews] = useState([]);
+  const [isReviewsLoading, setIsReviewsLoading] = useState(true);
   const hasFetched = useRef(false); // Ref to prevent double-shuffle in Strict Mode
 
   const brandRow1Ref = useRef(null);
@@ -116,6 +118,38 @@ export default function Home() {
       fetchProducts();
     } else {
       const initHandler = () => fetchProducts();
+      window.addEventListener("supabaseInitialized", initHandler);
+      return () =>
+        window.removeEventListener("supabaseInitialized", initHandler);
+    }
+  }, []);
+
+  // ==========================================
+  // FETCH CUSTOMER REVIEWS FROM SUPABASE
+  // ==========================================
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        if (!window.supabase) return;
+        const { data, error } = await window.supabase
+          .from("reviews")
+          .select("*, products ( name )")
+          .order("created_at", { ascending: false })
+          .limit(20);
+
+        if (error) throw error;
+        setCustomerReviews(data || []);
+      } catch (err) {
+        console.error("Error fetching testimonials:", err);
+      } finally {
+        setIsReviewsLoading(false);
+      }
+    };
+
+    if (window.supabase) {
+      fetchReviews();
+    } else {
+      const initHandler = () => fetchReviews();
       window.addEventListener("supabaseInitialized", initHandler);
       return () =>
         window.removeEventListener("supabaseInitialized", initHandler);
@@ -443,17 +477,41 @@ export default function Home() {
             </button>
 
             <div className={styles["carousel-track"]} ref={testimonialTrackRef}>
-              {testimonials.map((t, idx) => (
-                <div key={idx} className={styles["testimonial-card"]}>
-                  <div className={styles.stars}>
-                    {[...Array(5)].map((_, i) => (
-                      <i key={i} className="bi bi-star-fill"></i>
-                    ))}
-                  </div>
-                  <p className={styles["review-text"]}>{t.text}</p>
-                  <p className={styles["customer-name"]}>{t.name}</p>
-                </div>
-              ))}
+              {(customerReviews.length > 0 ? customerReviews : testimonials).map((t, idx) => {
+                const isDbReview = !!t.product_id;
+                const CardWrapper = isDbReview ? Link : "div";
+                const wrapperProps = isDbReview
+                  ? {
+                      to: `/product-detail?id=${t.product_id}#reviews`,
+                      className: `${styles["testimonial-card"]} ${styles["clickable-card"]}`,
+                      style: { textDecoration: "none" }
+                    }
+                  : {
+                      className: styles["testimonial-card"]
+                    };
+
+                return (
+                  <CardWrapper key={t.id || idx} {...wrapperProps}>
+                    <div className={styles.stars}>
+                      {[...Array(5)].map((_, i) => (
+                        <i
+                          key={i}
+                          className={`bi ${i < (t.rating || 5) ? "bi-star-fill" : "bi-star"}`}
+                        ></i>
+                      ))}
+                    </div>
+                    <p className={styles["review-text"]}>{t.review_text || t.text}</p>
+                    <div className={styles["customer-meta"]}>
+                      <p className={styles["customer-name"]}>{t.user_name || t.name}</p>
+                      {t.products && (
+                        <span className={styles["product-reviewed"]}>
+                          on {t.products.name}
+                        </span>
+                      )}
+                    </div>
+                  </CardWrapper>
+                );
+              })}
             </div>
 
             <button
