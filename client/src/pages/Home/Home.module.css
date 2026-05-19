@@ -304,6 +304,8 @@
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .marquee-row::-webkit-scrollbar {
@@ -334,6 +336,8 @@
   gap: 0.75rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: var(--transition-smooth);
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .brand-card-mini:hover {

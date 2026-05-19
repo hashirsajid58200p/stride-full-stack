@@ -162,6 +162,7 @@ export default function Home() {
   useEffect(() => {
     const rows = [brandRow1Ref.current, brandRow2Ref.current, brandRow3Ref.current];
     const animationFrames = [];
+    const eventCleanups = [];
 
     rows.forEach((row, index) => {
       if (!row) return;
@@ -169,6 +170,7 @@ export default function Home() {
       if (!track) return;
 
       let isHovered = false;
+      row.style.cursor = "grab";
 
       // Delay ensures DOM is painted and scrollWidth is accurate
       setTimeout(() => {
@@ -183,8 +185,12 @@ export default function Home() {
           row.scrollLeft = currentScroll;
         }
 
-        const handleMouseEnter = () => (isHovered = true);
-        const handleMouseLeave = () => (isHovered = false);
+        const handleMouseEnter = () => {
+          isHovered = true;
+        };
+        const handleMouseLeave = () => {
+          isHovered = false;
+        };
         const handleScroll = () => {
           if (isHovered) currentScroll = row.scrollLeft;
         };
@@ -193,8 +199,100 @@ export default function Home() {
         row.addEventListener("mouseleave", handleMouseLeave);
         row.addEventListener("scroll", handleScroll);
 
+        // MOUSE DRAG EVENT LISTENERS
+        let isDragging = false;
+        let startX = 0;
+        let scrollLeftStart = 0;
+
+        const handleMouseDown = (e) => {
+          isDragging = true;
+          row.style.cursor = "grabbing";
+          startX = e.pageX - row.offsetLeft;
+          scrollLeftStart = row.scrollLeft;
+          isHovered = true;
+        };
+
+        const handleMouseUp = () => {
+          isDragging = false;
+          row.style.cursor = "grab";
+          isHovered = false;
+        };
+
+        const handleMouseLeaveDrag = () => {
+          if (isDragging) {
+            isDragging = false;
+            row.style.cursor = "grab";
+            isHovered = false;
+          }
+        };
+
+        const handleMouseMove = (e) => {
+          if (!isDragging) return;
+          e.preventDefault();
+          const x = e.pageX - row.offsetLeft;
+          const walk = (x - startX) * 1.5;
+          let targetScroll = scrollLeftStart - walk;
+
+          if (targetScroll < 0) targetScroll += halfWidth;
+          if (targetScroll >= halfWidth * 2) targetScroll -= halfWidth;
+
+          row.scrollLeft = targetScroll;
+          currentScroll = targetScroll;
+        };
+
+        row.addEventListener("mousedown", handleMouseDown);
+        row.addEventListener("mouseup", handleMouseUp);
+        row.addEventListener("mouseleave", handleMouseLeaveDrag);
+        row.addEventListener("mousemove", handleMouseMove);
+
+        // TOUCH DRAG EVENT LISTENERS
+        let isTouching = false;
+
+        const handleTouchStart = (e) => {
+          isTouching = true;
+          startX = e.touches[0].pageX - row.offsetLeft;
+          scrollLeftStart = row.scrollLeft;
+          isHovered = true;
+        };
+
+        const handleTouchEnd = () => {
+          isTouching = false;
+          isHovered = false;
+        };
+
+        const handleTouchMove = (e) => {
+          if (!isTouching) return;
+          const x = e.touches[0].pageX - row.offsetLeft;
+          const walk = (x - startX) * 1.5;
+          let targetScroll = scrollLeftStart - walk;
+
+          if (targetScroll < 0) targetScroll += halfWidth;
+          if (targetScroll >= halfWidth * 2) targetScroll -= halfWidth;
+
+          row.scrollLeft = targetScroll;
+          currentScroll = targetScroll;
+        };
+
+        row.addEventListener("touchstart", handleTouchStart, { passive: true });
+        row.addEventListener("touchend", handleTouchEnd);
+        row.addEventListener("touchmove", handleTouchMove, { passive: true });
+
+        // Store event cleanups
+        eventCleanups.push(() => {
+          row.removeEventListener("mouseenter", handleMouseEnter);
+          row.removeEventListener("mouseleave", handleMouseLeave);
+          row.removeEventListener("scroll", handleScroll);
+          row.removeEventListener("mousedown", handleMouseDown);
+          row.removeEventListener("mouseup", handleMouseUp);
+          row.removeEventListener("mouseleave", handleMouseLeaveDrag);
+          row.removeEventListener("mousemove", handleMouseMove);
+          row.removeEventListener("touchstart", handleTouchStart);
+          row.removeEventListener("touchend", handleTouchEnd);
+          row.removeEventListener("touchmove", handleTouchMove);
+        });
+
         function autoScroll() {
-          if (!isHovered) {
+          if (!isHovered && !isDragging && !isTouching) {
             currentScroll += speed;
             if (speed > 0 && currentScroll >= halfWidth) {
               currentScroll -= halfWidth;
@@ -211,6 +309,7 @@ export default function Home() {
 
     return () => {
       animationFrames.forEach((frame) => cancelAnimationFrame(frame));
+      eventCleanups.forEach((cleanup) => cleanup());
     };
   }, []);
 
