@@ -816,10 +816,16 @@
   animation: lightboxFadeIn 0.3s ease-out forwards;
 }
 
-.close-lightbox {
+.lightbox-controls {
   position: absolute;
   top: 2rem;
   right: 2rem;
+  display: flex;
+  gap: 0.75rem;
+  z-index: 10000;
+}
+
+.control-btn {
   background: var(--color-accent) !important;
   border: none !important;
   width: 40px !important;
@@ -834,12 +840,16 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
-.close-lightbox:hover {
+.control-btn:hover {
   transform: scale(1.1) !important;
   opacity: 0.9 !important;
 }
 
-.close-lightbox i {
+.control-btn:active {
+  transform: scale(0.9) !important;
+}
+
+.control-btn i {
   font-size: 1.1rem !important;
   color: #fff !important;
   line-height: 1 !important;

@@ -93,6 +93,16 @@ export default function ProductDetail() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
+  // Lightbox Zoom & Pan States
+  const [zoomScale, setZoomScale] = useState(1);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  const overlayRef = React.useRef(null);
+  const touchStartDistRef = React.useRef(null);
+  const touchStartScaleRef = React.useRef(1);
+
   // Computed Rating
   let reviewCount = 0;
   let avgRating = 0;
@@ -109,13 +119,104 @@ export default function ProductDetail() {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
-        setIsLightboxOpen(false);
+        handleCloseLightbox();
         setIsModalOpen(false);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  const handleCloseLightbox = () => {
+    setIsLightboxOpen(false);
+    setZoomScale(1);
+    setDragOffset({ x: 0, y: 0 });
+    setIsDragging(false);
+  };
+
+  // Passive wheel zoom listener on Lightbox Overlay
+  useEffect(() => {
+    const overlay = overlayRef.current;
+    if (!overlay) return;
+
+    const handleWheel = (e) => {
+      e.preventDefault();
+      const delta = e.deltaY;
+      setZoomScale((prev) => {
+        const next = Math.max(1, Math.min(4, prev + (delta < 0 ? 0.15 : -0.15)));
+        if (next === 1) setDragOffset({ x: 0, y: 0 });
+        return next;
+      });
+    };
+
+    overlay.addEventListener("wheel", handleWheel, { passive: false });
+    return () => {
+      overlay.removeEventListener("wheel", handleWheel);
+    };
+  }, [isLightboxOpen]);
+
+  // Panning & dragging handlers
+  const handleMouseDown = (e) => {
+    if (zoomScale <= 1) return;
+    setIsDragging(true);
+    setDragStart({ x: e.clientX - dragOffset.x, y: e.clientY - dragOffset.y });
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    setDragOffset({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y,
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // Touch Panning & pinching gestures
+  const handleTouchStart = (e) => {
+    if (e.touches.length === 2) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      touchStartDistRef.current = dist;
+      touchStartScaleRef.current = zoomScale;
+      setIsDragging(false);
+    } else if (e.touches.length === 1 && zoomScale > 1) {
+      setIsDragging(true);
+      setDragStart({
+        x: e.touches[0].clientX - dragOffset.x,
+        y: e.touches[0].clientY - dragOffset.y,
+      });
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (e.touches.length === 2 && touchStartDistRef.current) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const ratio = dist / touchStartDistRef.current;
+      setZoomScale((prev) => {
+        const next = Math.max(1, Math.min(4, touchStartScaleRef.current * ratio));
+        if (next === 1) setDragOffset({ x: 0, y: 0 });
+        return next;
+      });
+    } else if (e.touches.length === 1 && isDragging) {
+      setDragOffset({
+        x: e.touches[0].clientX - dragStart.x,
+        y: e.touches[0].clientY - dragStart.y,
+      });
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    touchStartDistRef.current = null;
+  };
 
   // 1. Initial Fetch
   useEffect(() => {
@@ -1011,23 +1112,59 @@ export default function ProductDetail() {
       {/* FULLSCREEN IMAGE LIGHTBOX */}
       {isLightboxOpen && (
         <div
+          ref={overlayRef}
           className={styles["lightbox-overlay"]}
           onClick={(e) => {
-            if (e.target === e.currentTarget) setIsLightboxOpen(false);
+            if (e.target === e.currentTarget) handleCloseLightbox();
           }}
         >
-          <button
-            className={styles["close-lightbox"]}
-            onClick={() => setIsLightboxOpen(false)}
-            aria-label="Close image viewer"
-          >
-            <i className="bi bi-x-lg"></i>
-          </button>
+          <div className={styles["lightbox-controls"]}>
+            <button
+              className={styles["control-btn"]}
+              onClick={() => setZoomScale((prev) => Math.min(4, prev + 0.25))}
+              aria-label="Zoom in"
+            >
+              <i className="bi bi-plus-lg"></i>
+            </button>
+            <button
+              className={styles["control-btn"]}
+              onClick={() => {
+                setZoomScale((prev) => {
+                  const next = Math.max(1, prev - 0.25);
+                  if (next === 1) setDragOffset({ x: 0, y: 0 });
+                  return next;
+                });
+              }}
+              aria-label="Zoom out"
+            >
+              <i className="bi bi-dash-lg"></i>
+            </button>
+            <button
+              className={styles["control-btn"]}
+              onClick={() => handleCloseLightbox()}
+              aria-label="Close image viewer"
+            >
+              <i className="bi bi-x-lg"></i>
+            </button>
+          </div>
+
           <div className={styles["lightbox-content"]}>
             <img
               src={mainImage}
               alt={product?.name || "Product image fullscreen"}
               className={styles["lightbox-image"]}
+              style={{
+                transform: `translate(${dragOffset.x}px, ${dragOffset.y}px) scale(${zoomScale})`,
+                cursor: zoomScale > 1 ? (isDragging ? "grabbing" : "grab") : "zoom-in",
+                transition: isDragging ? "none" : "transform 0.15s ease-out",
+              }}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
             />
           </div>
         </div>
