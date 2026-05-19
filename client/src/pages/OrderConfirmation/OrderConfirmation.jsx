@@ -34,9 +34,17 @@ export default function OrderConfirmation() {
       if (localStorage.getItem(isProcessedKey)) {
         const savedOrder = JSON.parse(localStorage.getItem("strideLastOrder"));
         if (savedOrder) {
+          let displayName = savedOrder.customerName;
+          if (
+            (!displayName || displayName === "Guest Customer") &&
+            window.auth &&
+            window.auth.currentUser
+          ) {
+            displayName = window.auth.currentUser.displayName || displayName;
+          }
           setOrderState({
             id: shortId,
-            name: savedOrder.customerName,
+            name: displayName,
             email: savedOrder.customerEmail,
             items: savedOrder.items,
             subtotal: savedOrder.subtotal,
@@ -62,9 +70,10 @@ export default function OrderConfirmation() {
       let customerName = "Guest Customer";
       let customerEmail = "guest@stride.com";
 
-      if (checkoutData.firstName || checkoutData.lastName) {
-        customerName =
-          `${checkoutData.firstName || ""} ${checkoutData.lastName || ""}`.trim();
+      const first = checkoutData.fname || checkoutData.firstName || "";
+      const last = checkoutData.lname || checkoutData.lastName || "";
+      if (first || last) {
+        customerName = `${first} ${last}`.trim();
       } else if (window.auth && window.auth.currentUser) {
         customerName = window.auth.currentUser.displayName || "Registered User";
       }

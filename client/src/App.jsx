@@ -132,7 +132,7 @@ function App() {
           };
         }, []);
 
-        return showChat ? <Support /> : null;
+        return showChat && location.pathname !== "/order-confirmation" ? <Support /> : null;
       })()}
 
       <main>
