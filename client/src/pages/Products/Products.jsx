@@ -542,23 +542,19 @@ export default function Products() {
               )}
             </div>
 
-            {/* Size Pills */}
+            {/* Size Checkboxes */}
             <div className={styles["form-group"]}>
               <label>Available Sizes</label>
-              <div className={styles["size-pills-container"]}>
-                {["7", "8", "9", "10", "11", "12"].map((size) => {
-                  const isSelected = draftFilters.sizes.includes(size);
-                  return (
-                    <button
-                      key={size}
-                      type="button"
-                      className={`${styles["size-pill"]} ${isSelected ? styles.active : ""}`}
-                      onClick={() => handleDraftSizeToggle(size)}
-                    >
-                      {size}
-                    </button>
-                  );
-                })}
+              <div className={styles["checkbox-grid"]}>
+                {["7", "8", "9", "10", "11", "12"].map((size) => (
+                  <CustomCheckbox
+                    key={size}
+                    id={`filter-size-${size}`}
+                    label={`Size ${size}`}
+                    checked={draftFilters.sizes.includes(size)}
+                    onChange={() => handleDraftSizeToggle(size)}
+                  />
+                ))}
               </div>
             </div>
 
