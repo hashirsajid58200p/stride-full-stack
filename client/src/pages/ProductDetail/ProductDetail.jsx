@@ -91,6 +91,7 @@ export default function ProductDetail() {
   // Derived / Global States
   const [isWished, setIsWished] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   // Computed Rating
   let reviewCount = 0;
@@ -103,6 +104,18 @@ export default function ProductDetail() {
     );
     avgRating = Math.round(totalRating / reviewCount);
   }
+
+  // Close Modals / Lightbox on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setIsLightboxOpen(false);
+        setIsModalOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   // 1. Initial Fetch
   useEffect(() => {
@@ -508,6 +521,8 @@ export default function ProductDetail() {
           <div className={styles["product-gallery"]}>
             <div
               className={`${styles["main-image"]} ${loading ? styles["skeleton-box"] : ""}`}
+              onClick={() => !loading && setIsLightboxOpen(true)}
+              style={{ cursor: "zoom-in" }}
             >
               {!loading && (
                 <img
@@ -992,6 +1007,31 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
+
+      {/* FULLSCREEN IMAGE LIGHTBOX */}
+      {isLightboxOpen && (
+        <div
+          className={styles["lightbox-overlay"]}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsLightboxOpen(false);
+          }}
+        >
+          <button
+            className={styles["close-lightbox"]}
+            onClick={() => setIsLightboxOpen(false)}
+            aria-label="Close image viewer"
+          >
+            <i className="bi bi-x-lg"></i>
+          </button>
+          <div className={styles["lightbox-content"]}>
+            <img
+              src={mainImage}
+              alt={product?.name || "Product image fullscreen"}
+              className={styles["lightbox-image"]}
+            />
+          </div>
+        </div>
+      )}
     </main>
   );
 }
