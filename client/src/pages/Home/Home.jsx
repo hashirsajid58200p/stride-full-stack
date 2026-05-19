@@ -204,7 +204,7 @@ export default function Home() {
         if (!window.supabase) return;
         const { data, error } = await window.supabase
           .from("reviews")
-          .select("*, products ( name, brand, category, price )")
+          .select("*, products ( name, brand, tags, price )")
           .order("created_at", { ascending: false });
 
         if (error) throw error;
@@ -242,9 +242,13 @@ export default function Home() {
                   if (product.brand && brandCounts[product.brand]) {
                     score += brandCounts[product.brand] * 4;
                   }
-                  // Category match (+4 points per view)
-                  if (product.category && categoryCounts[product.category]) {
-                    score += categoryCounts[product.category] * 4;
+                  // Category match via tags (+4 points per view)
+                  if (product.tags) {
+                    Object.keys(categoryCounts).forEach((cat) => {
+                      if (cat && product.tags.toLowerCase().includes(cat.toLowerCase())) {
+                        score += categoryCounts[cat] * 4;
+                      }
+                    });
                   }
                   // Price proximity (max +5 points)
                   if (product.price && avgPrice > 0) {
