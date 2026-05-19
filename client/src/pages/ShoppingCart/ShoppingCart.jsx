@@ -273,11 +273,20 @@ export default function ShoppingCart() {
 
                 <div className={styles["subtotal-row"]}>
                   <span className={styles.label}>SUBTOTAL:</span>
-                  <span className={styles.value}>
-                    {window.formatPrice
-                      ? window.formatPrice(finalTotal)
-                      : `$${finalTotal.toFixed(2)}`}
-                  </span>
+                  <div className={styles["price-wrapper"]}>
+                    {discount > 0 && (
+                      <span className={styles["original-total"]}>
+                        {window.formatPrice
+                          ? window.formatPrice(subtotal)
+                          : `$${subtotal.toFixed(2)}`}
+                      </span>
+                    )}
+                    <span className={styles.value}>
+                      {window.formatPrice
+                        ? window.formatPrice(finalTotal)
+                        : `$${finalTotal.toFixed(2)}`}
+                    </span>
+                  </div>
                 </div>
 
                 <Link to="/checkout" className={styles["checkout-btn"]}>

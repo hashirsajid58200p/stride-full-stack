@@ -908,11 +908,20 @@ export default function Checkout() {
 
               <div className={styles["total-row"]}>
                 <span>Total</span>
-                <span className={styles["total-price"]}>
-                  {window.formatPrice
-                    ? window.formatPrice(finalTotal)
-                    : `$${finalTotal.toFixed(2)}`}
-                </span>
+                <div className={styles["total-price-wrapper"]}>
+                  {discount > 0 && (
+                    <span className={styles["original-total-price"]}>
+                      {window.formatPrice
+                        ? window.formatPrice(subtotal + selectedShippingCost)
+                        : `$${(subtotal + selectedShippingCost).toFixed(2)}`}
+                    </span>
+                  )}
+                  <span className={styles["total-price"]}>
+                    {window.formatPrice
+                      ? window.formatPrice(finalTotal)
+                      : `$${finalTotal.toFixed(2)}`}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
