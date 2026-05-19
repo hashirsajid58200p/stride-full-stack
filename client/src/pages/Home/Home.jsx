@@ -477,41 +477,28 @@ export default function Home() {
             </button>
 
             <div className={styles["carousel-track"]} ref={testimonialTrackRef}>
-              {(customerReviews.length > 0 ? customerReviews : testimonials).map((t, idx) => {
-                const isDbReview = !!t.product_id;
-                const CardWrapper = isDbReview ? Link : "div";
-                const wrapperProps = isDbReview
-                  ? {
-                      to: `/product-detail?id=${t.product_id}#reviews`,
-                      className: `${styles["testimonial-card"]} ${styles["clickable-card"]}`,
-                      style: { textDecoration: "none" }
-                    }
-                  : {
-                      className: styles["testimonial-card"]
-                    };
-
-                return (
-                  <CardWrapper key={t.id || idx} {...wrapperProps}>
-                    <div className={styles.stars}>
-                      {[...Array(5)].map((_, i) => (
-                        <i
-                          key={i}
-                          className={`bi ${i < (t.rating || 5) ? "bi-star-fill" : "bi-star"}`}
-                        ></i>
-                      ))}
-                    </div>
-                    <p className={styles["review-text"]}>{t.review_text || t.text}</p>
-                    <div className={styles["customer-meta"]}>
-                      <p className={styles["customer-name"]}>{t.user_name || t.name}</p>
-                      {t.products && (
-                        <span className={styles["product-reviewed"]}>
-                          on {t.products.name}
-                        </span>
-                      )}
-                    </div>
-                  </CardWrapper>
-                );
-              })}
+              {(customerReviews.length > 0 ? customerReviews : testimonials).map((t, idx) => (
+                <div key={t.id || idx} className={styles["testimonial-card"]}>
+                  <p className={styles["customer-name"]}>{t.user_name || t.name}</p>
+                  <p className={styles["review-text"]}>{t.review_text || t.text}</p>
+                  <div className={styles.stars}>
+                    {[...Array(5)].map((_, i) => (
+                      <i
+                        key={i}
+                        className={`bi ${i < (t.rating || 5) ? "bi-star-fill" : "bi-star"}`}
+                      ></i>
+                    ))}
+                  </div>
+                  {t.products && (
+                    <Link
+                      to={`/product-detail?id=${t.product_id}#reviews`}
+                      className={styles["product-btn"]}
+                    >
+                      on {t.products.name}
+                    </Link>
+                  )}
+                </div>
+              ))}
             </div>
 
             <button

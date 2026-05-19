@@ -410,10 +410,6 @@
   transform: translateY(-4px);
 }
 
-.clickable-card {
-  cursor: pointer;
-}
-
 .stars {
   display: flex;
   gap: 0.25rem;
@@ -431,30 +427,44 @@
   flex-grow: 1;
   display: flex;
   align-items: center;
+  margin: 1rem 0;
 }
 
 .customer-name {
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.82rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--color-fg);
 }
 
-.customer-meta {
-  display: flex;
-  flex-direction: column;
+.product-btn {
+  display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-}
-
-.product-reviewed {
+  justify-content: center;
+  padding: 0.6rem 1.4rem;
   font-size: 0.72rem;
-  color: var(--color-accent);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  opacity: 0.95;
+  color: var(--color-accent);
+  background: transparent;
+  border: 1.5px solid var(--color-accent);
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+  margin-top: 1rem;
+}
+
+.product-btn:hover {
+  background: var(--color-accent);
+  color: var(--color-accent-fg);
+  transform: scale(1.04);
+  box-shadow: 0 4px 15px rgba(255, 107, 0, 0.25);
+}
+
+.product-btn:active {
+  transform: scale(0.96);
 }
 
 .carousel-btn {
