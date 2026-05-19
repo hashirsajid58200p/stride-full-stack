@@ -281,16 +281,18 @@
 }
 
 .modal-content {
-  background: var(--color-secondary);
+  background: rgba(18, 18, 18, 0.9) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   width: 100%;
   max-width: 500px;
   max-height: 90vh;
-  border-radius: 16px;
+  border-radius: 20px;
   overflow-y: auto;
-  border: 1px solid var(--color-border);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 107, 0, 0.25);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   transform: scale(0.95);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   scrollbar-width: none;
 }
 .modal-content::-webkit-scrollbar {
@@ -303,13 +305,15 @@
 
 .modal-header {
   padding: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: sticky;
   top: 0;
-  background: var(--color-secondary);
+  background: transparent;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   z-index: 10;
 }
 
@@ -434,51 +438,40 @@
   margin-top: 0.25rem;
 }
 
-.checkbox-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 1rem;
+.size-pills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
   margin-top: 0.5rem;
 }
-.check-item {
+
+.size-pill {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  font-size: 0.9rem;
-  cursor: pointer;
-  color: var(--color-fg);
-}
-.check-item input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--color-border);
-  border-radius: 4px;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
   background-color: var(--color-bg);
-  display: grid;
-  place-content: center;
+  color: var(--color-fg);
+  font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
-  transition: var(--transition-smooth);
-  margin: 0;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.check-item input[type="checkbox"]::before {
-  content: "";
-  width: 12px;
-  height: 12px;
-  transform: scale(0);
-  transition: 120ms transform ease-in-out;
-  box-shadow: inset 1em 1em white;
-  background-color: white;
-  transform-origin: center;
-  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
-}
-.check-item input[type="checkbox"]:checked {
-  background-color: var(--color-accent);
+
+.size-pill:hover {
   border-color: var(--color-accent);
+  color: var(--color-accent);
+  transform: translateY(-2px);
 }
-.check-item input[type="checkbox"]:checked::before {
-  transform: scale(1);
+
+.size-pill.active {
+  background-color: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+  color: var(--color-accent-fg) !important;
+  box-shadow: 0 5px 15px rgba(255, 107, 0, 0.35);
 }
 
 /* =========================================
@@ -513,20 +506,39 @@
 
   .products-sidebar {
     position: fixed;
-    top: 0;
-    left: -100%;
-    width: 280px;
-    height: 100vh;
+    bottom: -100%;
+    left: 0;
+    right: 0;
+    top: auto;
+    width: 100%;
+    height: auto;
+    max-height: 70vh;
     z-index: 3000;
     margin: 0;
-    padding: 2rem 1.5rem;
+    padding: 2.5rem 1.5rem 2rem 1.5rem;
     border: none;
-    border-radius: 0;
-    background-color: var(--color-bg);
-    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
-    transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-top: 1px solid rgba(255, 107, 0, 0.25);
+    border-radius: 24px 24px 0 0;
+    background: rgba(18, 18, 18, 0.95);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.5);
+    transition: bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .products-sidebar::before {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
   }
   .products-sidebar.active {
+    bottom: 0;
     left: 0;
   }
 
