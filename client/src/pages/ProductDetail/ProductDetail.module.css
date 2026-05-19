@@ -217,9 +217,22 @@
 .old-price {
   font-size: 1.5rem;
   color: var(--color-muted-fg);
-  text-decoration: line-through;
-  text-decoration-color: #ef4444;
+  position: relative !important;
+  display: inline-block !important;
   opacity: 0.8;
+}
+
+.old-price::after {
+  content: "";
+  position: absolute;
+  top: calc(50% - 1px);
+  left: -5%;
+  width: 110%;
+  height: 2px;
+  background-color: #ef4444 !important;
+  transform: rotate(-10deg) !important;
+  transform-origin: center !important;
+  pointer-events: none;
 }
 
 .new-price {
