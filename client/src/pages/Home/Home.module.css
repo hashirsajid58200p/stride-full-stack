@@ -421,22 +421,23 @@
 }
 
 .stars i {
-  font-size: 1rem;
+  font-size: 0.85rem;
 }
 
 .review-text {
   font-size: 0.92rem;
   color: var(--color-muted-fg);
-  line-height: 1.5;
+  line-height: 1.55;
   flex-grow: 1;
   display: flex;
   align-items: center;
   margin: 0.4rem 0;
+  padding: 0 1.2rem;
 }
 
 .customer-name {
-  font-size: 0.82rem;
-  font-weight: 700;
+  font-size: 0.85rem;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--color-fg);
