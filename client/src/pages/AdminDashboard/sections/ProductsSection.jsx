@@ -28,12 +28,6 @@ const ProductsSection = ({
   return (
     <div className={styles["data-table-card"]}>
       <div className={styles["card-header"]}>
-        <div>
-          <h3 className={styles["card-title"]}>Product Inventory</h3>
-          <p className={styles["card-subtitle"]}>
-            Manage your catalog, pricing, and stock.
-          </p>
-        </div>
         <div className={`${styles["search-bar"]} ${styles["table-search"]}`}>
           <i className={`bi bi-search ${styles["search-icon"]}`}></i>
           <input

@@ -28,9 +28,6 @@ const OrdersSection = ({
   return (
     <div className={styles["data-table-card"]}>
       <div className={styles["card-header"]}>
-        <div>
-          <h3 className={styles["card-title"]}>Recent Orders</h3>
-        </div>
         <div className={`${styles["search-bar"]} ${styles["table-search"]}`}>
           <i className={`bi bi-search ${styles["search-icon"]}`}></i>
           <input

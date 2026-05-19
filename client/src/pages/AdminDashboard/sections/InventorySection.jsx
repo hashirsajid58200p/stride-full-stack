@@ -43,11 +43,6 @@ const InventorySection = ({
         className={styles["card-header"]}
         style={{ marginBottom: 0 }}
       >
-        <div>
-          <h3 className={styles["card-title"]}>
-            Inventory Management
-          </h3>
-        </div>
         <div className={`${styles["search-bar"]} ${styles["table-search"]}`}>
           <i className={`bi bi-search ${styles["search-icon"]}`}></i>
           <input
