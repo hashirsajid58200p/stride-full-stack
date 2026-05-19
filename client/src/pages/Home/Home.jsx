@@ -102,9 +102,71 @@ export default function Home() {
         if (error) throw error;
 
         if (data && data.length > 0) {
-          // Shuffle and pick exactly 6
-          const shuffled = data.sort(() => 0.5 - Math.random());
-          setFeaturedProducts(shuffled.slice(0, 6));
+          try {
+            const historyKey = "stride_view_history";
+            const existing = localStorage.getItem(historyKey);
+            const history = existing ? JSON.parse(existing) : [];
+
+            if (history.length === 0) {
+              // Fallback to random if first-time user with no history
+              const shuffled = data.sort(() => 0.5 - Math.random());
+              setFeaturedProducts(shuffled.slice(0, 6));
+            } else {
+              // 1. Build User Preferences Profile based on history
+              const brandCounts = {};
+              const categoryCounts = {};
+              let totalPrice = 0;
+
+              history.forEach((p) => {
+                if (p.brand) brandCounts[p.brand] = (brandCounts[p.brand] || 0) + 1;
+                if (p.category) categoryCounts[p.category] = (categoryCounts[p.category] || 0) + 1;
+                totalPrice += p.price || 0;
+              });
+
+              const avgPrice = totalPrice / history.length;
+              const historyIds = new Set(history.map((p) => p.id));
+
+              // 2. Score and Rank available products
+              const scoredProducts = data.map((product) => {
+                let score = 0;
+
+                // Brand match weighting (+3 points per past view)
+                if (product.brand && brandCounts[product.brand]) {
+                  score += brandCounts[product.brand] * 3;
+                }
+
+                // Category match weighting (+3 points per past view)
+                if (product.category && categoryCounts[product.category]) {
+                  score += categoryCounts[product.category] * 3;
+                }
+
+                // Price proximity weighting (max +4 points)
+                if (product.price && avgPrice > 0) {
+                  const priceDiffRatio = Math.abs(product.price - avgPrice) / avgPrice;
+                  score += Math.max(0, 4 - priceDiffRatio * 4);
+                }
+
+                // Penalty for recently viewed items to keep suggestions fresh
+                if (historyIds.has(product.id)) {
+                  score -= 5;
+                }
+
+                // Exploration noise factor to make list lively on refreshes
+                score += Math.random() * 0.3;
+
+                return { product, score };
+              });
+
+              // 3. Sort by score descending and set top 6 items
+              scoredProducts.sort((a, b) => b.score - a.score);
+              const recommended = scoredProducts.map((sp) => sp.product).slice(0, 6);
+              setFeaturedProducts(recommended);
+            }
+          } catch (err) {
+            console.error("AI recommendation engine failed, fallback to random:", err);
+            const shuffled = data.sort(() => 0.5 - Math.random());
+            setFeaturedProducts(shuffled.slice(0, 6));
+          }
         }
       } catch (err) {
         console.error("Error fetching featured products:", err);

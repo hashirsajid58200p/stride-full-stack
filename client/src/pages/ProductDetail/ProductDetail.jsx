@@ -203,6 +203,31 @@ export default function ProductDetail() {
     }
   }, [productId, preselectedColor]);
 
+  // 1.2. Track viewed product in local storage
+  useEffect(() => {
+    if (product && product.id) {
+      try {
+        const historyKey = "stride_view_history";
+        const existing = localStorage.getItem(historyKey);
+        let history = existing ? JSON.parse(existing) : [];
+        history = history.filter((p) => p.id !== product.id);
+        history.unshift({
+          id: product.id,
+          brand: product.brand || "",
+          category: product.category || "",
+          price: product.price || 0,
+          name: product.name || "",
+        });
+        if (history.length > 15) {
+          history = history.slice(0, 15);
+        }
+        localStorage.setItem(historyKey, JSON.stringify(history));
+      } catch (err) {
+        console.error("Error tracking product view:", err);
+      }
+    }
+  }, [product]);
+
   // 1.5. Scroll to Reviews if Hash is present
   useEffect(() => {
     if (!loading && product) {
