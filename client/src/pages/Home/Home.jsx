@@ -69,6 +69,15 @@ const testimonials = [
   },
 ];
 
+const formatAuthorName = (name) => {
+  if (!name) return "";
+  return name
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
 export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -567,7 +576,20 @@ export default function Home() {
             <div className={styles["carousel-track"]} ref={testimonialTrackRef}>
               {(customerReviews.length > 0 ? customerReviews : testimonials).map((t, idx) => (
                 <div key={t.id || idx} className={styles["testimonial-card"]}>
-                  <p className={styles["customer-name"]}>{t.user_name || t.name}</p>
+                  <div className={styles["avatar-container"]}>
+                    {(t.user_photo_url || t.photoUrl) ? (
+                      <img
+                        src={t.user_photo_url || t.photoUrl}
+                        alt={t.user_name || t.name}
+                        className={styles["avatar-image"]}
+                      />
+                    ) : (
+                      <div className={styles["avatar-placeholder"]}>
+                        <i className="bi bi-person-fill"></i>
+                      </div>
+                    )}
+                  </div>
+                  <p className={styles["customer-name"]}>{formatAuthorName(t.user_name || t.name)}</p>
                   <p className={styles["review-text"]}>{t.review_text || t.text}</p>
                   <div className={styles.stars}>
                     {[...Array(5)].map((_, i) => (
