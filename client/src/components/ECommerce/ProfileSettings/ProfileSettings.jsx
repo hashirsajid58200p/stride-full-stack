@@ -163,11 +163,14 @@ export default function ProfileSettings({ user, dbUser, setDbUser, onDeleteAccou
   };
 
   const avatars = [
-    "/images/avatars/male_01.jpg",
-    "/images/avatars/male_02.jpg",
-    "/images/avatars/male_03.jpg",
-    "/images/avatars/male_04.jpg",
-    "/images/avatars/female_01.jpg",
+    "https://res.cloudinary.com/dwagwbklz/image/upload/v1779215293/stride_avatars/yz2oku456mj3xh4qamya.jpg",
+    "https://res.cloudinary.com/dwagwbklz/image/upload/v1779215294/stride_avatars/bevdnnc2b8jh0bpcb1dv.jpg",
+    "https://res.cloudinary.com/dwagwbklz/image/upload/v1779215296/stride_avatars/p6tiuexy6pkr4ewe9ukp.jpg",
+    "https://res.cloudinary.com/dwagwbklz/image/upload/v1779215300/stride_avatars/z0jkdjffyn9ooevaohkx.jpg",
+    "https://res.cloudinary.com/dwagwbklz/image/upload/v1779215287/stride_avatars/yuv5mpzisuuxqsbdozya.jpg",
+    "https://res.cloudinary.com/dwagwbklz/image/upload/v1779215289/stride_avatars/cnswpv2ucstlk58bz7id.png",
+    "https://res.cloudinary.com/dwagwbklz/image/upload/v1779215291/stride_avatars/fuwsj6czu1mgoz8svbls.png",
+    "https://res.cloudinary.com/dwagwbklz/image/upload/v1779215292/stride_avatars/dtwhnqpxxfvvb2supd43.png"
   ];
 
   const initials = dbUser.fullName

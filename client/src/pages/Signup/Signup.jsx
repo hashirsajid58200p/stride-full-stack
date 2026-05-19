@@ -64,14 +64,19 @@ export default function Signup() {
 
       // 2. Assign Avatar based on Gender
       const maleAvatars = [
-        "/images/avatars/male_01.jpg",
-        "/images/avatars/male_02.jpg",
-        "/images/avatars/male_03.jpg",
-        "/images/avatars/male_04.jpg",
+        "https://res.cloudinary.com/dwagwbklz/image/upload/v1779215293/stride_avatars/yz2oku456mj3xh4qamya.jpg",
+        "https://res.cloudinary.com/dwagwbklz/image/upload/v1779215294/stride_avatars/bevdnnc2b8jh0bpcb1dv.jpg",
+        "https://res.cloudinary.com/dwagwbklz/image/upload/v1779215296/stride_avatars/p6tiuexy6pkr4ewe9ukp.jpg",
+        "https://res.cloudinary.com/dwagwbklz/image/upload/v1779215300/stride_avatars/z0jkdjffyn9ooevaohkx.jpg"
       ];
-      const femaleAvatars = ["/images/avatars/female_01.jpg"];
+      const femaleAvatars = [
+        "https://res.cloudinary.com/dwagwbklz/image/upload/v1779215287/stride_avatars/yuv5mpzisuuxqsbdozya.jpg",
+        "https://res.cloudinary.com/dwagwbklz/image/upload/v1779215289/stride_avatars/cnswpv2ucstlk58bz7id.png",
+        "https://res.cloudinary.com/dwagwbklz/image/upload/v1779215291/stride_avatars/fuwsj6czu1mgoz8svbls.png",
+        "https://res.cloudinary.com/dwagwbklz/image/upload/v1779215292/stride_avatars/dtwhnqpxxfvvb2supd43.png"
+      ];
 
-      let selectedAvatar = "/images/avatars/male_01.jpg";
+      let selectedAvatar = maleAvatars[0];
       if (formData.gender === "male") {
         selectedAvatar =
           maleAvatars[Math.floor(Math.random() * maleAvatars.length)];
@@ -80,7 +85,7 @@ export default function Signup() {
           femaleAvatars[Math.floor(Math.random() * femaleAvatars.length)];
       } else {
         // Fallback for "Prefer not to say" or empty
-        selectedAvatar = "/images/avatars/male_01.jpg";
+        selectedAvatar = maleAvatars[0];
       }
 
       // 3. Attach Full Name & Avatar
