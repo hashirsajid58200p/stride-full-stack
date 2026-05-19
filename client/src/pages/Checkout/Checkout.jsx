@@ -4,6 +4,8 @@ import { useCart } from "../../context/CartContext";
 import Coupon from "../../components/ECommerce/Coupon";
 import styles from "./Checkout.module.css";
 import { useCurrency } from "../../context/CurrencyContext";
+import { auth } from "../../firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -13,6 +15,27 @@ export default function Checkout() {
   // Step Navigation
   const [step, setStep] = useState(1);
   const flowRef = useRef(null);
+
+  // Auth State
+  const [currentUser, setCurrentUser] = useState(auth.currentUser);
+  const [authLoading, setAuthLoading] = useState(!auth.currentUser);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      setAuthLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (currentUser && currentUser.email) {
+      setFormData((prev) => ({
+        ...prev,
+        email: prev.email || currentUser.email,
+      }));
+    }
+  }, [currentUser]);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -401,48 +424,51 @@ export default function Checkout() {
     <main className={styles["checkout-page"]}>
       <div className={`container ${styles.container}`}>
         <div className={styles["checkout-layout"]}>
+          {/* PROGRESS TRACKER */}
+          <div className={styles["progress-tracker"]}>
+            <div
+              className={`${styles.step} ${step >= 1 ? (step === 1 ? styles["step-active"] : styles["step-completed"]) : ""}`}
+            >
+              <div className={styles["step-icon"]}>1</div>
+              <span className={styles["step-label"]}>Information</span>
+            </div>
+            <div
+              className={`${styles["progress-line"]} ${step >= 2 ? styles.completed : ""}`}
+            ></div>
+
+            <div
+              className={`${styles.step} ${step >= 2 ? (step === 2 ? styles["step-active"] : styles["step-completed"]) : ""}`}
+            >
+              <div className={styles["step-icon"]}>2</div>
+              <span className={styles["step-label"]}>Shipping</span>
+            </div>
+            <div
+              className={`${styles["progress-line"]} ${step >= 3 ? styles.completed : ""}`}
+            ></div>
+
+            <div
+              className={`${styles.step} ${step === 3 ? styles["step-active"] : ""}`}
+            >
+              <div className={styles["step-icon"]}>3</div>
+              <span className={styles["step-label"]}>Payment</span>
+            </div>
+          </div>
+
           {/* LEFT COLUMN: FLOW */}
           <div className={styles["checkout-flow"]} ref={flowRef}>
-            <div className={styles["progress-tracker"]}>
-              <div
-                className={`${styles.step} ${step >= 1 ? (step === 1 ? styles["step-active"] : styles["step-completed"]) : ""}`}
-              >
-                <div className={styles["step-icon"]}>1</div>
-                <span className={styles["step-label"]}>Information</span>
-              </div>
-              <div
-                className={`${styles["progress-line"]} ${step >= 2 ? styles.completed : ""}`}
-              ></div>
-
-              <div
-                className={`${styles.step} ${step >= 2 ? (step === 2 ? styles["step-active"] : styles["step-completed"]) : ""}`}
-              >
-                <div className={styles["step-icon"]}>2</div>
-                <span className={styles["step-label"]}>Shipping</span>
-              </div>
-              <div
-                className={`${styles["progress-line"]} ${step >= 3 ? styles.completed : ""}`}
-              ></div>
-
-              <div
-                className={`${styles.step} ${step === 3 ? styles["step-active"] : ""}`}
-              >
-                <div className={styles["step-icon"]}>3</div>
-                <span className={styles["step-label"]}>Payment</span>
-              </div>
-            </div>
-
             {/* STEP 1: INFO */}
             {step === 1 && (
               <div className={styles["checkout-step"]}>
                 <div className={styles["step-header"]}>
                   <h2>Contact Information</h2>
-                  <p>
-                    Already have an account?{" "}
-                    <Link to="/login" className={styles["text-link"]}>
-                      Log in
-                    </Link>
-                  </p>
+                  {!authLoading && !currentUser && (
+                    <p>
+                      Already have an account?{" "}
+                      <Link to="/login" className={styles["text-link"]}>
+                        Log in
+                      </Link>
+                    </p>
+                  )}
                 </div>
                 <form
                   className={styles["checkout-form"]}
