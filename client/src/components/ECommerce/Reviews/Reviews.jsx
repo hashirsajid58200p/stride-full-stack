@@ -4,6 +4,15 @@ import styles from "./Reviews.module.css";
 
 const EMOJIS = ["🔥", "👟", "😍", "💯", "⭐", "👌", "👍", "😎", "✨", "🏃‍♂️"];
 
+const formatAuthorName = (name) => {
+  if (!name) return "";
+  return name
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
 // Internal component to handle the image loading state flawlessly
 const ReviewAvatar = ({ src, alt }) => {
   const [loaded, setLoaded] = useState(false);
@@ -382,7 +391,7 @@ export default function Reviews({ productId, onRatingUpdate }) {
                           alt={r.user_name}
                         />
                         <span className={styles["review-author"]}>
-                          {r.user_name}
+                          {formatAuthorName(r.user_name)}
                         </span>
                       </div>
                       <div
