@@ -207,7 +207,8 @@ export default function OrderConfirmation() {
     <main className={styles["confirmation-page-wrapper"]}>
       <div className="container">
         <div className={styles["confirmation-card"]}>
-          <div className={styles["confirmation-left"]}>
+          {/* HEADER: Thank you + subtitle - always top on mobile */}
+          <div className={styles["confirmation-header"]}>
             <div className={styles["success-animation"]}>
               <i className="bi bi-check-circle-fill"></i>
             </div>
@@ -218,7 +219,10 @@ export default function OrderConfirmation() {
             <p className={styles["confirmation-subtitle"]}>
               Your order has been received and is currently being processed.
             </p>
+          </div>
 
+          {/* LEFT: Person / Order Details */}
+          <div className={styles["confirmation-left"]}>
             <div className={styles["order-details-box"]}>
               <div className={styles["detail-row"]}>
                 <span className={styles["detail-label"]}>Order Number:</span>
@@ -262,21 +266,22 @@ export default function OrderConfirmation() {
               We'll send a confirmation email with your tracking details
               shortly.
             </p>
+          </div>
 
-            <div className={styles["confirmation-actions"]}>
-              <Link
-                to="/user-dashboard?view=orders"
-                className={`${styles.btn} ${styles["btn-primary"]}`}
-              >
-                View My Orders
-              </Link>
-              <Link
-                to="/products"
-                className={`${styles.btn} ${styles["btn-outline"]}`}
-              >
-                Continue Shopping
-              </Link>
-            </div>
+          {/* ACTIONS: Buttons - always bottom on mobile */}
+          <div className={styles["confirmation-actions"]}>
+            <Link
+              to="/user-dashboard?view=orders"
+              className={`${styles.btn} ${styles["btn-primary"]}`}
+            >
+              View My Orders
+            </Link>
+            <Link
+              to="/products"
+              className={`${styles.btn} ${styles["btn-outline"]}`}
+            >
+              Continue Shopping
+            </Link>
           </div>
 
           <div className={styles["confirmation-right"]}>

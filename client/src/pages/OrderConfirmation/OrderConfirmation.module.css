@@ -22,17 +22,31 @@
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "header right"
+    "left   right"
+    "actions right";
   gap: 2.5rem;
-  align-items: center;
+  align-items: start;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
   animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Left Column Styling */
-.confirmation-left {
+/* Header: Thank you + subtitle */
+.confirmation-header {
+  grid-area: header;
   display: flex;
   flex-direction: column;
   text-align: left;
+}
+
+/* Left Column: Person Details */
+.confirmation-left {
+  grid-area: left;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 /* Success Icon Animation */
@@ -65,7 +79,6 @@
   border: 1px solid var(--color-border);
   border-radius: 10px;
   padding: 1rem;
-  margin-bottom: 1.25rem;
 }
 
 .detail-row {
@@ -98,11 +111,11 @@
 .email-notice {
   font-size: 0.85rem;
   color: var(--color-muted-fg);
-  margin-bottom: 1.25rem;
 }
 
 /* Actions */
 .confirmation-actions {
+  grid-area: actions;
   display: flex;
   gap: 0.75rem;
 }
@@ -148,10 +161,10 @@
    Right Column: Receipt Box
    ========================================= */
 .confirmation-right {
-  height: 100%;
+  grid-area: right;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .purchased-items-box {
@@ -356,21 +369,26 @@
   }
   .confirmation-card {
     grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    grid-template-areas: none;
     gap: 1.5rem;
     padding: 1.75rem;
   }
-  .confirmation-left {
+  /* Mobile order: header → summary → details → buttons */
+  .confirmation-header {
+    order: 1;
     text-align: center;
   }
-  .order-details-box {
+  .confirmation-right {
+    order: 2;
+  }
+  .confirmation-left {
+    order: 3;
     text-align: left;
   }
   .confirmation-actions {
+    order: 4;
     flex-direction: column;
-  }
-  .confirmation-right {
-    height: auto;
-    order: -1;
   }
   .items-list {
     max-height: 180px;
