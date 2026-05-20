@@ -370,6 +370,7 @@
   }
   .confirmation-right {
     height: auto;
+    order: -1;
   }
   .items-list {
     max-height: 180px;
