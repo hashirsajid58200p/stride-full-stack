@@ -193,3 +193,21 @@
     transform: translateY(0);
   }
 }
+
+@media (max-width: 768px) {
+  .wishlist-title {
+    font-size: 1.5rem;
+  }
+  .wishlist-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+  .wish-card {
+    width: 100%;
+    max-width: none;
+  }
+  .empty-wishlist-state {
+    padding: 2.5rem 1rem;
+  }
+}
+
