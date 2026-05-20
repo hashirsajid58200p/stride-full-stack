@@ -375,46 +375,42 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    padding: 1.25rem;
-    margin-bottom: 1.25rem;
-    background: var(--color-secondary);
-    border-radius: 12px;
-    border: 1px solid var(--color-border);
-    gap: 0.85rem;
-    position: relative;
+    padding: 1.5rem 0;
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--color-border);
+    gap: 1rem;
   }
   .col-product-wrap {
     display: flex;
     gap: 1.25rem;
     align-items: flex-start;
-    padding-right: 2.5rem; /* Space for trash button */
+    padding-right: 0;
   }
   .col-product-wrap img {
-    width: 90px;
-    height: 90px;
+    width: 100px;
+    height: 100px;
     border-radius: 8px;
     object-fit: cover;
   }
   .product-info h4 {
-    font-size: 1rem;
+    font-size: 1.05rem;
     margin-bottom: 0.25rem;
-    line-height: 1.3;
+    line-height: 1.4;
   }
   .product-info p {
-    font-size: 0.8rem;
-    margin-bottom: 0;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
   }
   .product-actions {
-    position: absolute;
-    top: 1.25rem;
-    right: 1.25rem;
+    display: flex;
+    gap: 1rem;
   }
   .product-actions button {
-    font-size: 1.15rem;
+    font-size: 1.2rem;
     color: var(--color-muted-fg);
   }
   .product-actions button:hover {
-    color: #ef4444;
+    color: var(--color-accent);
   }
   
   .col-price-wrap {
@@ -422,14 +418,11 @@
     justify-content: space-between;
     width: 100%;
     align-items: center;
-    border-top: 1px solid var(--color-border);
-    padding-top: 0.75rem;
-    margin-top: 0.25rem;
   }
   .col-price-wrap::before {
-    content: "Price";
-    font-size: 0.8rem;
-    font-weight: 600;
+    content: "Price:";
+    font-size: 0.9rem;
+    font-weight: 700;
     color: var(--color-muted-fg);
   }
   
@@ -440,21 +433,21 @@
     align-items: center;
   }
   .col-qty-wrap::before {
-    content: "Quantity";
-    font-size: 0.8rem;
-    font-weight: 600;
+    content: "Quantity:";
+    font-size: 0.9rem;
+    font-weight: 700;
     color: var(--color-muted-fg);
   }
   .quantity-control {
-    width: 110px;
-    height: 36px;
-    padding: 0 0.85rem;
+    width: 120px;
+    height: 40px;
+    padding: 0 1rem;
   }
   .qty-btn {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
   .qty-value {
-    font-size: 0.95rem;
+    font-weight: 600;
   }
   
   .col-total-wrap {
@@ -462,21 +455,21 @@
     justify-content: space-between;
     width: 100%;
     align-items: center;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: var(--color-fg);
   }
   .col-total-wrap::before {
-    content: "Subtotal";
-    font-size: 0.8rem;
-    font-weight: 600;
+    content: "Subtotal:";
+    font-size: 0.9rem;
+    font-weight: 700;
     color: var(--color-muted-fg);
   }
   
   .cart-bottom-section {
     display: flex;
     flex-direction: column; /* Move coupon above totals card */
-    gap: 1.5rem;
+    gap: 2rem;
     width: 100%;
     align-items: stretch;
     margin-top: 2rem;
@@ -489,25 +482,21 @@
     width: 100%;
     max-width: 100%;
     align-items: stretch;
-    background: var(--color-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-    padding: 1.5rem;
     box-sizing: border-box;
   }
   .subtotal-row, .cart-discount-row {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     width: 100%;
   }
   .subtotal-row .label, .cart-discount-row .label {
-    font-size: 1.05rem;
+    font-size: 1.2rem;
   }
   .subtotal-row .value, .cart-discount-row .value {
-    font-size: 1.25rem;
+    font-size: 1.4rem;
   }
   .checkout-btn {
-    padding: 0.9rem;
-    font-size: 0.95rem;
+    padding: 1rem;
+    font-size: 1rem;
   }
 }
 
