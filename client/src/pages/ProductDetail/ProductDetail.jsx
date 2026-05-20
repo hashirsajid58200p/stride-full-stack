@@ -376,6 +376,11 @@ export default function ProductDetail() {
     }
   }, [productId, preselectedColor]);
 
+  // 1.1. Scroll to top when product ID changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [productId]);
+
   // 1.2. Track viewed product in local storage
   useEffect(() => {
     if (product && product.id) {
