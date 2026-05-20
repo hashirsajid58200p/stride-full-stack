@@ -338,6 +338,38 @@
   margin: 0;
 }
 
+.rec-add-btn {
+  background-color: var(--color-accent);
+  color: var(--color-accent-fg);
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  margin-left: auto;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.rec-add-btn:hover {
+  transform: scale(1.12) rotate(90deg);
+  background-color: var(--color-accent);
+  opacity: 0.9;
+  box-shadow: 0 4px 8px rgba(var(--color-accent-rgb, 219, 39, 119), 0.35);
+}
+
+.rec-add-btn i {
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .slider-arrow {
   position: absolute;
   background: var(--color-secondary);

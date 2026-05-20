@@ -12,6 +12,7 @@ export default function Cart() {
     updateQuantity,
     removeFromCart,
     discount,
+    addToCart,
   } = useCart();
   const [recommendations, setRecommendations] = useState([]);
   const recTrackRef = useRef(null);
@@ -170,6 +171,23 @@ export default function Cart() {
                                   : `$${p.price}`}
                               </p>
                             </div>
+                            <button
+                              className={styles["rec-add-btn"]}
+                              onClick={() =>
+                                addToCart({
+                                  id: p.id,
+                                  name: p.name,
+                                  brand: p.brand,
+                                  price: p.price,
+                                  img: p.main_image_url,
+                                  size: "Standard",
+                                  color: "Default",
+                                })
+                              }
+                              title="Add to Cart"
+                            >
+                              <i className="bi bi-plus-lg"></i>
+                            </button>
                           </div>
                         ))}
                       </div>
