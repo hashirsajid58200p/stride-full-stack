@@ -3,6 +3,8 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import styles from "./OrderConfirmation.module.css";
 
+const pendingOrders = {};
+
 export default function OrderConfirmation() {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
@@ -58,121 +60,142 @@ export default function OrderConfirmation() {
         return;
       }
 
-      // 2. We need to process it. Gather local storage info.
-      const currentCart = JSON.parse(localStorage.getItem("strideCart")) || [];
-      const currentDiscount =
-        parseFloat(localStorage.getItem("strideDiscount")) || 0;
-      const checkoutData =
-        JSON.parse(localStorage.getItem("strideCheckoutData")) ||
-        JSON.parse(localStorage.getItem("strideGuestInfo")) ||
-        {};
+      // 2. Wrap async DB logic in a shared promise in-memory to prevent double-insertions in React 18 Strict Mode
+      if (!pendingOrders[sessionId]) {
+        pendingOrders[sessionId] = (async () => {
+          const currentCart = JSON.parse(localStorage.getItem("strideCart")) || [];
+          const currentDiscount = parseFloat(localStorage.getItem("strideDiscount")) || 0;
+          const checkoutData =
+            JSON.parse(localStorage.getItem("strideCheckoutData")) ||
+            JSON.parse(localStorage.getItem("strideGuestInfo")) ||
+            {};
 
-      let customerName = "Guest Customer";
-      let customerEmail = "guest@stride.com";
+          let customerName = "Guest Customer";
+          let customerEmail = "guest@stride.com";
 
-      const first = checkoutData.fname || checkoutData.firstName || "";
-      const last = checkoutData.lname || checkoutData.lastName || "";
-      if (first || last) {
-        customerName = `${first} ${last}`.trim();
-      } else if (window.auth && window.auth.currentUser) {
-        customerName = window.auth.currentUser.displayName || "Registered User";
-      }
+          const first = checkoutData.fname || checkoutData.firstName || "";
+          const last = checkoutData.lname || checkoutData.lastName || "";
+          if (first || last) {
+            customerName = `${first} ${last}`.trim();
+          } else if (window.auth && window.auth.currentUser) {
+            customerName = window.auth.currentUser.displayName || "Registered User";
+          }
 
-      if (checkoutData.email) {
-        customerEmail = checkoutData.email;
-      } else if (window.auth && window.auth.currentUser) {
-        customerEmail = window.auth.currentUser.email;
-      }
+          if (checkoutData.email) {
+            customerEmail = checkoutData.email;
+          } else if (window.auth && window.auth.currentUser) {
+            customerEmail = window.auth.currentUser.email;
+          }
 
-      if (currentCart.length > 0) {
-        try {
-          let subtotal = 0;
-          let itemsCount = 0;
-          currentCart.forEach((item) => {
-            const qty = item.quantity || 1;
-            subtotal += item.price * qty;
-            itemsCount += qty;
-          });
-          const finalTotal = Math.max(0, subtotal - currentDiscount);
+          if (currentCart.length > 0) {
+            let subtotal = 0;
+            let itemsCount = 0;
+            currentCart.forEach((item) => {
+              const qty = item.quantity || 1;
+              subtotal += item.price * qty;
+              itemsCount += qty;
+            });
+            const finalTotal = Math.max(0, subtotal - currentDiscount);
 
-          // A. Insert into Supabase Orders
-          if (window.supabase) {
-            const { error: orderError } = await window.supabase
-              .from("orders")
-              .insert([
-                {
-                  full_name: customerName,
-                  email: customerEmail,
-                  total_amount: finalTotal,
-                  items_count: itemsCount,
-                  items: currentCart,
-                  status: "Pending",
-                  is_manual_override: false,
-                },
-              ]);
-            if (orderError)
-              console.error("Failed to insert order to DB:", orderError);
+            // A. Insert into Supabase Orders
+            if (window.supabase) {
+              const { error: orderError } = await window.supabase
+                .from("orders")
+                .insert([
+                  {
+                    full_name: customerName,
+                    email: customerEmail,
+                    total_amount: finalTotal,
+                    items_count: itemsCount,
+                    items: currentCart,
+                    status: "Pending",
+                    is_manual_override: false,
+                  },
+                ]);
+              if (orderError) {
+                console.error("Failed to insert order to DB:", orderError);
+              }
 
-            // B. Decrement Stock Quantity
-            for (const item of currentCart) {
-              const { data: sizeData, error: fetchError } =
-                await window.supabase
+              // B. Decrement Stock Quantity
+              for (const item of currentCart) {
+                const { data: sizeData, error: fetchError } = await window.supabase
                   .from("product_sizes")
                   .select("stock_quantity")
                   .eq("product_id", item.id)
                   .eq("size", item.size)
                   .single();
 
-              if (!fetchError && sizeData) {
-                const purchasedQty = item.quantity || 1;
-                const newStock = Math.max(
-                  0,
-                  sizeData.stock_quantity - purchasedQty,
-                );
-                await window.supabase
-                  .from("product_sizes")
-                  .update({ stock_quantity: newStock })
-                  .eq("product_id", item.id)
-                  .eq("size", item.size);
+                if (!fetchError && sizeData) {
+                  const purchasedQty = item.quantity || 1;
+                  const newStock = Math.max(
+                    0,
+                    sizeData.stock_quantity - purchasedQty,
+                  );
+                  await window.supabase
+                    .from("product_sizes")
+                    .update({ stock_quantity: newStock })
+                    .eq("product_id", item.id)
+                    .eq("size", item.size);
+                }
               }
             }
+
+            // C. Save processing flag and receipt data
+            localStorage.setItem(isProcessedKey, "true");
+            const orderData = {
+              customerName,
+              customerEmail,
+              items: currentCart,
+              discount: currentDiscount,
+              total: finalTotal,
+              subtotal,
+            };
+            localStorage.setItem("strideLastOrder", JSON.stringify(orderData));
+
+            // D. Clear Storage
+            localStorage.removeItem("strideCart");
+            localStorage.removeItem("strideDiscount");
+            localStorage.removeItem("strideAppliedOffer");
+            localStorage.removeItem("strideCheckoutData");
+
+            return orderData;
+          }
+          return null;
+        })();
+      }
+
+      // 3. Await the single shared promise so all rendering instances receive the same data
+      try {
+        const orderData = await pendingOrders[sessionId];
+        if (orderData) {
+          let displayName = orderData.customerName;
+          if (
+            (!displayName || displayName === "Guest Customer") &&
+            window.auth &&
+            window.auth.currentUser
+          ) {
+            displayName = window.auth.currentUser.displayName || displayName;
           }
 
-          // C. Save processing flag and receipt data
-          localStorage.setItem(isProcessedKey, "true");
-          const orderData = {
-            customerName,
-            customerEmail,
-            items: currentCart,
-            discount: currentDiscount,
-            total: finalTotal,
-            subtotal,
-          };
-          localStorage.setItem("strideLastOrder", JSON.stringify(orderData));
-
-          // D. Clear Storage & Global Context State
-          localStorage.removeItem("strideCart");
-          localStorage.removeItem("strideDiscount");
-          localStorage.removeItem("strideAppliedOffer");
-          localStorage.removeItem("strideCheckoutData");
+          // Clear global context state
           setCartItems([]);
           setDiscount(0);
 
           setOrderState({
             id: shortId,
-            name: customerName,
-            email: customerEmail,
-            items: currentCart,
-            subtotal,
-            discount: currentDiscount,
-            total: finalTotal,
+            name: displayName,
+            email: orderData.customerEmail,
+            items: orderData.items,
+            subtotal: orderData.subtotal,
+            discount: orderData.discount,
+            total: orderData.total,
             loading: false,
           });
-        } catch (err) {
-          console.error("Critical error completing order logic:", err);
-          setOrderState((prev) => ({ ...prev, loading: false }));
+        } else {
+          setOrderState((prev) => ({ ...prev, id: shortId, loading: false }));
         }
-      } else {
+      } catch (err) {
+        console.error("Critical error completing order logic:", err);
         setOrderState((prev) => ({ ...prev, loading: false }));
       }
     };
