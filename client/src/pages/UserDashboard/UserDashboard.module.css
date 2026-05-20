@@ -1262,6 +1262,10 @@
   }
 }
 
+.sidebar-overlay {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .sidebar {
     position: fixed;
@@ -1270,14 +1274,45 @@
     transform: translateX(-100%);
     height: 100vh;
     width: 260px;
+    z-index: 100;
   }
   .sidebar.active {
     transform: translateX(0);
     box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
   }
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 99;
+    animation: fadeIn 0.3s ease;
+  }
   .mobile-toggle-btn,
   .mobile-close-btn {
     display: block;
+  }
+  .top-header {
+    padding: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .header-left {
+    display: contents;
+  }
+  .mobile-toggle-btn {
+    order: 1;
+  }
+  .header-right {
+    order: 2;
+    margin-left: auto;
+  }
+  .search-bar {
+    display: block;
+    order: 3;
+    width: 100%;
+    max-width: 100%;
   }
   .dashboard-content {
     padding: 1rem;
@@ -1300,14 +1335,14 @@
   .profile-card {
     padding: 1.5rem;
   }
-  .search-bar {
-    display: none;
-  }
   .welcome-banner {
     padding: 1.5rem;
   }
   .banner-title {
     font-size: 1.8rem;
+  }
+  .banner-subtitle {
+    font-size: 0.95rem;
   }
   .support-avatars {
     padding: 1rem;
@@ -1324,6 +1359,20 @@
     right: 1rem;
     left: 1rem;
     width: auto;
+    max-width: none;
+  }
+  .wishlist-preview-cards,
+  .orders-preview-cards {
+    margin: -1.5rem -1rem -0.5rem -1rem;
+    padding: 1.5rem 1rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  .full-list-container {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+  .full-list-container .dash-order-card {
+    width: 100%;
     max-width: none;
   }
 }

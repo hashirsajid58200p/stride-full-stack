@@ -324,16 +324,22 @@
 }
 
 @media (max-width: 768px) {
+  .profileCard {
+    padding: 1.25rem;
+  }
   .formRow {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
   .profileUploadSection {
     flex-direction: column;
     text-align: center;
+    gap: 1rem;
   }
   .passwordActions {
     flex-direction: column;
     align-items: stretch;
+    gap: 1rem;
   }
   .uploadButtonsRow {
     flex-direction: column;
@@ -343,6 +349,23 @@
   .btnOutline,
   .btnDangerOutline {
     width: 100%;
+    justify-content: center;
+  }
+  .avatarGallery {
+    justify-content: center;
+  }
+  .linkedAccountBox {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+    text-align: center;
+    padding: 1rem;
+  }
+  .linkedAccountInfo {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .connectedStatus {
     justify-content: center;
   }
 }

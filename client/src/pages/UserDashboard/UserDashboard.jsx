@@ -404,6 +404,14 @@ export default function UserDashboard() {
             </ul>
           </nav>
         </aside>
+        
+        {/* Mobile Sidebar Backdrop Overlay */}
+        {isSidebarOpen && (
+          <div
+            className={styles["sidebar-overlay"]}
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
 
         {/* MAIN */}
         <main className={styles["main-content"]}>
