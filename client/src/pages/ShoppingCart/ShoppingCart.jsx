@@ -58,11 +58,11 @@ export default function ShoppingCart() {
       try {
         if (!window.supabase) throw new Error("Database not connected");
 
-        // Fetch a pool of products
+        // Fetch a larger pool of products to allow richer scoring
         const { data, error } = await window.supabase
           .from("products")
           .select("*, reviews(rating)")
-          .limit(30);
+          .limit(50);
 
         if (error) throw error;
 
@@ -84,8 +84,9 @@ export default function ShoppingCart() {
           if (p.brand) brandCounts[p.brand] = (brandCounts[p.brand] || 0) + 1;
           if (p.category) categoryCounts[p.category] = (categoryCounts[p.category] || 0) + 1;
         });
+        const historyIds = new Set(history.map((h) => h.id));
 
-        // Score each candidate product in the pool
+        // Score each candidate product in the pool using the AI recommendation engine
         const scoredRecs = (data || [])
           .filter((p) => !cartIds.has(p.id)) // Strictly exclude items already in the cart
           .map((product) => {
@@ -115,15 +116,20 @@ export default function ShoppingCart() {
               score += Math.max(0, 4 - priceDiffRatio * 4);
             }
 
+            // Penalty for recently viewed items to encourage discovery
+            if (historyIds.has(product.id)) {
+              score -= 3;
+            }
+
             // Exploration noise factor
             score += Math.random() * 0.3;
 
             return { product, score };
           });
 
-        // Sort by score descending and pick top 2 items
+        // Sort by score descending and pick top 4 items to keep the section full and premium
         scoredRecs.sort((a, b) => b.score - a.score);
-        const recommended = scoredRecs.map((sr) => sr.product).slice(0, 2);
+        const recommended = scoredRecs.map((sr) => sr.product).slice(0, 4);
 
         setRecommendations(recommended);
       } catch (err) {
@@ -131,7 +137,7 @@ export default function ShoppingCart() {
         // Fallback to basic random slice excluding cart items
         const cartIds = new Set(cartItems.map((item) => item.id));
         const filtered = (data || []).filter((p) => !cartIds.has(p.id));
-        setRecommendations(filtered.slice(0, 2));
+        setRecommendations(filtered.slice(0, 4));
       } finally {
         setLoadingRecs(false);
       }
@@ -307,7 +313,7 @@ export default function ShoppingCart() {
             </div>
             <div className={styles["featured-products-override"]}>
               {loadingRecs ? (
-                <SkeletonAnimation count={2} />
+                <SkeletonAnimation count={4} />
               ) : (
                 recommendations.map((p, i) => (
                   <ProductCards key={p.id} product={p} index={i} />
