@@ -1294,7 +1294,7 @@
     display: block;
   }
   .top-header {
-    padding: 1rem;
+    padding: 1rem 1.5rem;
     flex-wrap: wrap;
     gap: 1rem;
   }
@@ -1315,7 +1315,7 @@
     max-width: 100%;
   }
   .dashboard-content {
-    padding: 1rem;
+    padding: 1.5rem;
     gap: 1.5rem;
   }
   .user-info {
@@ -1356,15 +1356,15 @@
   .notification-dropdown {
     position: fixed;
     top: 70px;
-    right: 1rem;
-    left: 1rem;
+    right: 1.5rem;
+    left: 1.5rem;
     width: auto;
     max-width: none;
   }
   .wishlist-preview-cards,
   .orders-preview-cards {
-    margin: -1.5rem -1rem -0.5rem -1rem;
-    padding: 1.5rem 1rem;
+    margin: -1.5rem -1.5rem -0.5rem -1.5rem;
+    padding: 1.5rem 1.5rem;
     -webkit-overflow-scrolling: touch;
   }
   .full-list-container {
