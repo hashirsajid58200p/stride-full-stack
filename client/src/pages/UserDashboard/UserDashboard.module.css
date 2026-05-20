@@ -260,43 +260,12 @@
   max-height: 400px;
   overflow-y: auto;
   animation: slideUp 0.2s ease;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-accent) transparent;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
 .search-dropdown::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-.search-dropdown::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.search-dropdown::-webkit-scrollbar-thumb {
-  background: var(--color-accent);
-  border-radius: 0;
-  border: none;
-}
-
-.search-dropdown::-webkit-scrollbar-thumb:hover {
-  background: var(--color-accent);
-  filter: brightness(0.9);
-}
-
-.search-dropdown::-webkit-scrollbar-button,
-.search-dropdown::-webkit-scrollbar-button:single-button,
-.search-dropdown::-webkit-scrollbar-button:vertical:decrement,
-.search-dropdown::-webkit-scrollbar-button:vertical:increment,
-.search-dropdown::-webkit-scrollbar-button:horizontal:decrement,
-.search-dropdown::-webkit-scrollbar-button:horizontal:increment {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-}
-
-.search-dropdown::-webkit-scrollbar-corner {
-  background: transparent;
+  display: none; /* Chrome/Safari/Webkit */
 }
 
 .search-dropdown-section {
