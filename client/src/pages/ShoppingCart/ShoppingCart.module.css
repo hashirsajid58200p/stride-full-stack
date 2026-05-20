@@ -499,19 +499,12 @@
     font-size: 1rem;
   }
 
-  /* Compact spacing below checkout button on mobile */
+  /* Compact spacing directly below checkout button on mobile */
   .shopping-cart-page {
-    padding-bottom: 2rem;
+    padding-bottom: 1.5rem;
   }
   .related-products-section {
-    margin-top: 2rem;
-    padding: 2.5rem 0;
-  }
-  .related-products-section .section-header {
-    margin-bottom: 2.5rem;
-  }
-  .related-products-section .section-title {
-    font-size: 1.8rem;
+    margin-top: 1.5rem;
   }
 }
 
