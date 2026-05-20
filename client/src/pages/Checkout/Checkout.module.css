@@ -716,8 +716,8 @@
     grid-template-rows: auto auto auto;
     grid-template-areas:
       "tracker"
-      "flow"
-      "summary";
+      "summary"
+      "flow";
     gap: 2rem;
   }
   .container {
