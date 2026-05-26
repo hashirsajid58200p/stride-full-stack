@@ -10,7 +10,7 @@
   flex-direction: column-reverse;
   align-items: flex-end;
   gap: 1rem;
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
 }
 
 .support-toggle-btn {

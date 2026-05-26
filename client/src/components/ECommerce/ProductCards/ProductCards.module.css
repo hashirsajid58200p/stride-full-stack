@@ -120,6 +120,7 @@
   font-weight: 800;
   color: var(--color-fg);
   line-height: 1.2;
+  -webkit-text-stroke: 0.35px var(--color-fg);
 }
 
 .product-info {
@@ -144,7 +145,7 @@
 }
 
 .product-price {
-  font-size: 1.25rem;
+  font-size: 1.05rem;
   font-weight: 800;
   color: var(--color-fg);
   margin-top: 0;
@@ -158,7 +159,7 @@
 }
 
 .old-price {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: var(--color-muted-fg);
   position: relative !important;
   display: inline-block !important;
@@ -179,7 +180,7 @@
 }
 
 .new-price {
-  font-size: 1.25rem;
+  font-size: 1.05rem;
   font-weight: 800;
   color: var(--color-accent);
 }
