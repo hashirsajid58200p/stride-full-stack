@@ -20,6 +20,9 @@
     },
     {
       "src": "/(.*)\\.(js|css|png|jpg|jpeg|gif|svg|ico|json|txt|woff|woff2|webp|webmanifest|map|mp4|webm|ogg|mp3|wav)",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      },
       "dest": "client/$1.$2"
     },
     {

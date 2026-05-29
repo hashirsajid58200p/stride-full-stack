@@ -404,7 +404,15 @@ export default function Home() {
     <main>
       {/* HERO SECTION */}
       <section className={styles.hero}>
-        <video className={styles["hero-video"]} autoPlay muted loop playsInline>
+        <video 
+          className={styles["hero-video"]} 
+          autoPlay 
+          muted 
+          loop 
+          playsInline 
+          preload="auto"
+          poster="/images/backgrounds/hero_background_mobile.jpg"
+        >
           <source src="/videos/hero_background.mp4" type="video/mp4" />
         </video>
         <img
@@ -553,6 +561,7 @@ export default function Home() {
                           src={`/images/logos/brands/${brand}.png`}
                           alt={brand}
                           className={styles["brand-icon"]}
+                          loading="lazy"
                         />
                       </div>
                     ))}
@@ -576,6 +585,7 @@ export default function Home() {
                           src={`/images/logos/brands/${brand}.png`}
                           alt={brand}
                           className={styles["brand-icon"]}
+                          loading="lazy"
                         />
                       </div>
                     ))}
@@ -602,6 +612,7 @@ export default function Home() {
                           src={`/images/logos/brands/${brand}.png`}
                           alt={brand}
                           className={styles["brand-icon"]}
+                          loading="lazy"
                         />
                       </div>
                     ))}
@@ -650,6 +661,7 @@ export default function Home() {
                         src={t.user_photo_url || t.photoUrl}
                         alt={t.user_name || t.name}
                         className={styles["avatar-image"]}
+                        loading="lazy"
                       />
                     ) : (
                       <div className={styles["avatar-placeholder"]}>
