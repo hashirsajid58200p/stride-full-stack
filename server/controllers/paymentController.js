@@ -19,24 +19,29 @@ exports.createCheckoutSession = async (req, res) => {
       quantity: item.quantity,
     }));
 
+    // Dynamically determine the client base URL for local development & production deployments
+    let clientUrl = process.env.CLIENT_URL;
+    if (!clientUrl && req.headers.origin) {
+      clientUrl = req.headers.origin;
+    }
+    if (!clientUrl && req.headers.referer) {
+      try {
+        const urlObj = new URL(req.headers.referer);
+        clientUrl = urlObj.origin;
+      } catch (e) {}
+    }
+    if (!clientUrl) {
+      clientUrl = "https://stride-full-stack.vercel.app";
+    }
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
       customer_email: customerEmail,
 
-      // ==========================================
-      // REDIRECT URL TOGGLE
-      // ==========================================
-
-      // DEPLOYMENT VARIANT: (Commented out for local development)
-      // success_url: `${process.env.CLIENT_URL}/pages/orderConfirmation.html?session_id={CHECKOUT_SESSION_ID}`,
-      // cancel_url: `${process.env.CLIENT_URL}/pages/checkOut.html`,
-
-      // LOCAL MACHINE VARIANT: (Active for local development)
-      // Change these two lines in your createCheckoutSession function:
-      success_url: `http://localhost:5173/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `http://localhost:5173/checkout`,
+      success_url: `${clientUrl}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${clientUrl}/checkout`,
     });
 
     res.status(200).json({ id: session.id, url: session.url });
