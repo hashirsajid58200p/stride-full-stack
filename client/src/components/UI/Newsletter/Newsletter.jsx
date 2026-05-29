@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styles from "./Newsletter.module.css";
+import { getApiUrl } from "../../../utils/apiConfig";
 
 export default function Newsletter({ bgImage }) {
   const [email, setEmail] = useState("");
@@ -17,15 +18,12 @@ export default function Newsletter({ bgImage }) {
 
     try {
       const response = await fetch(
-        // Deployment Version
-        // "/api/newsletter/subscribe",
-        // Local Version
-        "http://localhost:5000/api/newsletter/subscribe",
+        getApiUrl("/api/newsletter/subscribe"),
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: trimmedEmail }),
-        },
+        }
       );
 
       const data = await response.json();

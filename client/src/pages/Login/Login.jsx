@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { getApiUrl } from "../../utils/apiConfig";
 import {
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -36,7 +37,7 @@ export default function Login() {
     try {
       const idToken = await user.getIdToken();
 
-      const response = await fetch("http://localhost:5000/api/auth/verify", {
+      const response = await fetch(getApiUrl("/api/auth/verify"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idToken }),

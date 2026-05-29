@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
+import { getApiUrl } from "../../utils/apiConfig";
 import { useCart } from "../../context/CartContext";
 import {
   deleteUser,
@@ -249,7 +250,7 @@ export default function UserDashboard() {
       let path = url.substring(uploadIndex + 7);
       if (path.match(/^v\d+\//)) path = path.replace(/^v\d+\//, "");
       const publicId = path.lastIndexOf(".") !== -1 ? path.substring(0, path.lastIndexOf(".")) : path;
-      await fetch("http://localhost:5000/api/images/delete", {
+      await fetch(getApiUrl("/api/images/delete"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ public_id: publicId }),

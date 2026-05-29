@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
+import { getApiUrl } from "../../utils/apiConfig";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 import styles from "./AdminDashboard.module.css";
@@ -700,7 +701,7 @@ export default function AdminDashboard() {
         path.lastIndexOf(".") !== -1
           ? path.substring(0, path.lastIndexOf("."))
           : path;
-      await fetch("http://localhost:5000/api/images/delete", {
+      await fetch(getApiUrl("/api/images/delete"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ public_id: publicId }),

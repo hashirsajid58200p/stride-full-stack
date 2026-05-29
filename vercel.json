@@ -6,8 +6,11 @@
       "use": "@vercel/node"
     },
     {
-      "src": "client/**/*",
-      "use": "@vercel/static"
+      "src": "client/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
     }
   ],
   "routes": [
@@ -16,32 +19,11 @@
       "dest": "server/server.js"
     },
     {
-      "src": "/public/(.*)",
-      "dest": "client/public/$1"
+      "handle": "filesystem"
     },
     {
-      "src": "/scripts/(.*)",
-      "dest": "client/src/scripts/$1"
-    },
-    {
-      "src": "/styles/(.*)",
-      "dest": "client/src/styles/$1"
-    },
-    {
-      "src": "/components/(.*)",
-      "dest": "client/src/components/$1"
-    },
-    {
-      "src": "/pages/(.*)",
-      "dest": "client/src/pages/$1"
-    },
-    {
-      "src": "/",
-      "dest": "client/src/pages/index.html"
-    },
-    {
-      "src": "/(.*).html",
-      "dest": "client/src/pages/$1.html"
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }

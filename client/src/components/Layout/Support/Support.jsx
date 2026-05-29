@@ -3,6 +3,7 @@ import styles from "./Support.module.css";
 import { io } from "socket.io-client";
 import { auth } from "../../../firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
+import { API_BASE_URL, getApiUrl } from "../../../utils/apiConfig";
 
 export default function Support() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,7 +23,7 @@ export default function Support() {
 
   useEffect(() => {
     if (currentUser) {
-      socket.current = io("http://localhost:5000");
+      socket.current = io(API_BASE_URL);
       
       socket.current.emit("join-room", currentUser.uid);
 
@@ -113,7 +114,7 @@ export default function Support() {
 
   const handleTrackOrder = async (orderId, city) => {
     try {
-      const response = await fetch("http://localhost:5000/api/ai/track-order", {
+      const response = await fetch(getApiUrl("/api/ai/track-order"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -183,7 +184,7 @@ export default function Support() {
 
     try {
       // 3. API Call (Streaming)
-      const response = await fetch("http://localhost:5000/api/chat/ask", {
+      const response = await fetch(getApiUrl("/api/chat/ask"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 

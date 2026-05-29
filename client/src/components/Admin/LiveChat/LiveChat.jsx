@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import styles from "./LiveChat.module.css";
+import { API_BASE_URL } from "../../../utils/apiConfig";
 
 export default function LiveChat() {
   const [activeUsers, setActiveUsers] = useState({}); // { userId: { name, messages: [] } }
@@ -35,7 +36,7 @@ export default function LiveChat() {
     fetchHistory();
 
     // 2. Initialize Sockets
-    socket.current = io("http://localhost:5000");
+    socket.current = io(API_BASE_URL);
 
     socket.current.on("new-customer-message", (data) => {
       setActiveUsers((prev) => {

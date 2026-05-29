@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
+import { getApiUrl } from "../../utils/apiConfig";
 import ProductCards from "../../components/ECommerce/ProductCards";
 import SkeletonAnimation from "../../components/UI/SkeletonAnimation";
 import styles from "./Products.module.css";
@@ -255,7 +256,7 @@ export default function Products() {
       if (searchQuery.length > 2) {
         setIsVectorLoading(true);
         try {
-          const res = await fetch("http://localhost:5000/api/products/search-semantic", {
+          const res = await fetch(getApiUrl("/api/products/search-semantic"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ query: searchQuery }),

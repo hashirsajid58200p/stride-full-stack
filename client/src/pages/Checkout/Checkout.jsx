@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { getApiUrl } from "../../utils/apiConfig";
 import { useCart } from "../../context/CartContext";
 import Coupon from "../../components/ECommerce/Coupon";
 import styles from "./Checkout.module.css";
@@ -378,7 +379,7 @@ export default function Checkout() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/payments/create-checkout-session",
+        getApiUrl("/api/payments/create-checkout-session"),
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

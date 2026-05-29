@@ -3,6 +3,8 @@
  * Handles IP-based currency detection and global price formatting.
  */
 
+import { getApiUrl } from "./apiConfig";
+
 // Cache values in memory to avoid hitting localStorage in every render
 let cachedCurrency = localStorage.getItem("strideCurrency") || "USD";
 let cachedRate = parseFloat(localStorage.getItem("strideExchangeRate")) || 1;
@@ -71,7 +73,7 @@ export const initCurrencyDetection = async () => {
       // Final fallback: Use server-side detection if front-end failed or is USD
       if (targetCurrency === "USD" || targetCurrency === "PKR") {
         try {
-          const res3 = await fetch("http://localhost:5000/api/currency/detect-ip");
+          const res3 = await fetch(getApiUrl("/api/currency/detect-ip"));
           const data3 = await res3.json();
           if (data3.success && data3.currency) targetCurrency = data3.currency;
         } catch (err3) {}
@@ -88,7 +90,7 @@ export const initCurrencyDetection = async () => {
     const detectedSymbol = getSymbolFromCurrency(detectedCurrency);
     
     // Fetch latest rate for the detected currency
-    const rateRes = await fetch(`http://localhost:5000/api/currency?target=${detectedCurrency}`);
+    const rateRes = await fetch(getApiUrl(`/api/currency?target=${detectedCurrency}`));
     const rateData = await rateRes.json();
     
     if (rateData.rate) {
@@ -114,7 +116,7 @@ export const changeCurrencyManual = async (newCurrency) => {
   const detectedSymbol = getSymbolFromCurrency(newCurrency);
   
   try {
-    const rateRes = await fetch(`http://localhost:5000/api/currency?target=${newCurrency}`);
+    const rateRes = await fetch(getApiUrl(`/api/currency?target=${newCurrency}`));
     const rateData = await rateRes.json();
     
     if (rateData.rate) {
