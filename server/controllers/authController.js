@@ -9,8 +9,9 @@ exports.verifyToken = async (req, res) => {
 
   try {
     // Check if Firebase Admin was successfully initialized
-    if (!admin || !admin.app || typeof admin.auth !== "function") {
-      throw new Error("Firebase Admin SDK is not initialized. Please ensure the FIREBASE_SERVICE_ACCOUNT environment variable is set correctly in Vercel.");
+    if (!admin || !admin.apps || admin.apps.length === 0) {
+      const reason = admin && admin.initError ? ` Reason: ${admin.initError}` : "";
+      throw new Error(`Firebase Admin SDK is not initialized.${reason} Please verify your environment variables.`);
     }
 
     // Verify the ID token sent from the frontend

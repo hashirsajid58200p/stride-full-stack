@@ -1,6 +1,7 @@
 const admin = require("firebase-admin");
 
 let serviceAccount;
+let initError = null;
 
 // ==========================================
 // FIREBASE ADMIN AUTH TOGGLE
@@ -23,6 +24,7 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT) {
       serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
     }
   } catch (err) {
+    initError = "Parse Error: " + err.message;
     console.error("Firebase Service Account Parse Error:", err);
   }
 } else {
@@ -31,6 +33,7 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT) {
   try {
     serviceAccount = require("../serviceAccountKey.json");
   } catch (err) {
+    initError = "FIREBASE_SERVICE_ACCOUNT environment variable is missing, and local serviceAccountKey.json was not found.";
     console.warn(
       "Local serviceAccountKey.json not found. If this is production, ensure FIREBASE_SERVICE_ACCOUNT env var is set.",
     );
@@ -39,14 +42,23 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT) {
 
 // Initialize the SDK only if credentials were found
 if (serviceAccount) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
-  console.log("Firebase Admin SDK Initialized Successfully");
-} else {
-  console.error(
-    "CRITICAL ERROR: Firebase Admin SDK failed to initialize. No credentials found.",
-  );
+  try {
+    // Only initialize if not already initialized to avoid duplicate app errors in HMR
+    if (admin.apps.length === 0) {
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+      });
+      console.log("Firebase Admin SDK Initialized Successfully");
+    }
+  } catch (err) {
+    initError = "Initialization Error: " + err.message;
+    console.error("Firebase Admin SDK Initialization Error:", err);
+  }
+} else if (!initError) {
+  initError = "No service account credentials could be resolved.";
 }
+
+// Export the diagnostic error if initialization was unsuccessful
+admin.initError = initError;
 
 module.exports = admin;
