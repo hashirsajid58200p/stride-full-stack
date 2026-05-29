@@ -334,7 +334,7 @@ export default function UserDashboard() {
     .join("")
     .toUpperCase();
 
-  if (authLoading) return <ProfileLoader isVisible={true} />;
+  if (authLoading) return <ProfileLoader isVisible={true} isFullPage={true} />;
 
   if (!user) return null;
 

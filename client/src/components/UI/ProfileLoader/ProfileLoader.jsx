@@ -1,13 +1,13 @@
 import React from "react";
 import styles from "./ProfileLoader.module.css";
 
-export default function ProfileLoader({ isVisible = true, isSmall = false }) {
+export default function ProfileLoader({ isVisible = true, isSmall = false, isFullPage = false }) {
   // If not visible, do not render anything into the DOM
   if (!isVisible) return null;
 
   return (
     <div
-      className={`${styles["profile-loader-instance"]} ${isSmall ? styles["small-scale"] : ""}`}
+      className={`${styles["profile-loader-instance"]} ${isSmall ? styles["small-scale"] : ""} ${isFullPage ? styles["full-page"] : ""}`}
     >
       <div className={styles.loader}>
         <div className={styles.bar1}></div>
