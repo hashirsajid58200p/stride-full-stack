@@ -6,6 +6,8 @@
 
 .wrapper input {
   flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
   padding: 0.75rem 1rem;
   background-color: var(--color-bg);
   border: 1px solid var(--color-border);
@@ -23,6 +25,7 @@
 
 .wrapper button {
   padding: 0.75rem 1.5rem;
+  box-sizing: border-box;
   border: 1px solid var(--color-border);
   background-color: var(--color-bg);
   color: var(--color-fg);
@@ -30,6 +33,7 @@
   font-weight: 600;
   transition: var(--transition-smooth);
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .wrapper button:hover:not(:disabled) {
@@ -41,4 +45,15 @@
 .wrapper input:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .wrapper input {
+    padding: 0.75rem 0.75rem;
+    font-size: 0.9rem;
+  }
+  .wrapper button {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
 }
