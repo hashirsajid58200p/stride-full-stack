@@ -10,7 +10,18 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT) {
   // DEPLOYMENT VARIANT:
   // Uses the JSON string stored in Vercel/Render environment variables
   try {
-    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    let serviceAccountStr = process.env.FIREBASE_SERVICE_ACCOUNT.trim();
+    // Handle cases where the env var has leading/trailing quotes from pasting
+    if (serviceAccountStr.startsWith('"') && serviceAccountStr.endsWith('"')) {
+      serviceAccountStr = serviceAccountStr.slice(1, -1);
+    }
+    
+    serviceAccount = JSON.parse(serviceAccountStr);
+    
+    // Handle the notorious Vercel newline character escaping in the private key
+    if (serviceAccount.private_key) {
+      serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+    }
   } catch (err) {
     console.error("Firebase Service Account Parse Error:", err);
   }

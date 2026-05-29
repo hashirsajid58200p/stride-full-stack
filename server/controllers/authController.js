@@ -8,6 +8,11 @@ exports.verifyToken = async (req, res) => {
   }
 
   try {
+    // Check if Firebase Admin was successfully initialized
+    if (!admin || !admin.app || typeof admin.auth !== "function") {
+      throw new Error("Firebase Admin SDK is not initialized. Please ensure the FIREBASE_SERVICE_ACCOUNT environment variable is set correctly in Vercel.");
+    }
+
     // Verify the ID token sent from the frontend
     const decodedToken = await admin.auth().verifyIdToken(idToken);
 
@@ -20,6 +25,6 @@ exports.verifyToken = async (req, res) => {
     });
   } catch (error) {
     console.error("Error verifying Firebase token:", error);
-    res.status(401).json({ error: "Invalid or expired token" });
+    res.status(401).json({ error: error.message || "Invalid or expired token" });
   }
 };
