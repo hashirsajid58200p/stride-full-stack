@@ -46,6 +46,7 @@ export default function Login() {
       const result = await response.json();
 
       if (!response.ok) {
+        console.error("Server Auth Verification Failed Details:", result);
         throw new Error(result.error || "Server verification failed");
       }
 

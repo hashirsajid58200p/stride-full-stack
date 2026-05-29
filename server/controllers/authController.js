@@ -25,6 +25,11 @@ exports.verifyToken = async (req, res) => {
     });
   } catch (error) {
     console.error("Error verifying Firebase token:", error);
-    res.status(401).json({ error: error.message || "Invalid or expired token" });
+    res.status(401).json({
+      error: error.message || "Invalid or expired token",
+      code: error.code,
+      stack: error.stack,
+      details: typeof error === "object" ? { ...error, message: error.message, stack: error.stack } : error
+    });
   }
 };
