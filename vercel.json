@@ -19,7 +19,7 @@
       "dest": "server/server.js"
     },
     {
-      "src": "/(.*)\\.(js|css|png|jpg|jpeg|gif|svg|ico|json|txt|woff|woff2|webp|webmanifest|map)",
+      "src": "/(.*)\\.(js|css|png|jpg|jpeg|gif|svg|ico|json|txt|woff|woff2|webp|webmanifest|map|mp4|webm|ogg|mp3|wav)",
       "dest": "client/$1.$2"
     },
     {
