@@ -411,7 +411,6 @@ export default function Home() {
           loop 
           playsInline 
           preload="auto"
-          poster="/images/backgrounds/hero_background_mobile.jpg"
         >
           <source src="/videos/hero_background.mp4" type="video/mp4" />
         </video>
