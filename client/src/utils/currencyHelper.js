@@ -45,42 +45,29 @@ export const initCurrencyDetection = async () => {
 
   isDetecting = true;
   const detectCurrency = async () => {
-    let targetCurrency = "USD";
-
     try {
-      // Step A: Primary
-      try {
-        const res1 = await fetch("https://ipapi.co/json/");
-        if (!res1.ok) throw new Error();
-        const data1 = await res1.json();
-        if (data1.currency) targetCurrency = data1.currency;
-      } catch (err1) {
-        // Step B: Secondary
-        try {
-          const res2 = await fetch("https://freeipapi.com/api/json");
-          if (!res2.ok) throw new Error();
-          const data2 = await res2.json();
-          targetCurrency = data2.currency?.code || data2.currencyCode || "USD";
-        } catch (err2) {
-          // Step C: Timezone fallback
-          const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
-          if (tz.includes("Karachi")) targetCurrency = "PKR";
-          else if (tz.includes("London")) targetCurrency = "GBP";
-          else if (tz.includes("Berlin") || tz.includes("Paris")) targetCurrency = "EUR";
+      // Query the server-side detection immediately to avoid browser CORS issues
+      const res = await fetch(getApiUrl("/api/currency/detect-ip"));
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.currency) {
+          return data.currency;
         }
       }
-
-      // Final fallback: Use server-side detection if front-end failed or is USD
-      if (targetCurrency === "USD" || targetCurrency === "PKR") {
-        try {
-          const res3 = await fetch(getApiUrl("/api/currency/detect-ip"));
-          const data3 = await res3.json();
-          if (data3.success && data3.currency) targetCurrency = data3.currency;
-        } catch (err3) {}
-      }
-
-      return targetCurrency;
+      
+      // Fallback: Timezone-based detection if server is down or returns error
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+      if (tz.includes("Karachi")) return "PKR";
+      if (tz.includes("London")) return "GBP";
+      if (tz.includes("Berlin") || tz.includes("Paris")) return "EUR";
+      
+      return "USD";
     } catch (e) {
+      // Fallback: Timezone-based detection
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+      if (tz.includes("Karachi")) return "PKR";
+      if (tz.includes("London")) return "GBP";
+      if (tz.includes("Berlin") || tz.includes("Paris")) return "EUR";
       return "USD";
     }
   };

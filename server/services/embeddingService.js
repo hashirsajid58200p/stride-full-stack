@@ -1,5 +1,4 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const { pipeline } = require('@xenova/transformers');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -12,6 +11,7 @@ class EmbeddingService {
 
     async getLocalModel() {
         if (!this.localModel) {
+            const { pipeline } = require('@xenova/transformers');
             this.localModel = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
         }
         return this.localModel;

@@ -107,21 +107,13 @@ export default function Checkout() {
           // Use a more robust geo-location logic
           const getGeo = async () => {
             try {
-              // Try ipapi with a timeout
-              const controller = new AbortController();
-              const id = setTimeout(() => controller.abort(), 2000);
-              const res = await fetch("https://ipapi.co/json/", { signal: controller.signal });
-              clearTimeout(id);
-              if (res.ok) return (await res.json()).country_name;
-            } catch (e) {}
-
-            try {
-              // Try freeipapi with a timeout
-              const controller = new AbortController();
-              const id = setTimeout(() => controller.abort(), 2000);
-              const res = await fetch("https://freeipapi.com/api/json", { signal: controller.signal });
-              clearTimeout(id);
-              if (res.ok) return (await res.json()).countryName;
+              const res = await fetch(getApiUrl("/api/currency/detect-ip"));
+              if (res.ok) {
+                const data = await res.json();
+                if (data.success && data.country) {
+                  return data.country;
+                }
+              }
             } catch (e) {}
 
             // Timezone fallback
