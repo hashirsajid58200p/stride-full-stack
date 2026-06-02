@@ -18,7 +18,7 @@ export default function ReturnExchange() {
           <div className={styles["policy-header"]}>
             <h1 className={styles["page-title"]}>Returns & Exchanges</h1>
             <p className={styles["last-updated"]}>
-              General guidelines to our policy
+              Last Updated: June 2026
             </p>
           </div>
 
@@ -120,7 +120,7 @@ export default function ReturnExchange() {
             <h2 id="returns">Returns and Exchange</h2>
             <p>
               Product(s) can be exchanged from any of our retail stores within
-              15 days from the date of delivery. Please note that the product
+              <strong> 30 days</strong> from the date of delivery. Please note that the product
               must be unused with the price label attached along with the
               purchase invoice. Items bought on sale cannot be exchanged nor be
               refunded. Due to the differences in color monitors/screens and
@@ -129,22 +129,22 @@ export default function ReturnExchange() {
               therefore products cannot be exchanged for this reason.
             </p>
             <p>
-              We will only exchange any product(s), if a defected or wrong
-              product(s) has been delivered or if the size purchased is not
-              accurate as required. Contact our customer service center by
+              We will only exchange any product(s) if a defective or incorrect
+              product has been delivered, or if the size purchased is not
+              accurate as required. Please contact our customer service center by
               DM/Messages on our social channels by sharing images of the
-              defected/wrong product at @stride or customercare@stride.com or
-              calling us at 1-800-STRIDE within 2-3 days of delivery.
+              defective/incorrect product at @stride, emailing customercare@stride.com, or
+              calling us at 1-800-STRIDE within <strong>7 days</strong> of delivery.
             </p>
 
             <h2 id="refunds">Refunds</h2>
             <p>
-              We have a ‘No Refund’ policy. However, refunds may be allowed in
+              We maintain a strict ‘No Refund’ policy. However, refunds may be allowed in
               exceptional cases wherein the product is out of stock. Refunds
-              will be issued to the same credit card that was used for the
+              will be issued to the same credit card or payment method that was used for the
               original purchase. You will be credited for the cost of the
               item(s) and applicable taxes. Shipping and handling costs are
-              non-refundable. Please allow 10 working days for processing
+              non-refundable. Please allow <strong>5 to 7 business days</strong> for processing
               returns and refunds.
             </p>
 
@@ -177,7 +177,7 @@ export default function ReturnExchange() {
               </li>
               <li>
                 Item cannot be exchanged if the request is made outside the
-                specified time frame (15 days).
+                specified time frame (<strong>30 days</strong>).
               </li>
               <li>
                 We cannot exchange, return or change the product which is
@@ -213,8 +213,8 @@ export default function ReturnExchange() {
             </p>
             <p>
               If you notice any issue such as a damaged item, a missing product,
-              or an incorrect article, please report it immediately on the same
-              day through our official chat channels, along with pictures of the
+              or an incorrect article, please report it within <strong>48 hours</strong> of
+              delivery through our official chat channels, along with pictures of the
               article and video evidence (Email, Facebook Messenger, Instagram
               Messenger). Timely reporting is essential as it allows us to
               coordinate with our teams and courier partners effectively.
@@ -264,7 +264,7 @@ export default function ReturnExchange() {
               conditions.
             </p>
             <p>
-              Stride offers a one-month claim policy from the date of purchase.
+              Stride offers a <strong>three-month (90 days) claim policy</strong> from the date of purchase.
               In case of any concern within this period, customers are requested
               to visit their nearest Stride store along with a valid proof of
               purchase to lodge a claim.
@@ -277,7 +277,7 @@ export default function ReturnExchange() {
             </p>
             <p>
               If a claim for repair is approved, the repaired shoes must be
-              collected within 30 days from the notified collection date.
+              collected within <strong>45 days</strong> from the notified collection date.
               Failure to collect the shoes within this timeframe will result in
               the claim being treated as void.
             </p>
