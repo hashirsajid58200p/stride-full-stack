@@ -17,7 +17,7 @@ export default function PrivacyPolicy() {
         <div className={styles["policy-wrapper"]}>
           <div className={styles["policy-header"]}>
             <h1 className={styles["page-title"]}>Privacy Policy</h1>
-            <p className={styles["last-updated"]}>Last Updated: August 2024</p>
+            <p className={styles["last-updated"]}>Last Updated: June 2026</p>
           </div>
 
           <div className={styles["policy-content"]}>

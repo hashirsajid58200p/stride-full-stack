@@ -34,8 +34,16 @@ const faqData = [
     icon: "bi-arrow-counterclockwise",
     questions: [
       {
-        q: "What is your return policy?",
-        a: "We accept returns within 30 days of purchase. Items must be unworn, in original condition with tags attached. Refunds will be processed within 5-10 business days of receiving the returned item.",
+        q: "What is your return & exchange policy?",
+        a: "Product exchanges are accepted from any of our retail stores within 30 days of delivery. Items must be unused, in their original condition with price labels and invoices attached. Items bought on sale are not eligible for exchanges or refunds.",
+      },
+      {
+        q: "Do you offer refunds?",
+        a: "We maintain a strict 'No Refund' policy. Refunds are only allowed in exceptional cases (e.g., if an item is out of stock). Approved refunds are processed within 5-7 business days to the original payment method.",
+      },
+      {
+        q: "What is your footwear warranty or claim policy?",
+        a: "Stride offers a three-month (90 days) claim policy from the purchase date for manufacturing or design defects. Please bring your proof of purchase to any store to initiate a claim. Approved repaired items must be collected within 45 days of notification.",
       },
     ],
   },
