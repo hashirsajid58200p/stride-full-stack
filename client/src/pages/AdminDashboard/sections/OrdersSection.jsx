@@ -64,7 +64,13 @@ const OrdersSection = ({
                   <td className={styles["text-muted"]}>{o.id.substring(0, 8).toUpperCase()}</td>
                   <td className={styles["font-semibold"]}>{o.full_name}</td>
                   <td className={styles["text-muted"]}>{o.created_at?.split("T")[0]}</td>
-                  <td>{o.order_items?.length || 0} Products</td>
+                  <td>
+                    {Array.isArray(o.items) && o.items.length > 0 ? (
+                      o.items.map(item => `${item.name}${item.quantity > 1 ? ` (x${item.quantity})` : ''}`).join(', ')
+                    ) : (
+                      "0 Products"
+                    )}
+                  </td>
                   <td className={styles["font-semibold"]}>
                     {window.formatPrice ? window.formatPrice(o.total_amount) : `$${o.total_amount.toFixed(2)}`}
                   </td>
