@@ -1,13 +1,12 @@
-<h1 align="left">Stride</h1>
 
-<p align="center">
-  <strong>Stride is a premium full-stack footwear e-commerce platform featuring dynamic, cognitive capabilities and advanced admin controls. It solves the limitations of traditional retail sites by integrating high-dimensional semantic search, a context-aware customer chatbot, automatic currency localization, and weather-aware delivery tracking. The platform delivers a high-performance shopping experience with a clean design aesthetic and responsive interface.</strong>
-</p>
 
-<p align="center">
+# 👟 Stride — Full Stack Footwear E-Commerce
+
+Stride is a premium full-stack footwear e-commerce platform featuring dynamic, cognitive capabilities and advanced admin controls. It solves the limitations of traditional retail sites by integrating high-dimensional semantic search, a context-aware customer chatbot, automatic currency localization, and weather-aware delivery tracking. The platform delivers a high-performance shopping experience with a clean design aesthetic and responsive interface. 
+
+<p align="left">
   <em>This project was developed as a Final Year Project (FYP).</em>
 </p>
-
 ---
 
 ## 🌐 Live Demo
