@@ -23,16 +23,16 @@
 ## 👀 Previews
 
 ### 🏠 Home Page
-![Home Page](home.png)
+![Home Page](previews/home.png)
 
 ### 🛍️ Product Page
-![Product Page](product.png)
+![Product Page](previews/products.png)
 
 ### 🛡️ Admin Dashboard
-![Admin Dashboard](admin.png)
+![Admin Dashboard](previews/admin.png)
 
 ### 👤 User Dashboard
-![User Dashboard](userdashboard.png)
+![User Dashboard](previews/user.png)
 
 ---
 
