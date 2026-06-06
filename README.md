@@ -2,13 +2,9 @@
 
 Stride is a premium full-stack footwear e-commerce platform featuring dynamic, cognitive capabilities and advanced admin controls. It solves the limitations of traditional retail sites by integrating high-dimensional semantic search, a context-aware customer chatbot, automatic currency localization, and weather-aware delivery tracking. The platform delivers a high-performance shopping experience with a clean design aesthetic and responsive interface. 
 
----
-
 ## 🌐 Live Demo
 
 🔗 [View Stride](https://stride-full-stack.vercel.app/)
-
----
 
 ## 👀 Previews
 
@@ -23,8 +19,6 @@ Stride is a premium full-stack footwear e-commerce platform featuring dynamic, c
 
 ### 👤 User Dashboard
 ![User Dashboard](previews/user.png)
-
----
 
 ## ✨ Features
 
@@ -50,8 +44,6 @@ Stride is a premium full-stack footwear e-commerce platform featuring dynamic, c
 - **Promotional Planner**: Configures discount coupon thresholds and launches global flash sales.
 - **WebSocket Live Support Desk**: Allows admins to join user chatrooms and reply directly using real-time Socket.io connections.
 - **Sandbox Testing Lab**: Allows testing flags (e.g., enable/disable checkout, chatbot, reviews, and content protection modules which lock right-clicks and drag actions on images/videos).
-
----
 
 ## 🛠️ Tech Stack
 
@@ -85,8 +77,6 @@ Stride is a premium full-stack footwear e-commerce platform featuring dynamic, c
 | **pgvector** | Vector similarity database extension |
 | **Vercel** | Unified deployment hosting (Client and Serverless APIs) |
 
----
-
 ## 📁 Project Structure
 
 ```
@@ -117,8 +107,6 @@ stride-full-stack/
 ├── vercel.json              # Vercel deployment config
 └── README.md                # Project documentation
 ```
-
----
 
 ## 🔌 API Endpoints
 
@@ -162,8 +150,6 @@ stride-full-stack/
 | `GET` | `/api/config` | Dynamically fetches frontend credentials configurations |
 | `POST` | `/api/images/delete` | Deletes uploaded image asset from Cloudinary |
 | `GET` | `/` | Checks Express API server status |
-
----
 
 ## 🗄️ Database Schema
 
@@ -246,6 +232,4 @@ The database uses PostgreSQL on Supabase with the `pgvector` extension enabled.
 - `text` — text (Not Null) — Chat dialogue message
 - `sender` — text (Not Null) — Message author type ('user', 'admin', 'ai')
 - `created_at` — timestamp — Delivery timestamp
-
----
 
