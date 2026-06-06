@@ -1,93 +1,375 @@
-# KICKZ - Footwear E-Commerce Website
+<p align="center">
+  <img src="client/public/images/logos/stride_logo_dark.png" width="80" height="80" alt="Stride Logo" />
+</p>
 
-## 📦 Files Included
+<h1 align="center">Stride</h1>
 
-- `index.html` - Main HTML structure
-- `styles.css` - All styling and animations
-- `script.js` - Interactive functionality
-- `images/` - Product and hero images
-  - `hero-shoe.jpg` - Hero section background
-  - `shoe-1.jpg` - Nike Air Max Fusion
-  - `shoe-2.jpg` - Adidas Ultraboost 23
-  - `shoe-3.jpg` - Jordan Legacy
-  - `shoe-4.jpg` - New Balance 550 Classic
+<p align="center">
+  <strong>Stride is a premium full-stack footwear e-commerce platform featuring dynamic, cognitive capabilities and advanced admin controls. It solves the limitations of traditional retail sites by integrating high-dimensional semantic search, a context-aware customer chatbot, automatic currency localization, and weather-aware delivery tracking. The platform delivers a high-performance shopping experience with a clean design aesthetic and responsive interface.</strong>
+</p>
 
-## 🚀 How to Use
-
-1. **Download all files** to your computer
-2. **Maintain the folder structure**:
-   ```
-   your-project/
-   ├── index.html
-   ├── styles.css
-   ├── script.js
-   └── images/
-       ├── hero-shoe.jpg
-       ├── shoe-1.jpg
-       ├── shoe-2.jpg
-       ├── shoe-3.jpg
-       └── shoe-4.jpg
-   ```
-3. **Open `index.html`** in your web browser
-4. That's it! No build process or server needed.
-
-## 🎨 Features
-
-- **Responsive Design** - Works perfectly on desktop, tablet, and mobile
-- **Smooth Animations** - Fade-in, slide-up, and hover effects
-- **Interactive Cart** - Add to cart functionality with counter
-- **Modern UI** - Clean, professional design inspired by Nike and StockX
-- **SEO Optimized** - Proper meta tags and semantic HTML
-
-## 🎯 Customization Tips
-
-### Change Colors
-Edit the CSS variables in `styles.css` (lines 15-20):
-```css
-:root {
-    --color-accent: #FF6B00;  /* Change to your brand color */
-    --color-primary: #171717; /* Change to your preferred dark color */
-}
-```
-
-### Update Products
-Edit the product cards in `index.html` starting at line 97. Update:
-- Image source (`src="images/your-image.jpg"`)
-- Product name
-- Brand
-- Price
-
-### Modify Content
-All text content is in `index.html` and can be easily edited.
-
-## 📱 Browser Compatibility
-
-- Chrome (recommended)
-- Firefox
-- Safari
-- Edge
-- Mobile browsers (iOS Safari, Chrome Mobile)
-
-## 💡 Tips
-
-- Keep all files in the same folder structure
-- Replace the images with your own products (keep the same filenames or update paths)
-- The design is fully responsive and will automatically adapt to different screen sizes
-- No external dependencies required - everything is self-contained
-
-## 🔧 Technical Details
-
-- Pure HTML5, CSS3, and vanilla JavaScript
-- No frameworks or libraries needed
-- Lightweight and fast-loading
-- Uses modern CSS features (Grid, Flexbox, CSS Variables)
-- Intersection Observer API for scroll animations
-
-## 📄 License
-
-Free to use for personal and commercial projects.
+<p align="center">
+  <em>This project was developed as a Final Year Project (FYP).</em>
+</p>
 
 ---
 
-**Enjoy your new footwear website! 👟**
-# fyp
+## 🌐 Live Demo
+
+🔗 [View Stride](https://stride-full-stack.vercel.app/)
+
+---
+
+## 👀 Previews
+
+### 🏠 Home Page
+![Home Page](home.png)
+
+### 🛍️ Product Page
+![Product Page](product.png)
+
+### 🛡️ Admin Dashboard
+![Admin Dashboard](admin.png)
+
+### 👤 User Dashboard
+![User Dashboard](userdashboard.png)
+
+---
+
+## ✨ Features
+
+### 🛍️ Shopping Experience
+- **Responsive Layout**: Designed from modern UI mockups with fluid Vanilla CSS, light/dark layout toggles, custom interactive scroll controls, and skeleton animation states.
+- **Dynamic Product Detail Page**: Implements color-block swatch variants, size matrix grids, and image zoom panels.
+- **Multi-Currency Localizer**: Recognizes client location by IP addresses to execute dynamic currency conversion (supporting USD, EUR, GBP, PKR, etc.) using live exchange rates.
+- **Custom Checkout Journey**: Persists shopping cart state locally, validates valid coupons and active flash discounts, and processes payments via Stripe checkout elements.
+
+### 🧠 Cognitive Capabilities
+- **Semantic Product Search**: Resolves search parameters using high-dimensional text embeddings (`text-embedding-004` from Gemini or local Xenova fallbacks) to match database products using cosine distance similarity.
+- **RAG Customer Support Chatbot**: Reads past user order data and semantic product matches to populate custom LLM system prompts, streaming responses in real-time using Server-Sent Events (SSE).
+- **Smart Logistics Officer**: Locates shipping addresses, queries local weather details (extreme rain, snow, temperature thresholds), and prompts LLaMA 3.1 to generate weather-aware, context-aware shipping summaries.
+
+### 🔐 Authentication & User Accounts
+- **Firebase Authentication**: Secures signup, login, password reset, and session tracking using JWT token exchanges.
+- **Customer Dashboard**: Displays past orders, provides item shipping status tracking updates, and houses account info controls (including account deletion).
+
+### 🛡️ Super Admin Control Panel
+- **Real-Time Analytics Dashboard**: Displays total store sales revenue logs (Line Charts) and item variant stock distributions (Doughnut Charts) using Chart.js.
+- **Variant Product Creator**: Houses forms to map footwear metadata, upload images straight to Cloudinary, assign variant colors, and build size matrices.
+- **Bulk Inventory Restocker**: Serves a spreadsheet interface to update quantities of sizes 7 to 12 across products simultaneously.
+- **Promotional Planner**: Configures discount coupon thresholds and launches global flash sales.
+- **WebSocket Live Support Desk**: Allows admins to join user chatrooms and reply directly using real-time Socket.io connections.
+- **Sandbox Testing Lab**: Allows testing flags (e.g., enable/disable checkout, chatbot, reviews, and content protection modules which lock right-clicks and drag actions on images/videos).
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend (Client)
+| Technology | Purpose |
+|------------|---------|
+| **React 19** | Core SPA framework for building the reactive UI |
+| **Vite** | Tooling and high-performance development server |
+| **Vanilla CSS / CSS Modules** | Custom styles, layout variables, and page transitions |
+| **React Router DOM v7** | Client-side routing engine |
+| **Firebase Client SDK** | Secure credentials-based authentication |
+| **Socket.io Client** | Real-time live support desk connection |
+| **Supabase Client SDK** | Direct database read integrations |
+
+### Backend (Server)
+| Technology | Purpose |
+|------------|---------|
+| **Node.js & Express** | RESTful routing and server-side logic middleware |
+| **Socket.io** | Bidirectional communication server-side gateway |
+| **Firebase Admin SDK** | Backend validation for client JWT auth tokens |
+| **Stripe SDK** | Secure credit card transaction sessions |
+| **Cloudinary SDK** | Automated media uploading and deletion |
+| **Resend SDK** | Contact form routing and newsletter updates |
+| **Google Generative AI SDK** | Gemini `text-embedding-004` embedding creator |
+| **Xenova Transformers** | Local execution fallback for embeddings generation |
+
+### Database & Infrastructure
+| Technology | Purpose |
+|------------|---------|
+| **Supabase (PostgreSQL)** | Persistent relational database engine |
+| **pgvector** | Vector similarity database extension |
+| **Vercel** | Unified deployment hosting (Client and Serverless APIs) |
+
+---
+
+## 📁 Project Structure
+
+```
+stride-full-stack/
+├── client/                  # Vite + React frontend
+│   ├── public/              # Static media assets, logos, and videos
+│   ├── src/                 # React source code
+│   │   ├── components/      # Shared components (Layout, UI, Admin, ECommerce)
+│   │   ├── context/         # React Context files (Cart, Currency, Offer)
+│   │   ├── pages/           # Client views (Home, Products, Admin/User Dashboards)
+│   │   ├── utils/           # API and configurations resolver
+│   │   ├── App.jsx          # Route router config
+│   │   ├── firebaseConfig.js# Firebase client SDK script
+│   │   ├── index.css        # Global variables and resets
+│   │   └── main.jsx         # App entry point
+│   ├── package.json         # Client dependencies & scripts
+│   └── vite.config.js       # Vite bundler parameters
+├── server/                  # Node.js + Express backend
+│   ├── config/              # Server configuration (Firebase Admin SDK)
+│   ├── controllers/         # Logic handlers for endpoints
+│   ├── routes/              # Express API endpoint definitions
+│   ├── scripts/             # Database embedding generator scripts
+│   ├── services/            # Embedding generation layer (Gemini/Xenova)
+│   ├── check_dim.js         # Embedding testing tool
+│   ├── check_schema.js      # Supabase connection testing tool
+│   ├── server.js            # Express server configuration
+│   └── package.json         # Server dependencies & scripts
+├── vercel.json              # Vercel deployment config
+└── README.md                # Project documentation
+```
+
+---
+
+## 🔌 API Endpoints
+
+### Auth Routes
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/auth/verify` | Validates Firebase client ID tokens on requests |
+
+### Product Routes
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/products/search-semantic` | Queries products using high-dimensional cosine similarity |
+| `POST` | `/api/products/sync-embedding/:id` | Generates and updates the vector embedding for a database product |
+
+### Payment Routes
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/payments/create-checkout-session` | Generates secure Stripe Checkout sessions for cart items |
+
+### Currency Routes
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/currency` | Retrieves current exchange rates for currency mapping |
+| `GET` | `/api/currency/detect-ip` | Geolocates IP to return localized currency settings |
+
+### AI Logistics Routes
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/ai/track-order` | Compiles custom weather-aware delivery alerts using LLaMA 3.1 |
+
+### Chat Routes
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/chat/ask` | Initiates SSE streaming RAG chatbot support completions |
+
+### Utility & Global Actions (Root Server Routes)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/newsletter/subscribe` | Adds email to newsletter subscription logs |
+| `POST` | `/api/contact` | Sends contact form message details to admin support |
+| `GET` | `/api/config` | Dynamically fetches frontend credentials configurations |
+| `POST` | `/api/images/delete` | Deletes uploaded image asset from Cloudinary |
+| `GET` | `/` | Checks Express API server status |
+
+---
+
+## 🗄️ Database Schema
+
+The database uses PostgreSQL on Supabase with the `pgvector` extension enabled.
+
+### `products` Table
+- `id` — text (Primary Key) — Unique product code
+- `brand` — text (Not Null) — Shoe brand name
+- `name` — text (Not Null) — Footwear model name
+- `description` — text — In-depth description details
+- `price` — numeric (Not Null) — Cost of item in USD
+- `tags` — text — Descriptors for searching/filtering
+- `main_image_url` — text (Not Null) — Main image URL
+- `embedding` — vector (384/768 dimensions) — Vector embedding of product details
+- `created_at` — timestamp — Catalog date record creation
+
+### `product_colors` Table
+- `id` — bigint (Primary Key, Auto-increment)
+- `product_id` — text (Foreign Key -> `products.id` ON DELETE CASCADE) — Associated product
+- `color_name` — text (Not Null) — Shade name description
+- `image_url` — text (Not Null) — Cloudinary URL for variant
+
+### `product_sizes` Table
+- `id` — bigint (Primary Key, Auto-increment)
+- `product_id` — text (Foreign Key -> `products.id` ON DELETE CASCADE) — Associated product
+- `size` — numeric (Not Null) — UK/US shoe size
+- `stock_quantity` — integer (Not Null) — Available inventory count
+
+### `orders` Table
+- `id` — text (Primary Key) — Order reference code
+- `created_at` — timestamp — Date order was processed
+- `full_name` — text (Not Null) — Recipient name
+- `email` — text (Not Null) — Contact email
+- `phone` — text — Shipping phone number
+- `address` — text (Not Null) — Shipping address
+- `postal_code` — text — Zipcode details
+- `items` — json (Not Null) — List array of purchased variants details
+- `total_amount` — numeric (Not Null) — Final order sum in USD
+- `status` — text — Order progression: 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'
+- `is_manual_override` — boolean — Keeps admin state static without time-based automation override
+
+### `delivery_options` Table
+- `id` — text (Primary Key) — Shipping tier code
+- `name` — text (Not Null) — Shipping tier name
+- `cost` — numeric (Not Null) — Shipping charge in USD
+- `is_free` — boolean — Free delivery criteria flag
+- `time` — text — Estimated duration details
+
+### `offers` Table
+- `id` — bigint (Primary Key, Auto-increment)
+- `type` — text (Not Null) — Offer tier ('coupon' or 'flash')
+- `code` — text (Unique) — Promo coupon text
+- `discount_percentage` — integer (Not Null) — Discount percent (1-100%)
+- `target_product_id` — text (Foreign Key -> `products.id` ON DELETE CASCADE) — Scope limit
+- `valid_until` — date — Promo expiration limit
+- `limit` — integer — Remaining claims count
+
+### `platform_notifications` Table
+- `id` — bigint (Primary Key, Auto-increment)
+- `type` — text (Not Null) — Alert category type
+- `title` — text (Not Null) — Brief header
+- `message` — text (Not Null) — Detailed description content
+- `related_id` — text — Reference key to related product/order/offer
+- `is_read` — boolean — Read state flag
+- `created_at` — timestamp — Notification dispatch timestamp
+
+### `reviews` Table
+- `id` — bigint (Primary Key, Auto-increment)
+- `product_id` — text (Foreign Key -> `products.id` ON DELETE CASCADE) — Associated product
+- `user_id` — text (Not Null) — Firebase user ID
+- `user_name` — text — Display name of user
+- `rating` — integer — Star count rating (1 to 5)
+- `text` — text — Written review details
+- `created_at` — timestamp — Submission date
+
+### `chat_messages` Table
+- `id` — bigint (Primary Key, Auto-increment)
+- `user_id` — text (Not Null) — Firebase user ID or active session code
+- `user_name` — text — Customer name
+- `text` — text (Not Null) — Chat dialogue message
+- `sender` — text (Not Null) — Message author type ('user', 'admin', 'ai')
+- `created_at` — timestamp — Delivery timestamp
+
+---
+
+## 🚀 Local Setup & Installation
+
+### Prerequisites
+- Node.js v18+
+- npm or yarn
+- Supabase account with custom database details (PostgreSQL instance with `pgvector` enabled)
+- Firebase Account Console details
+- Stripe Developer Keys
+- Cloudinary Storage Space credentials
+- Resend Account key credentials
+- Groq API Access token
+- WeatherAPI Developer key
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/hashirsajid58200p/stride-full-stack.git
+cd stride-full-stack
+```
+
+### 2. Setup the Server
+```bash
+cd server
+npm install
+```
+
+Create a `.env` file in the `/server` directory:
+```env
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+
+FIREBASE_API_KEY=your_firebase_api_key
+FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
+FIREBASE_PROJECT_ID=your_firebase_project_id
+FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
+FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
+FIREBASE_APP_ID=your_firebase_app_id
+
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
+
+STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+STRIPE_SECRET_KEY=your_stripe_secret_key
+
+RESEND_API_KEY=your_resend_api_key
+CURRENCY_BEACON_API_KEY=your_currency_beacon_api_key
+GROQ_API_KEY=your_groq_api_key
+WEATHER_API_KEY=your_weather_api_key
+
+PORT=5000
+```
+
+> ⚠️ **Firebase credentials**: Download your project's service account JSON key file from Firebase Console (`Project Settings > Service Accounts`), rename it to `serviceAccountKey.json`, and place it in the root of the `/server` folder.
+
+Start the backend API server:
+```bash
+npm start
+```
+
+### 3. Setup the Client
+```bash
+cd ../client
+npm install
+```
+
+Create a `.env` file in the `/client` directory:
+```env
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
+VITE_FIREBASE_PROJECT_ID=your_firebase_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
+VITE_FIREBASE_APP_ID=your_firebase_app_id
+
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+VITE_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+```
+
+Start the client development server:
+```bash
+npm run dev
+```
+
+### 4. Access the Application
+```
+Frontend: http://localhost:5173
+Backend API: http://localhost:5000
+```
+
+---
+
+## 🚀 Deployment
+
+This project is deployed on **Vercel** using a monorepo configuration defined in `vercel.json`.
+
+- **Frontend:** Deployed via Vercel's Static Build module mapping React outputs from the `/client` directory.
+- **Backend:** Deployed as Vercel Node Serverless Functions mapping backend routes to Express in the `/server` directory.
+- **Live URL:** https://stride-full-stack.vercel.app/
+
+---
+
+## 📄 License
+
+This project is open-source and free to use for personal and educational purposes.
+
+---
+
+## 👨💻 Author
+
+**Hashir Sajid**  
+🌐 [hashirsajid.vercel.app](https://hashirsajid.vercel.app)  
+🐙 [GitHub](https://github.com/hashirsajid58200p)
