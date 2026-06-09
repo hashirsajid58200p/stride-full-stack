@@ -11,6 +11,9 @@ export default function Support() {
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [chatMode, setChatMode] = useState(() => {
+    return localStorage.getItem("stride_chat_mode") || "ai";
+  });
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -22,15 +25,24 @@ export default function Support() {
   const socket = useRef(null);
 
   useEffect(() => {
-    if (currentUser) {
+    let activeUserId = currentUser?.uid;
+    if (!activeUserId) {
+      activeUserId = localStorage.getItem("stride_chat_guest_id");
+      if (!activeUserId && chatMode === "live") {
+        activeUserId = "guest_" + Math.random().toString(36).substring(2, 11);
+        localStorage.setItem("stride_chat_guest_id", activeUserId);
+      }
+    }
+
+    if (activeUserId && chatMode === "live") {
       socket.current = io(API_BASE_URL);
       
-      socket.current.emit("join-room", currentUser.uid);
+      socket.current.emit("join-room", activeUserId);
 
       socket.current.on("admin-message", (data) => {
         setMessages((prev) => [
           ...prev, 
-          { id: Date.now(), text: data.text, sender: "admin" }
+          { id: Date.now(), text: data.text, sender: "admin", timestamp: new Date().toISOString() }
         ]);
       });
 
@@ -40,14 +52,15 @@ export default function Support() {
         const { data } = await window.supabase
           .from("chat_messages")
           .select("*")
-          .eq("user_id", currentUser.uid)
+          .eq("user_id", activeUserId)
           .order("created_at", { ascending: true });
 
         if (data && data.length > 0) {
           const history = data.map(m => ({
             id: m.id,
             text: m.text,
-            sender: m.sender
+            sender: m.sender,
+            timestamp: m.created_at
           }));
           // Merge with initial message
           setMessages((prev) => [prev[0], ...history]);
@@ -56,18 +69,113 @@ export default function Support() {
       fetchHistory();
 
       return () => {
-        if (socket.current) socket.current.disconnect();
+        if (socket.current) {
+          socket.current.disconnect();
+          socket.current = null;
+        }
       };
     }
-  }, [currentUser]);
+  }, [currentUser, chatMode]);
 
   const [messages, setMessages] = useState([
     {
       id: 1,
       text: "Hi buddy! 👋 Welcome to Stride. How can I help you find the perfect pair of sneakers today?",
       sender: "ai",
+      timestamp: new Date().toISOString()
     },
   ]);
+
+  const formatDividerDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const options = { weekday: "long", month: "long", day: "numeric", year: "numeric" };
+    return date.toLocaleDateString("en-US", options);
+  };
+
+  const handleConnectLive = async () => {
+    let activeUserId = currentUser?.uid;
+    if (!activeUserId) {
+      activeUserId = localStorage.getItem("stride_chat_guest_id");
+      if (!activeUserId) {
+        activeUserId = "guest_" + Math.random().toString(36).substring(2, 11);
+        localStorage.setItem("stride_chat_guest_id", activeUserId);
+      }
+    }
+
+    setChatMode("live");
+    localStorage.setItem("stride_chat_mode", "live");
+
+    const ticketRequestMsg = {
+      id: Date.now(),
+      text: "I need more help. Please connect me to a live agent.",
+      sender: "user",
+      timestamp: new Date().toISOString()
+    };
+
+    const systemConnectingMsg = {
+      id: Date.now() + 1,
+      text: "Ticket opened. Connecting to a live Stride agent...",
+      sender: "system",
+      timestamp: new Date().toISOString()
+    };
+
+    setMessages((prev) => [...prev, ticketRequestMsg, systemConnectingMsg]);
+
+    if (window.supabase) {
+      try {
+        await window.supabase.from("chat_messages").insert([
+          {
+            user_id: activeUserId,
+            user_name: currentUser?.displayName || "Guest Customer",
+            text: "Hello, I need live support. (Ticket Opened)",
+            sender: "user",
+            created_at: new Date().toISOString()
+          }
+        ]);
+      } catch (e) {
+        console.error("Error saving ticket message to Supabase:", e);
+      }
+    }
+
+    if (!socket.current) {
+      socket.current = io(API_BASE_URL);
+      socket.current.emit("join-room", activeUserId);
+      
+      socket.current.on("admin-message", (data) => {
+        setMessages((prev) => [
+          ...prev, 
+          { id: Date.now(), text: data.text, sender: "admin", timestamp: new Date().toISOString() }
+        ]);
+      });
+    }
+
+    socket.current.emit("send-to-admin", {
+      userId: activeUserId,
+      userName: currentUser?.displayName || "Guest Customer",
+      message: "Hello, I need live support. (Ticket Opened)",
+      timestamp: new Date()
+    });
+  };
+
+  const handleExitLive = () => {
+    setChatMode("ai");
+    localStorage.setItem("stride_chat_mode", "ai");
+
+    const systemExitMsg = {
+      id: Date.now(),
+      text: "You have exited Live Chat. You are now chatting with Stride AI.",
+      sender: "system",
+      timestamp: new Date().toISOString()
+    };
+
+    setMessages((prev) => [...prev, systemExitMsg]);
+
+    if (!currentUser && socket.current) {
+      socket.current.disconnect();
+      socket.current = null;
+    }
+  };
 
   const chatBodyRef = useRef(null);
   const wrapperRef = useRef(null);
@@ -153,19 +261,27 @@ export default function Support() {
     const text = inputValue.trim();
     if (!text) return;
 
+    let activeUserId = currentUser?.uid;
+    if (!activeUserId) {
+      activeUserId = localStorage.getItem("stride_chat_guest_id");
+    }
+
     // 1. Add user message
-    const userMsg = { id: Date.now(), text, sender: "user" };
+    const userMsg = { id: Date.now(), text, sender: "user", timestamp: new Date().toISOString() };
     setMessages((prev) => [...prev, userMsg]);
     setInputValue("");
 
-    // Send to Socket (for Live Admin)
-    if (socket.current) {
-      socket.current.emit("send-to-admin", {
-        userId: currentUser?.uid,
-        userName: currentUser?.displayName || "Guest",
-        message: text,
-        timestamp: new Date()
-      });
+    if (chatMode === "live") {
+      // Send to Socket (for Live Admin)
+      if (socket.current) {
+        socket.current.emit("send-to-admin", {
+          userId: activeUserId,
+          userName: currentUser?.displayName || "Guest",
+          message: text,
+          timestamp: new Date()
+        });
+      }
+      return; // Do not call AI
     }
 
     // 2. Show thinking state
@@ -301,29 +417,81 @@ export default function Support() {
       >
         <div className={styles["chatbox-header"]}>
           <div className={styles["chatbox-title-container"]}>
-            <i className="bi bi-robot"></i>
+            <i className={`bi ${chatMode === "live" ? "bi-person-badge-fill" : "bi-robot"}`}></i>
             <div className={styles["chatbox-title"]}>
-              <strong>Stride AI</strong>
-              <span>Typically replies instantly</span>
+              <strong>{chatMode === "live" ? "Stride Live Chat" : "Stride AI"}</strong>
+              <span>{chatMode === "live" ? "Connecting to agent..." : "Typically replies instantly"}</span>
             </div>
           </div>
-          <button
-            className={styles["chatbox-close-btn"]}
-            onClick={handleCloseChat}
-          >
-            <i className="bi bi-x-lg"></i>
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            {chatMode === "ai" ? (
+              <button
+                className={styles["connect-agent-btn"]}
+                onClick={handleConnectLive}
+                title="Connect to Live Support"
+              >
+                <i className="bi bi-person-fill"></i> More Help
+              </button>
+            ) : (
+              <button
+                className={styles["exit-live-btn"]}
+                onClick={handleExitLive}
+                title="Exit Live Chat"
+              >
+                Exit Live
+              </button>
+            )}
+            <button
+              className={styles["chatbox-close-btn"]}
+              onClick={handleCloseChat}
+            >
+              <i className="bi bi-x-lg"></i>
+            </button>
+          </div>
         </div>
 
         <div className={styles["chatbox-body"]} ref={chatBodyRef}>
-          {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`${styles["chat-msg"]} ${msg.sender === "user" ? styles["msg-user"] : styles["msg-ai"]}`}
-            >
-              {msg.text}
-            </div>
-          ))}
+          {messages.map((msg, idx, arr) => {
+            if (msg.sender === "system") {
+              return (
+                <div key={msg.id} className={styles["msg-system"]}>
+                  {msg.text}
+                </div>
+              );
+            }
+
+            const prevMsg = arr[idx - 1];
+            const showDateDivider = msg.timestamp && (
+              !prevMsg || 
+              !prevMsg.timestamp || 
+              new Date(msg.timestamp).toDateString() !== new Date(prevMsg.timestamp).toDateString()
+            );
+
+            let senderClass = styles["msg-ai"];
+            if (msg.sender === "user") {
+              senderClass = styles["msg-user"];
+            } else if (msg.sender === "admin") {
+              senderClass = styles["msg-admin"];
+            }
+
+            return (
+              <React.Fragment key={msg.id || idx}>
+                {showDateDivider && (
+                  <div className={styles["dateDivider"]}>
+                    {formatDividerDate(msg.timestamp)}
+                  </div>
+                )}
+                <div
+                  className={`${styles["chat-msg"]} ${senderClass}`}
+                >
+                  <strong className={styles["bubbleSender"]}>
+                    {msg.sender === "user" ? "Guest: " : msg.sender === "admin" ? "Admin: " : "AI: "}
+                  </strong>
+                  {msg.text}
+                </div>
+              </React.Fragment>
+            );
+          })}
           {isTyping && (
             <div
               className={`${styles["chat-msg"]} ${styles["msg-ai"]} ${styles["msg-typing"]}`}

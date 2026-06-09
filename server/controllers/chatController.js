@@ -130,10 +130,12 @@ const handleChat = async (req, res) => {
       }
     }
 
-    // 4. Save Final AI Response to DB
+    // 4. Save Final AI Response to DB (Commented out: AI conversations are no longer saved to DB directly)
+    /*
     if (fullAiResponse) {
       await saveMessage(fullAiResponse, "ai");
     }
+    */
 
     res.end();
   } catch (error) {

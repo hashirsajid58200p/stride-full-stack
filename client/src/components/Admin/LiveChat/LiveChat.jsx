@@ -61,6 +61,13 @@ export default function LiveChat() {
     };
   }, []);
 
+  const formatDividerDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const options = { weekday: "long", month: "long", day: "numeric", year: "numeric" };
+    return date.toLocaleDateString("en-US", options);
+  };
+
   const handleSendReply = () => {
     if (!selectedUserId || !replyText.trim()) return;
 
@@ -125,19 +132,37 @@ export default function LiveChat() {
               Chatting with {activeUsers[selectedUserId].name}
             </div>
             <div className={styles.messageList}>
-              {activeUsers[selectedUserId].messages.map((msg, idx) => (
-                <div
-                  key={idx}
-                  className={`${styles.message} ${
-                    msg.sender === "admin" ? styles.admin : msg.sender === "ai" ? styles.ai : styles.user
-                  }`}
-                >
-                  <div className={styles.msgBubble}>{msg.text}</div>
-                  <span className={styles.msgTime}>
-                    {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                </div>
-              ))}
+              {activeUsers[selectedUserId].messages.map((msg, idx, arr) => {
+                const prevMsg = arr[idx - 1];
+                const showDateDivider = msg.timestamp && (
+                  !prevMsg || 
+                  !prevMsg.timestamp || 
+                  new Date(msg.timestamp).toDateString() !== new Date(prevMsg.timestamp).toDateString()
+                );
+
+                return (
+                  <React.Fragment key={idx}>
+                    {showDateDivider && (
+                      <div className={styles.dateDivider}>
+                        {formatDividerDate(msg.timestamp)}
+                      </div>
+                    )}
+                    <div
+                      className={`${styles.message} ${
+                        msg.sender === "admin" ? styles.admin : msg.sender === "ai" ? styles.ai : styles.user
+                      }`}
+                    >
+                      <strong className={styles.bubbleSender}>
+                        {msg.sender === "admin" ? "Admin: " : msg.sender === "ai" ? "AI: " : "Guest: "}
+                      </strong>
+                      <div className={styles.msgBubble}>{msg.text}</div>
+                      <span className={styles.msgTime}>
+                        {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                  </React.Fragment>
+                );
+              })}
             </div>
             <div className={styles.inputArea}>
               <input
