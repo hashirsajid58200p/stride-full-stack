@@ -66,6 +66,28 @@ function App() {
     document.title = titleMap[location.pathname] || "Stride";
   }, [location.pathname]);
 
+  // Root Theme Synchronization (Loads theme for pages without header/footer)
+  useEffect(() => {
+    const syncTheme = () => {
+      const savedTheme = localStorage.getItem("theme") || "light";
+      if (savedTheme === "dark") {
+        document.documentElement.setAttribute("data-theme", "dark");
+      } else {
+        document.documentElement.removeAttribute("data-theme");
+      }
+    };
+
+    syncTheme();
+
+    const handleStorageChange = (e) => {
+      if (e.key === "theme") {
+        syncTheme();
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
   // Content Protection & Download Bypasser Logic
   useEffect(() => {
     const handleContextMenu = (e) => {
