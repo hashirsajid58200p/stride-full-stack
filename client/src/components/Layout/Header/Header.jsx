@@ -124,6 +124,8 @@ export default function Header() {
       if (!user) {
         setUserRole(null);
         localStorage.removeItem("userRole");
+        localStorage.removeItem("stride_admin_test_config");
+        window.dispatchEvent(new Event("stride_config_updated"));
       }
     });
 
@@ -226,6 +228,8 @@ export default function Header() {
   const handleLogout = (e) => {
     e.preventDefault();
     localStorage.removeItem("userRole");
+    localStorage.removeItem("stride_admin_test_config");
+    window.dispatchEvent(new Event("stride_config_updated"));
     signOut(auth)
       .then(() => navigate("/login"))
       .catch(() => navigate("/login"));

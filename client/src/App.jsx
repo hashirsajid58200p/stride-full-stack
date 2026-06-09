@@ -88,6 +88,15 @@ function App() {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
+  // Root Admin Test Config Cleanup (Resets sandbox testing settings for non-admin users on load)
+  useEffect(() => {
+    const role = localStorage.getItem("userRole");
+    if (role !== "admin") {
+      localStorage.removeItem("stride_admin_test_config");
+      window.dispatchEvent(new Event("stride_config_updated"));
+    }
+  }, []);
+
   // Content Protection & Download Bypasser Logic
   useEffect(() => {
     const handleContextMenu = (e) => {

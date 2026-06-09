@@ -597,6 +597,8 @@ export default function AdminDashboard() {
   const handleLogout = () => {
     signOut(window.auth).then(() => {
       localStorage.removeItem("userRole");
+      localStorage.removeItem("stride_admin_test_config");
+      window.dispatchEvent(new Event("stride_config_updated"));
       if (window.showToast)
         window.showToast("Logged out successfully!", "success");
       navigate("/login");

@@ -261,6 +261,8 @@ export default function UserDashboard() {
   const handleLogout = () => {
     signOut(auth).then(() => {
       localStorage.removeItem("userRole");
+      localStorage.removeItem("stride_admin_test_config");
+      window.dispatchEvent(new Event("stride_config_updated"));
       if (window.showToast) window.showToast("Logged out successfully!", "success");
       navigate("/login");
     });
@@ -272,6 +274,8 @@ export default function UserDashboard() {
         await deleteOldImageFromCloudinary(dbUser.avatarUrl);
       localStorage.removeItem(`stride_profile_${user.uid}`);
       localStorage.removeItem(`stride_dismissed_notifs_${user.uid}`);
+      localStorage.removeItem("stride_admin_test_config");
+      window.dispatchEvent(new Event("stride_config_updated"));
       await deleteUser(user);
       if (window.showToast) window.showToast("Account deleted.", "success");
       navigate("/");
