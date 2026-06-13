@@ -1427,7 +1427,7 @@ export default function AdminDashboard() {
     <React.Fragment>
       <div className={`${styles["admin-layout"]} ${isSidebarCollapsed ? styles.collapsed : ""}`}>
         {/* SIDEBAR */}
-        <aside className={`${styles.sidebar} ${isSidebarOpen ? styles.open : ""} ${isSidebarCollapsed ? styles["is-collapsed"] : ""}`} id="sidebar">
+        <aside className={`${styles.sidebar} ${isSidebarOpen ? styles.active : ""} ${isSidebarCollapsed ? styles["is-collapsed"] : ""}`} id="sidebar">
           <div className={styles["sidebar-header"]}>
             <Link to="/" className={styles["sidebar-logo"]}>
               <img
@@ -1489,6 +1489,14 @@ export default function AdminDashboard() {
             </ul>
           </nav>
         </aside>
+
+        {/* Mobile Sidebar Backdrop Overlay */}
+        {isSidebarOpen && (
+          <div
+            className={styles["sidebar-overlay"]}
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
 
         {/* MAIN CONTENT */}
         <main className={styles["main-content"]}>

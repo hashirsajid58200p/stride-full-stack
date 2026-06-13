@@ -188,6 +188,10 @@ body {
   border-left-color: var(--color-accent);
 }
 
+.sidebar-overlay {
+  display: none;
+}
+
 /* =========================================
    Main Content Area
    ========================================= */
@@ -2108,6 +2112,15 @@ select.custom-select-arrow {
   .sidebar.active {
     transform: translateX(0);
     box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+  }
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 99;
+    animation: fadeIn 0.3s ease;
   }
   .mobile-toggle-btn,
   .mobile-close-btn {
