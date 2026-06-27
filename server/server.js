@@ -155,6 +155,43 @@ app.get("/api/config", (req, res) => {
   });
 });
 
+app.get("/api/health", async (req, res) => {
+  try {
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error("Supabase environment variables are missing");
+    }
+
+    const response = await fetch(`${supabaseUrl}/rest/v1/products?select=id&limit=1`, {
+      method: "GET",
+      headers: {
+        "apikey": supabaseKey,
+        "Authorization": `Bearer ${supabaseKey}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Supabase query failed: ${errText}`);
+    }
+
+    res.status(200).json({
+      status: "active",
+      message: "Stride Platform Database ping successful",
+    });
+  } catch (error) {
+    console.error("Health Check Error:", error.message);
+    res.status(500).json({
+      status: "error",
+      message: "Database ping failed",
+      details: error.message,
+    });
+  }
+});
+
+
 app.post("/api/images/delete", async (req, res) => {
   const { public_id } = req.body;
   try {
