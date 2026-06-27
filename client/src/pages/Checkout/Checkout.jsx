@@ -7,6 +7,7 @@ import styles from "./Checkout.module.css";
 import { useCurrency } from "../../context/CurrencyContext";
 import { auth } from "../../firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
+import { countriesData } from "../../utils/countriesData";
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -96,11 +97,8 @@ export default function Checkout() {
   useEffect(() => {
     const loadCountries = async () => {
       try {
-        const response = await fetch(
-          "https://restcountries.com/v3.1/all?fields=name",
-        );
-        if (!response.ok) throw new Error("Network response not ok");
-        let countriesData = await response.json();
+        // Clone the local copy of countries list so we don't mutate imported ref
+        let localCountries = JSON.parse(JSON.stringify(countriesData));
 
         let userCountryName = null;
         try {
@@ -135,13 +133,13 @@ export default function Checkout() {
         }
 
         if (userCountryName) {
-          const userIndex = countriesData.findIndex(
+          const userIndex = localCountries.findIndex(
             (c) =>
               c.name.common.toLowerCase() === userCountryName.toLowerCase(),
           );
           if (userIndex > -1) {
-            const userCountryObj = countriesData.splice(userIndex, 1)[0];
-            countriesData.unshift(userCountryObj);
+            const userCountryObj = localCountries.splice(userIndex, 1)[0];
+            localCountries.unshift(userCountryObj);
             setFormData((prev) => ({
               ...prev,
               country: userCountryObj.name.common,
@@ -151,12 +149,12 @@ export default function Checkout() {
 
         const sortedCountries = userCountryName
           ? [
-              countriesData[0],
-              ...countriesData
+              localCountries[0],
+              ...localCountries
                 .slice(1)
                 .sort((a, b) => a.name.common.localeCompare(b.name.common)),
             ]
-          : countriesData.sort((a, b) =>
+          : localCountries.sort((a, b) =>
               a.name.common.localeCompare(b.name.common),
             );
 
