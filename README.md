@@ -100,8 +100,6 @@ stride-full-stack/
 │   ├── routes/              # Express API endpoint definitions
 │   ├── scripts/             # Database embedding generator scripts
 │   ├── services/            # Embedding generation layer (Gemini/Xenova)
-│   ├── check_dim.js         # Embedding testing tool
-│   ├── check_schema.js      # Supabase connection testing tool
 │   ├── server.js            # Express server configuration
 │   └── package.json         # Server dependencies & scripts
 ├── vercel.json              # Vercel deployment config
