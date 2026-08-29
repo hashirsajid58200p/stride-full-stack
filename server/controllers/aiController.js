@@ -72,4 +72,65 @@ const getSmartTrackingUpdate = async (req, res) => {
   }
 };
 
-module.exports = { getSmartTrackingUpdate };
+const generateProductImage = async (req, res) => {
+  const { name, brand, color, category, gender, customPrompt } = req.body;
+
+  if (!name || !brand) {
+    return res.status(400).json({ error: "Product name and brand are required" });
+  }
+
+  try {
+    const shoeColor = color || "classic";
+    const shoeCategory = category || "sneakers";
+    const shoeGender = gender || "unisex";
+
+    const prompt =
+      customPrompt ||
+      `High-end commercial studio product photography of ${brand} ${name} ${shoeCategory} for ${shoeGender} in ${shoeColor} colorway, side angle profile view, ultra crisp footwear details, clean solid neutral studio backdrop, professional softbox footwear lighting, 8k resolution, photorealistic shoe`;
+
+    console.log(`[AI Image Gen] Generating image for "${brand} ${name} (${shoeColor})"...`);
+
+    const encodedPrompt = encodeURIComponent(prompt);
+    const seed = Math.floor(Math.random() * 999999);
+    const aiImageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=800&height=800&model=flux&nologo=true&seed=${seed}`;
+
+    const cloudinary = require("cloudinary").v2;
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+
+    const sanitizedSlug = `${brand}-${name}-${shoeColor}`
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+
+    const publicId = `${sanitizedSlug}-${Date.now()}`;
+
+    const uploadResult = await cloudinary.uploader.upload(aiImageUrl, {
+      folder: "stride/products",
+      asset_folder: "stride/products",
+      public_id: publicId,
+      overwrite: true,
+    });
+
+    console.log(`[AI Image Gen] Uploaded to Cloudinary: ${uploadResult.secure_url}`);
+
+    return res.status(200).json({
+      success: true,
+      imageUrl: uploadResult.secure_url,
+      publicId: uploadResult.public_id,
+      prompt: prompt,
+    });
+  } catch (error) {
+    console.error("AI Image Generation Error:", error);
+    return res.status(500).json({
+      error: "Failed to generate AI image",
+      details: error.message,
+    });
+  }
+};
+
+module.exports = { getSmartTrackingUpdate, generateProductImage };
+

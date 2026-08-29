@@ -267,10 +267,13 @@ export default function AdminDashboard() {
     standardTags: [],
   });
   const [colorBlocks, setColorBlocks] = useState([]); // [{ color: 'Red', file: null, existingUrl: '', sizes: { '7': 10, '8': 5 } }]
+  const [generatingAiIndex, setGeneratingAiIndex] = useState(null);
+  const [isGeneratingAllAi, setIsGeneratingAllAi] = useState(false);
 
   // Inventory Bulk
   const [bulkStock, setBulkStock] = useState("");
   const [selectedInventory, setSelectedInventory] = useState([]);
+
 
   // ==========================================
   // INITIALIZATION & AUTH
@@ -980,6 +983,124 @@ export default function AdminDashboard() {
     newBlocks[blockIndex].sizes[size] = value === false ? null : value; // false implies unchecked
     setColorBlocks(newBlocks);
   };
+
+  const handleGenerateAiImage = async (bIdx) => {
+    if (!productForm.name || !productForm.brand) {
+      if (window.showToast) {
+        window.showToast("Please enter Brand and Product Name first!", "error");
+      }
+      return;
+    }
+
+    const block = colorBlocks[bIdx];
+    if (!block) return;
+
+    setGeneratingAiIndex(bIdx);
+    if (window.showToast) {
+      window.showToast(`✨ Generating AI shoe image for ${block.color}...`, "info");
+    }
+
+    try {
+      const res = await fetch(getApiUrl("/api/ai/generate-product-image"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          brand: productForm.brand,
+          name: productForm.name,
+          color: block.color,
+          category: productForm.tags || "sneakers",
+          gender: "unisex",
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.imageUrl) {
+        throw new Error(data.error || "Failed to generate image");
+      }
+
+      setColorBlocks((prev) => {
+        const next = [...prev];
+        next[bIdx] = {
+          ...next[bIdx],
+          existingUrl: data.imageUrl,
+          file: null,
+        };
+        return next;
+      });
+
+      if (window.showToast) {
+        window.showToast(`✨ AI image ready for ${block.color}!`, "success");
+      }
+    } catch (err) {
+      console.error("AI Image Generation Error:", err);
+      if (window.showToast) {
+        window.showToast(err.message || "Failed to generate AI image", "error");
+      }
+    } finally {
+      setGeneratingAiIndex(null);
+    }
+  };
+
+  const handleGenerateAllAiImages = async () => {
+    if (!productForm.name || !productForm.brand) {
+      if (window.showToast) {
+        window.showToast("Please enter Brand and Product Name first!", "error");
+      }
+      return;
+    }
+
+    if (colorBlocks.length === 0) {
+      if (window.showToast) {
+        window.showToast("Please select at least one color variant!", "error");
+      }
+      return;
+    }
+
+    setIsGeneratingAllAi(true);
+    if (window.showToast) {
+      window.showToast(`✨ Generating AI images for ${colorBlocks.length} variants...`, "info");
+    }
+
+    for (let i = 0; i < colorBlocks.length; i++) {
+      setGeneratingAiIndex(i);
+      try {
+        const block = colorBlocks[i];
+        const res = await fetch(getApiUrl("/api/ai/generate-product-image"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            brand: productForm.brand,
+            name: productForm.name,
+            color: block.color,
+            category: productForm.tags || "sneakers",
+            gender: "unisex",
+          }),
+        });
+
+        const data = await res.json();
+        if (res.ok && data.imageUrl) {
+          setColorBlocks((prev) => {
+            const next = [...prev];
+            next[i] = {
+              ...next[i],
+              existingUrl: data.imageUrl,
+              file: null,
+            };
+            return next;
+          });
+        }
+      } catch (err) {
+        console.error(`AI Gen Error for variant ${i}:`, err);
+      }
+    }
+
+    setGeneratingAiIndex(null);
+    setIsGeneratingAllAi(false);
+    if (window.showToast) {
+      window.showToast("✨ All AI product images generated!", "success");
+    }
+  };
+
 
   // ==========================================
   // HANDLERS: DELIVERY OPTIONS
@@ -1954,6 +2075,33 @@ export default function AdminDashboard() {
                     ))}
                   </div>
 
+                  <div className={styles["color-blocks-top-bar"]}>
+                    <label className={styles["field-label"]} style={{ margin: 0 }}>
+                      Color Variants & Images ({colorBlocks.length})
+                    </label>
+                    {colorBlocks.length > 0 && (
+                      <button
+                        type="button"
+                        className={styles["ai-generate-all-btn"]}
+                        onClick={handleGenerateAllAiImages}
+                        disabled={generatingAiIndex !== null || isGeneratingAllAi}
+                        title="Generate studio footwear images for all color variants using AI"
+                      >
+                        {isGeneratingAllAi ? (
+                          <>
+                            <span className={styles["ai-spinner"]}></span>
+                            <span>Generating All...</span>
+                          </>
+                        ) : (
+                          <>
+                            <i className="bi bi-stars"></i>
+                            <span>Generate All AI Images</span>
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
+
                   <div className={styles["dynamic-uploads"]}>
                     {colorBlocks.map((block, bIdx) => (
                       <div key={bIdx} className={styles["color-block"]}>
@@ -1972,13 +2120,35 @@ export default function AdminDashboard() {
                             ></div>
                             <span>{block.color} Variant</span>
                           </div>
-                          <button
-                            type="button"
-                            className={styles["remove-color-btn"]}
-                            onClick={() => setColorBlocks(prev => prev.filter((_, i) => i !== bIdx))}
-                          >
-                            <i className="bi bi-trash"></i>
-                          </button>
+                          <div className={styles["color-block-actions"]}>
+                            <button
+                              type="button"
+                              className={styles["ai-generate-btn"]}
+                              onClick={() => handleGenerateAiImage(bIdx)}
+                              disabled={generatingAiIndex === bIdx || isGeneratingAllAi}
+                              title={`Generate AI shoe image for ${block.color}`}
+                            >
+                              {generatingAiIndex === bIdx ? (
+                                <>
+                                  <span className={styles["ai-spinner"]}></span>
+                                  <span>Generating...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <i className="bi bi-stars"></i>
+                                  <span>{block.existingUrl ? "Re-generate AI" : "Generate with AI"}</span>
+                                </>
+                              )}
+                            </button>
+                            <button
+                              type="button"
+                              className={styles["remove-color-btn"]}
+                              onClick={() => setColorBlocks(prev => prev.filter((_, i) => i !== bIdx))}
+                              title="Remove variant"
+                            >
+                              <i className="bi bi-trash"></i>
+                            </button>
+                          </div>
                         </div>
 
                         <div className={styles["color-image-upload-area"]}>
