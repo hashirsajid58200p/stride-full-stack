@@ -269,8 +269,10 @@ export default function AdminDashboard() {
   const [colorBlocks, setColorBlocks] = useState([]); // [{ color: 'Red', file: null, existingUrl: '', sizes: { '7': 10, '8': 5 } }]
   const [generatingAiIndex, setGeneratingAiIndex] = useState(null);
   const [isGeneratingAllAi, setIsGeneratingAllAi] = useState(false);
+  const [previewModalUrl, setPreviewModalUrl] = useState(null);
 
   // Inventory Bulk
+
   const [bulkStock, setBulkStock] = useState("");
   const [selectedInventory, setSelectedInventory] = useState([]);
 
@@ -2118,59 +2120,159 @@ export default function AdminDashboard() {
                                 marginRight: '8px'
                               }}
                             ></div>
-                            <span>{block.color} Variant</span>
+                            <span>{block.color} Colorway</span>
                           </div>
-                          <div className={styles["color-block-actions"]}>
-                            <button
-                              type="button"
-                              className={styles["ai-generate-btn"]}
-                              onClick={() => handleGenerateAiImage(bIdx)}
-                              disabled={generatingAiIndex === bIdx || isGeneratingAllAi}
-                              title={`Generate AI shoe image for ${block.color}`}
-                            >
-                              {generatingAiIndex === bIdx ? (
-                                <>
-                                  <span className={styles["ai-spinner"]}></span>
-                                  <span>Generating...</span>
-                                </>
-                              ) : (
-                                <>
-                                  <i className="bi bi-stars"></i>
-                                  <span>{block.existingUrl ? "Re-generate AI" : "Generate with AI"}</span>
-                                </>
-                              )}
-                            </button>
-                            <button
-                              type="button"
-                              className={styles["remove-color-btn"]}
-                              onClick={() => setColorBlocks(prev => prev.filter((_, i) => i !== bIdx))}
-                              title="Remove variant"
-                            >
-                              <i className="bi bi-trash"></i>
-                            </button>
-                          </div>
+                          <button
+                            type="button"
+                            className={styles["remove-color-btn"]}
+                            onClick={() => setColorBlocks(prev => prev.filter((_, i) => i !== bIdx))}
+                            title="Remove color variant"
+                          >
+                            <i className="bi bi-trash"></i>
+                          </button>
                         </div>
 
-                        <div className={styles["color-image-upload-area"]}>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            className={styles["color-file-input"]}
-                            onChange={(e) =>
-                              updateColorBlockFile(bIdx, e.target.files[0])
-                            }
-                          />
-                          {(block.file || block.existingUrl) && (
-                            <img
-                              src={
-                                block.file
-                                  ? URL.createObjectURL(block.file)
-                                  : block.existingUrl
-                              }
-                              alt="Preview"
-                              className={styles["color-preview-img"]}
-                              style={{ display: 'block' }}
-                            />
+                        {/* Dual Upload / AI Generation Card */}
+                        <div className={styles["color-media-card"]}>
+                          {generatingAiIndex === bIdx ? (
+                            <div className={styles["ai-loading-box"]}>
+                              <div className={styles["ai-pulse-ring"]}></div>
+                              <div className={styles["ai-loading-text"]}>
+                                <strong>Rendering {block.color} Edition...</strong>
+                                <span>Generating photorealistic studio footwear photo</span>
+                              </div>
+                            </div>
+                          ) : (block.file || block.existingUrl) ? (
+                            <div className={styles["media-preview-container"]}>
+                              <div
+                                className={styles["media-preview-wrapper"]}
+                                onClick={() =>
+                                  setPreviewModalUrl(
+                                    block.file
+                                      ? URL.createObjectURL(block.file)
+                                      : block.existingUrl
+                                  )
+                                }
+                                title="Click to view enlarged image"
+                              >
+                                <img
+                                  src={
+                                    block.file
+                                      ? URL.createObjectURL(block.file)
+                                      : block.existingUrl
+                                  }
+                                  alt={`${block.color} Preview`}
+                                  className={styles["color-preview-image"]}
+                                />
+                                <div className={styles["preview-overlay"]}>
+                                  <i className="bi bi-arrows-fullscreen"></i>
+                                  <span>Zoom</span>
+                                </div>
+                              </div>
+
+                              <div className={styles["media-info-actions"]}>
+                                <div className={styles["media-source-tag"]}>
+                                  {block.existingUrl && !block.file ? (
+                                    <span className={styles["badge-ai"]}>
+                                      <i className="bi bi-stars"></i> AI Generated
+                                    </span>
+                                  ) : (
+                                    <span className={styles["badge-file"]}>
+                                      <i className="bi bi-image"></i> Local File
+                                    </span>
+                                  )}
+                                  <span className={styles["media-status-text"]}>
+                                    Image ready & attached
+                                  </span>
+                                </div>
+
+                                <div className={styles["media-btn-row"]}>
+                                  <button
+                                    type="button"
+                                    className={styles["btn-action-ai"]}
+                                    onClick={() => handleGenerateAiImage(bIdx)}
+                                    disabled={
+                                      generatingAiIndex !== null || isGeneratingAllAi
+                                    }
+                                    title="Generate a new variation with AI"
+                                  >
+                                    <i className="bi bi-arrow-clockwise"></i>
+                                    <span>Re-generate AI</span>
+                                  </button>
+
+                                  <label className={styles["btn-action-upload"]}>
+                                    <i className="bi bi-upload"></i>
+                                    <span>Replace File</span>
+                                    <input
+                                      type="file"
+                                      accept="image/*"
+                                      className={styles["hidden-file-input"]}
+                                      onChange={(e) =>
+                                        updateColorBlockFile(bIdx, e.target.files[0])
+                                      }
+                                    />
+                                  </label>
+
+                                  <button
+                                    type="button"
+                                    className={styles["btn-action-clear"]}
+                                    onClick={() => {
+                                      setColorBlocks((prev) => {
+                                        const next = [...prev];
+                                        next[bIdx] = {
+                                          ...next[bIdx],
+                                          file: null,
+                                          existingUrl: "",
+                                        };
+                                        return next;
+                                      });
+                                    }}
+                                    title="Remove this image"
+                                  >
+                                    <i className="bi bi-x-lg"></i>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className={styles["media-empty-dropzone"]}>
+                              <div className={styles["empty-actions-grid"]}>
+                                <button
+                                  type="button"
+                                  className={styles["dropzone-ai-card"]}
+                                  onClick={() => handleGenerateAiImage(bIdx)}
+                                  disabled={
+                                    generatingAiIndex !== null || isGeneratingAllAi
+                                  }
+                                >
+                                  <div className={styles["dropzone-ai-icon"]}>
+                                    <i className="bi bi-stars"></i>
+                                  </div>
+                                  <div className={styles["dropzone-ai-content"]}>
+                                    <strong>Generate with AI</strong>
+                                    <span>Studio photo for {block.color}</span>
+                                  </div>
+                                </button>
+
+                                <label className={styles["dropzone-upload-card"]}>
+                                  <div className={styles["dropzone-upload-icon"]}>
+                                    <i className="bi bi-cloud-arrow-up"></i>
+                                  </div>
+                                  <div className={styles["dropzone-upload-content"]}>
+                                    <strong>Upload File</strong>
+                                    <span>Browse from device</span>
+                                  </div>
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    className={styles["hidden-file-input"]}
+                                    onChange={(e) =>
+                                      updateColorBlockFile(bIdx, e.target.files[0])
+                                    }
+                                  />
+                                </label>
+                              </div>
+                            </div>
                           )}
                         </div>
 
@@ -3127,6 +3229,34 @@ export default function AdminDashboard() {
       </div>
 
 
+      {/* Image Zoom Lightbox Modal */}
+      {previewModalUrl && (
+        <div
+          className={styles["image-lightbox-backdrop"]}
+          onClick={() => setPreviewModalUrl(null)}
+        >
+          <div
+            className={styles["image-lightbox-content"]}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className={styles["image-lightbox-close"]}
+              onClick={() => setPreviewModalUrl(null)}
+              title="Close Preview"
+            >
+              <i className="bi bi-x-lg"></i>
+            </button>
+            <img
+              src={previewModalUrl}
+              alt="Enlarged Footwear Preview"
+              className={styles["image-lightbox-img"]}
+            />
+          </div>
+        </div>
+      )}
+
     </React.Fragment>
   );
 }
+
