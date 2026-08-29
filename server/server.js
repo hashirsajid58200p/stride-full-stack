@@ -160,6 +160,10 @@ app.post(
 
 // 3. Global middleware
 app.use(cors(corsOptions));
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  next();
+});
 app.use(express.json({ limit: "2mb" }));
 app.use("/api", globalApiLimiter);
 

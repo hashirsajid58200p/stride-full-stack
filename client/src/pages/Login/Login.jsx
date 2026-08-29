@@ -36,7 +36,7 @@ export default function Login() {
 
   const processLoginResult = async (user) => {
     try {
-      const idToken = await user.getIdToken();
+      const idToken = await user.getIdToken(true);
 
       const response = await fetch(getApiUrl("/api/auth/verify"), {
         method: "POST",
@@ -51,20 +51,34 @@ export default function Login() {
         throw new Error(result.error || "Server verification failed");
       }
 
-      // Authoritative Firebase Custom Claims verification
+      // Check role from server verification response, refreshed token claims, and RTDB
       const idTokenResult = await user.getIdTokenResult(true);
-      const userRole = idTokenResult.claims?.role === "admin" ? "admin" : "client";
+      let isUserAdmin =
+        idTokenResult.claims?.role === "admin" ||
+        result.user?.role === "admin";
 
-      if (userRole === "admin") {
+      if (!isUserAdmin) {
+        try {
+          const db = getDatabase();
+          const roleSnapshot = await get(ref(db, `users/${user.uid}/role`));
+          if (roleSnapshot.exists() && roleSnapshot.val() === "admin") {
+            isUserAdmin = true;
+          }
+        } catch (dbErr) {
+          console.warn("Client RTDB role check:", dbErr);
+        }
+      }
+
+      if (isUserAdmin) {
         localStorage.setItem("userRole", "admin");
         if (window.showToast)
-          window.showToast("Admin access granted!", "success");
-        setTimeout(() => navigate("/admin-dashboard"), 2000);
+          window.showToast("Admin access verified! Opening Admin Control Center...", "success");
+        setTimeout(() => navigate("/admin-dashboard"), 1200);
       } else {
         localStorage.setItem("userRole", "client");
         if (window.showToast)
           window.showToast("Welcome back to Stride!", "success");
-        setTimeout(() => navigate("/user-dashboard"), 2000);
+        setTimeout(() => navigate("/user-dashboard"), 1200);
       }
     } catch (error) {
       console.error("Verification Error:", error);
@@ -72,6 +86,8 @@ export default function Login() {
         ...prev,
         form: error.message || "Server verification failed.",
       }));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

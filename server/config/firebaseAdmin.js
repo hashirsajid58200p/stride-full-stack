@@ -45,8 +45,10 @@ if (serviceAccount) {
   try {
     // Only initialize if not already initialized to avoid duplicate app errors in HMR
     if (admin.apps.length === 0) {
+      const projectId = serviceAccount.project_id || "stride-fullstack-fyp";
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
+        databaseURL: process.env.FIREBASE_DATABASE_URL || `https://${projectId}-default-rtdb.firebaseio.com`,
       });
       console.log("Firebase Admin SDK Initialized Successfully");
     }

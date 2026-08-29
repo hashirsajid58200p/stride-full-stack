@@ -28,11 +28,52 @@ async function requireAuth(req, res, next) {
 /**
  * Middleware: Requires the authenticated user to possess role === 'admin' in Custom Claims
  */
-function requireAdmin(req, res, next) {
-  if (!req.user || req.user.role !== "admin") {
-    return res.status(403).json({ error: "Admin authorization required for this action" });
+async function requireAdmin(req, res, next) {
+  if (!req.user) {
+    return res.status(401).json({ error: "Authentication required" });
   }
-  next();
+
+  if (req.user.role === "admin") {
+    return next();
+  }
+
+  // Fallback: If token claim hasn't refreshed yet, check userRecord or RTDB
+  try {
+    if (admin && admin.apps && admin.apps.length > 0) {
+      const userRecord = await admin.auth().getUser(req.user.uid);
+      if (userRecord.customClaims && userRecord.customClaims.role === "admin") {
+        req.user.role = "admin";
+        return next();
+      }
+
+      // Check RTDB
+      try {
+        const db = admin.database();
+        const snapshot = await db.ref(`users/${req.user.uid}/role`).once("value");
+        if (snapshot.exists() && snapshot.val() === "admin") {
+          await admin.auth().setCustomUserClaims(req.user.uid, { role: "admin" });
+          req.user.role = "admin";
+          return next();
+        }
+      } catch (e) {
+        // ignore RTDB error
+      }
+
+      // Check ADMIN_EMAILS
+      if (process.env.ADMIN_EMAILS && req.user.email) {
+        const adminList = process.env.ADMIN_EMAILS.split(",").map((e) => e.trim().toLowerCase());
+        if (adminList.includes(req.user.email.toLowerCase())) {
+          await admin.auth().setCustomUserClaims(req.user.uid, { role: "admin" });
+          req.user.role = "admin";
+          return next();
+        }
+      }
+    }
+  } catch (err) {
+    console.error("[requireAdmin check error]:", err.message);
+  }
+
+  return res.status(403).json({ error: "Admin authorization required for this action" });
 }
 
 /**

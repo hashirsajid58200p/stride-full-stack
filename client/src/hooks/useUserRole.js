@@ -1,11 +1,10 @@
-// client/src/hooks/useUserRole.js
 import { useState, useEffect } from "react";
 import { onIdTokenChanged } from "firebase/auth";
+import { getDatabase, ref, get } from "firebase/database";
 import { auth } from "../firebaseConfig";
 
 /**
- * Authoritative user role hook backed by Firebase Custom Claims.
- * Never trusts client localStorage for authorization.
+ * Authoritative user role hook backed by Firebase Custom Claims + fallback check.
  */
 export function useUserRole() {
   const [role, setRole] = useState(null);
@@ -31,9 +30,22 @@ export function useUserRole() {
       setUser(firebaseUser);
       try {
         const idTokenResult = await firebaseUser.getIdTokenResult();
-        const hasAdminClaim = idTokenResult.claims?.role === "admin";
-        const currentRole = hasAdminClaim ? "admin" : "client";
+        let hasAdminClaim = idTokenResult.claims?.role === "admin";
 
+        // Fallback: If custom claim not yet minted in token, check RTDB or localStorage
+        if (!hasAdminClaim) {
+          try {
+            const db = getDatabase();
+            const roleSnapshot = await get(ref(db, `users/${firebaseUser.uid}/role`));
+            if (roleSnapshot.exists() && roleSnapshot.val() === "admin") {
+              hasAdminClaim = true;
+            }
+          } catch (e) {
+            // ignore RTDB error
+          }
+        }
+
+        const currentRole = hasAdminClaim ? "admin" : "client";
         setRole(currentRole);
         setIsAdmin(hasAdminClaim);
       } catch (err) {
