@@ -80,7 +80,7 @@ export default function Support() {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Hi buddy! 👋 Welcome to Stride. How can I help you find the perfect pair of sneakers today?",
+      text: "Hi there! Welcome to Stride. How can I help you find the perfect sneakers or track an order today?",
       sender: "ai",
       timestamp: new Date().toISOString()
     },
@@ -89,8 +89,14 @@ export default function Support() {
   const formatDividerDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
-    const options = { weekday: "long", month: "long", day: "numeric", year: "numeric" };
+    const options = { weekday: "short", month: "short", day: "numeric" };
     return date.toLocaleDateString("en-US", options);
+  };
+
+  const formatTime = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   const handleConnectLive = async () => {
@@ -108,14 +114,14 @@ export default function Support() {
 
     const ticketRequestMsg = {
       id: Date.now(),
-      text: "I need more help. Please connect me to a live agent.",
+      text: "I would like to speak with a human support agent.",
       sender: "user",
       timestamp: new Date().toISOString()
     };
 
     const systemConnectingMsg = {
       id: Date.now() + 1,
-      text: "Ticket opened. Connecting to a live Stride agent...",
+      text: "Support ticket opened. Connecting you to a live Stride specialist...",
       sender: "system",
       timestamp: new Date().toISOString()
     };
@@ -164,7 +170,7 @@ export default function Support() {
 
     const systemExitMsg = {
       id: Date.now(),
-      text: "You have exited Live Chat. You are now chatting with Stride AI.",
+      text: "You have returned to Stride AI Assistant.",
       sender: "system",
       timestamp: new Date().toISOString()
     };
@@ -211,7 +217,7 @@ export default function Support() {
   };
 
   const handleOpenChat = (e) => {
-    e.stopPropagation();
+    if (e) e.stopPropagation();
     setIsMenuOpen(false);
     setIsChatOpen(true);
   };
@@ -237,7 +243,7 @@ export default function Support() {
       if (response.ok && data.success) {
         setMessages((prev) => [
           ...prev,
-          { id: Date.now() + 1, text: data.update, sender: "ai" },
+          { id: Date.now() + 1, text: data.update, sender: "ai", timestamp: new Date().toISOString() },
         ]);
       } else {
         throw new Error(data.error || "Tracking failed");
@@ -248,8 +254,9 @@ export default function Support() {
         ...prev,
         {
           id: Date.now() + 1,
-          text: "I couldn't find that order. Please double-check your Order ID and City.",
+          text: "I couldn't find that order. Please verify your Order ID and City.",
           sender: "ai",
+          timestamp: new Date().toISOString()
         },
       ]);
     } finally {
@@ -257,8 +264,8 @@ export default function Support() {
     }
   };
 
-  const handleSendMessage = async () => {
-    const text = inputValue.trim();
+  const sendMessageWithText = async (textToSend) => {
+    const text = textToSend.trim();
     if (!text) return;
 
     let activeUserId = currentUser?.uid;
@@ -316,7 +323,7 @@ export default function Support() {
       const aiMsgId = Date.now() + 1;
       setMessages((prev) => [
         ...prev,
-        { id: aiMsgId, text: "", sender: "ai" },
+        { id: aiMsgId, text: "", sender: "ai", timestamp: new Date().toISOString() },
       ]);
       setIsTyping(false); // Hide "thinking" once streaming starts
 
@@ -357,8 +364,9 @@ export default function Support() {
         ...prev,
         {
           id: Date.now() + 1,
-          text: "Error: Could not reach the server. Make sure your local backend is running.",
+          text: "Sorry, I am having trouble connecting right now. Please try again in a moment.",
           sender: "ai",
+          timestamp: new Date().toISOString()
         },
       ]);
     } finally {
@@ -366,96 +374,118 @@ export default function Support() {
     }
   };
 
+  const handleSendMessage = () => {
+    sendMessageWithText(inputValue);
+  };
+
   const handleKeyPress = (e) => {
     if (e.key === "Enter") handleSendMessage();
   };
 
-  // Hide the floating wrapper button entirely on mobile if chat is open to prevent overlapping
-  const isMobile = window.innerWidth <= 576;
-  const hideWrapper = isChatOpen && isMobile;
+  const quickPrompts = [
+    { label: "Best Running Shoes", prompt: "Recommend the best running sneakers currently available." },
+    { label: "Track My Order", prompt: "How can I track my order status?" },
+    { label: "Latest Drops", prompt: "What are the latest shoe releases and trending drops?" },
+  ];
 
   return (
     <>
-      <div
-        ref={wrapperRef}
-        className={`${styles["support-widget-wrapper"]} ${isMenuOpen ? styles.open : ""}`}
-        id="supportWidgetWrapper"
-        style={{ display: hideWrapper ? "none" : "flex" }}
-      >
-        <button
-          className={styles["support-toggle-btn"]}
-          onClick={handleToggle}
-          aria-label="Support"
+      {/* Floating Support Launcher (Hidden when chat is active to avoid double buttons) */}
+      {!isChatOpen && (
+        <div
+          ref={wrapperRef}
+          className={`${styles["support-widget-wrapper"]} ${isMenuOpen ? styles.open : ""}`}
+          id="supportWidgetWrapper"
         >
-          <i
-            className={`bi ${isChatOpen || isMenuOpen ? "bi-x-lg" : "bi-chat-dots-fill"}`}
-          ></i>
-        </button>
-
-        <div className={styles["support-menu"]}>
           <button
-            className={styles["support-option-btn"]}
-            aria-label="AI Assistant"
-            onClick={handleOpenChat}
+            className={styles["support-toggle-btn"]}
+            onClick={handleToggle}
+            aria-label="Support Options"
+            title="Need help?"
           >
-            <i className={`bi bi-robot ${styles["icon-ai"]}`}></i>
+            <i className={`bi ${isMenuOpen ? "bi-x-lg" : "bi-chat-dots-fill"}`}></i>
+            <span className={styles["pulse-ring"]}></span>
           </button>
-          <a
-            href="https://wa.me/1234567890"
-            target="_blank"
-            rel="noreferrer"
-            className={styles["support-option-btn"]}
-            aria-label="WhatsApp Us"
-          >
-            <i className={`bi bi-whatsapp ${styles["icon-whatsapp"]}`}></i>
-          </a>
-        </div>
-      </div>
 
+          <div className={styles["support-menu"]}>
+            <button
+              className={styles["support-option-btn"]}
+              aria-label="Stride AI Chat"
+              onClick={handleOpenChat}
+            >
+              <i className={`bi bi-robot ${styles["icon-ai"]}`}></i>
+            </button>
+            <a
+              href="https://wa.me/1234567890"
+              target="_blank"
+              rel="noreferrer"
+              className={styles["support-option-btn"]}
+              aria-label="WhatsApp Support"
+            >
+              <i className={`bi bi-whatsapp ${styles["icon-whatsapp"]}`}></i>
+            </a>
+          </div>
+        </div>
+      )}
+
+      {/* Modern AI / Live Chat Widget */}
       <div
         className={`${styles["ai-chatbox"]} ${isChatOpen ? styles.active : ""}`}
       >
+        {/* Header */}
         <div className={styles["chatbox-header"]}>
           <div className={styles["chatbox-title-container"]}>
-            <i className={`bi ${chatMode === "live" ? "bi-person-badge-fill" : "bi-robot"}`}></i>
+            <div className={styles["chatbox-avatar-wrapper"]}>
+              <i className={`bi ${chatMode === "live" ? "bi-headset" : "bi-robot"}`}></i>
+              <span className={styles["online-indicator"]}></span>
+            </div>
             <div className={styles["chatbox-title"]}>
-              <strong>{chatMode === "live" ? "Stride Live Chat" : "Stride AI"}</strong>
-              <span>{chatMode === "live" ? "Connecting to agent..." : "Typically replies instantly"}</span>
+              <strong>{chatMode === "live" ? "Live Specialist" : "Stride AI"}</strong>
+              <span>
+                {chatMode === "live" ? "Connected to Support" : "Instant 24/7 Footwear Help"}
+              </span>
             </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+
+          <div className={styles["header-actions"]}>
             {chatMode === "ai" ? (
               <button
                 className={styles["connect-agent-btn"]}
                 onClick={handleConnectLive}
-                title="Connect to Live Support"
+                title="Connect to Human Support Specialist"
               >
-                <i className="bi bi-person-fill"></i> More Help
+                <i className="bi bi-headset"></i>
+                <span>Human Agent</span>
               </button>
             ) : (
               <button
                 className={styles["exit-live-btn"]}
                 onClick={handleExitLive}
-                title="Exit Live Chat"
+                title="Return to AI Assistant"
               >
-                Exit Live
+                <i className="bi bi-robot"></i>
+                <span>AI Mode</span>
               </button>
             )}
             <button
               className={styles["chatbox-close-btn"]}
               onClick={handleCloseChat}
+              title="Close chat"
+              aria-label="Close"
             >
               <i className="bi bi-x-lg"></i>
             </button>
           </div>
         </div>
 
+        {/* Message Body */}
         <div className={styles["chatbox-body"]} ref={chatBodyRef}>
           {messages.map((msg, idx, arr) => {
             if (msg.sender === "system") {
               return (
-                <div key={msg.id} className={styles["msg-system"]}>
-                  {msg.text}
+                <div key={msg.id || idx} className={styles["msg-system"]}>
+                  <i className="bi bi-info-circle"></i>
+                  <span>{msg.text}</span>
                 </div>
               );
             }
@@ -467,56 +497,107 @@ export default function Support() {
               new Date(msg.timestamp).toDateString() !== new Date(prevMsg.timestamp).toDateString()
             );
 
-            let senderClass = styles["msg-ai"];
-            if (msg.sender === "user") {
-              senderClass = styles["msg-user"];
-            } else if (msg.sender === "admin") {
-              senderClass = styles["msg-admin"];
-            }
+            const isAi = msg.sender === "ai";
+            const isAdmin = msg.sender === "admin";
+            const isUser = msg.sender === "user";
 
             return (
               <React.Fragment key={msg.id || idx}>
                 {showDateDivider && (
                   <div className={styles["dateDivider"]}>
-                    {formatDividerDate(msg.timestamp)}
+                    <span>{formatDividerDate(msg.timestamp)}</span>
                   </div>
                 )}
+
                 <div
-                  className={`${styles["chat-msg"]} ${senderClass}`}
+                  className={`${styles["chat-msg-row"]} ${
+                    isUser ? styles["row-user"] : styles["row-bot"]
+                  }`}
                 >
-                  <strong className={styles["bubbleSender"]}>
-                    {msg.sender === "user" ? "Guest: " : msg.sender === "admin" ? "Admin: " : "AI: "}
-                  </strong>
-                  {msg.text}
+                  {!isUser && (
+                    <div className={styles["msg-avatar"]}>
+                      <i className={`bi ${isAdmin ? "bi-person-badge-fill" : "bi-robot"}`}></i>
+                    </div>
+                  )}
+
+                  <div className={styles["msg-bubble-container"]}>
+                    <div
+                      className={`${styles["chat-msg"]} ${
+                        isUser
+                          ? styles["msg-user"]
+                          : isAdmin
+                          ? styles["msg-admin"]
+                          : styles["msg-ai"]
+                      }`}
+                    >
+                      {msg.text}
+                    </div>
+                    {msg.timestamp && (
+                      <span className={styles["msg-timestamp"]}>
+                        {formatTime(msg.timestamp)}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </React.Fragment>
             );
           })}
+
+          {/* Typing Animation */}
           {isTyping && (
-            <div
-              className={`${styles["chat-msg"]} ${styles["msg-ai"]} ${styles["msg-typing"]}`}
-            >
-              Thinking...
+            <div className={`${styles["chat-msg-row"]} ${styles["row-bot"]}`}>
+              <div className={styles["msg-avatar"]}>
+                <i className="bi bi-robot"></i>
+              </div>
+              <div className={styles["typing-bubble"]}>
+                <span className={styles["typing-dot"]}></span>
+                <span className={styles["typing-dot"]}></span>
+                <span className={styles["typing-dot"]}></span>
+              </div>
+            </div>
+          )}
+
+          {/* Quick Suggestion Chips (Shown on initial conversation) */}
+          {messages.length <= 2 && !isTyping && chatMode === "ai" && (
+            <div className={styles["quick-chips-container"]}>
+              <span className={styles["quick-chips-label"]}>Suggested Questions</span>
+              <div className={styles["quick-chips-list"]}>
+                {quickPrompts.map((chip, cIdx) => (
+                  <button
+                    key={cIdx}
+                    type="button"
+                    className={styles["quick-chip-btn"]}
+                    onClick={() => sendMessageWithText(chip.prompt)}
+                  >
+                    {chip.label}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
         </div>
 
+        {/* Input Composer */}
         <div className={styles["chatbox-input-area"]}>
-          <input
-            type="text"
-            className={styles["chatbox-input"]}
-            placeholder="Type your message..."
-            autoComplete="off"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyPress={handleKeyPress}
-          />
-          <button
-            className={styles["chatbox-send-btn"]}
-            onClick={handleSendMessage}
-          >
-            <i className="bi bi-send-fill"></i>
-          </button>
+          <div className={styles["input-field-wrapper"]}>
+            <input
+              type="text"
+              className={styles["chatbox-input"]}
+              placeholder={chatMode === "live" ? "Message support specialist..." : "Ask anything about shoes or orders..."}
+              autoComplete="off"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyPress={handleKeyPress}
+            />
+            <button
+              className={styles["chatbox-send-btn"]}
+              onClick={handleSendMessage}
+              disabled={!inputValue.trim()}
+              title="Send Message"
+            >
+              <i className="bi bi-arrow-up-short"></i>
+            </button>
+          </div>
         </div>
       </div>
     </>
