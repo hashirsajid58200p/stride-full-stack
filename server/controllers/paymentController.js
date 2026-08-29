@@ -285,12 +285,20 @@ exports.getSessionStatus = async (req, res) => {
     return res.status(400).json({ error: "Session ID is required" });
   }
 
+  const cleanId = String(sessionId).trim();
+  const isStripeSession = /^cs_[a-zA-Z0-9_]{10,120}$/.test(cleanId);
+  const isUuid = /^[0-9a-fA-F-]{10,64}$/.test(cleanId);
+
+  if (!isStripeSession && !isUuid) {
+    return res.status(400).json({ error: "Invalid session or order ID format" });
+  }
+
   try {
     // 1. Look for completed order in Supabase
     const { data: order, error } = await supabaseAdmin
       .from("orders")
       .select("*")
-      .or(`stripe_session_id.eq.${sessionId},id.eq.${sessionId}`)
+      .or(`stripe_session_id.eq.${cleanId},id.eq.${cleanId}`)
       .maybeSingle();
 
     if (order) {

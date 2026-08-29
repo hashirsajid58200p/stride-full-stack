@@ -880,64 +880,6 @@ export default function AdminDashboard() {
         processedColors.push({ color_name: block.color, image_url: finalUrl });
       }
 
-      let newProductId = productForm.id;
-
-      if (isEdit) {
-        await window.supabase
-          .from("products")
-          .update({
-            brand: productForm.brand,
-            name: productForm.name,
-            description: productForm.desc,
-            price: parseFloat(productForm.price),
-            tags: tagsString,
-            main_image_url: mainImageUrl,
-          })
-          .eq("id", newProductId);
-
-        await window.supabase
-          .from("product_colors")
-          .delete()
-          .eq("product_id", newProductId);
-        await window.supabase
-          .from("product_sizes")
-          .delete()
-          .eq("product_id", newProductId);
-      } else {
-        const { data, error } = await window.supabase
-          .from("products")
-          .insert([
-            {
-              brand: productForm.brand,
-              name: productForm.name,
-              description: productForm.desc,
-              price: parseFloat(productForm.price),
-              tags: tagsString,
-              main_image_url: mainImageUrl,
-            },
-          ])
-          .select()
-          .single();
-        if (error) throw error;
-        newProductId = data.id;
-
-        await window.createNotification(
-          "product_added",
-          "New Product Alert!",
-          `${productForm.name} has been added to the catalog. Check it out!`,
-          newProductId // Pass the ID to link it
-        );
-      }
-
-      if (processedColors.length > 0) {
-        const colorInserts = processedColors.map((c) => ({
-          product_id: newProductId,
-          color_name: c.color_name,
-          image_url: c.image_url,
-        }));
-        await window.supabase.from("product_colors").insert(colorInserts);
-      }
-
       let globalSizesMap = {};
       colorBlocks.forEach((block) => {
         Object.entries(block.sizes).forEach(([size, qty]) => {
@@ -949,12 +891,43 @@ export default function AdminDashboard() {
       });
 
       const sizeInserts = Object.keys(globalSizesMap).map((size) => ({
-        product_id: newProductId,
         size: size,
         stock_quantity: globalSizesMap[size],
       }));
-      if (sizeInserts.length > 0) {
-        await window.supabase.from("product_sizes").insert(sizeInserts);
+
+      const headers = await getAuthHeaders();
+      const productPayload = {
+        product: {
+          brand: productForm.brand,
+          name: productForm.name,
+          description: productForm.desc,
+          price: parseFloat(productForm.price),
+          tags: tagsString,
+          main_image_url: mainImageUrl,
+        },
+        colors: processedColors,
+        sizes: sizeInserts,
+        notification: isEdit
+          ? null
+          : {
+              title: "New Product Alert!",
+              message: `${productForm.name} has been added to the catalog. Check it out!`,
+            },
+      };
+
+      const url = isEdit
+        ? getApiUrl(`/api/admin/products/${productForm.id}`)
+        : getApiUrl("/api/admin/products");
+
+      const response = await fetch(url, {
+        method: isEdit ? "PUT" : "POST",
+        headers,
+        body: JSON.stringify(productPayload),
+      });
+
+      if (!response.ok) {
+        const errJson = await response.json().catch(() => ({}));
+        throw new Error(errJson.error || "Failed to save product on server");
       }
 
       if (window.showToast)
@@ -982,10 +955,17 @@ export default function AdminDashboard() {
         for (let pc of productColors)
           await deleteOldImageFromCloudinary(pc.image_url);
       }
-      await window.supabase.from("products").delete().eq("id", targetId);
-      
-      // Auto-delete related notifications
-      await window.supabase.from("platform_notifications").delete().eq("related_id", targetId);
+
+      const headers = await getAuthHeaders();
+      const response = await fetch(getApiUrl(`/api/admin/products/${targetId}`), {
+        method: "DELETE",
+        headers,
+      });
+
+      if (!response.ok) {
+        const errJson = await response.json().catch(() => ({}));
+        throw new Error(errJson.error || "Failed to delete product");
+      }
 
       if (window.showToast)
         window.showToast("Product permanently deleted.", "success");
@@ -993,7 +973,7 @@ export default function AdminDashboard() {
       fetchData();
     } catch (err) {
       if (window.showToast)
-        window.showToast("Failed to delete product.", "error");
+        window.showToast(err.message || "Failed to delete product.", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -1154,27 +1134,24 @@ export default function AdminDashboard() {
     setIsSubmitting(true);
     try {
       const cost = deliveryForm.isFree ? 0 : parseFloat(deliveryForm.cost);
-      if (deliveryForm.id) {
-        await window.supabase
-          .from("delivery_options")
-          .update({
-            name: deliveryForm.name,
-            cost,
-            estimated_time: deliveryForm.time,
-          })
-          .eq("id", deliveryForm.id);
-      } else {
-        await window.supabase
-          .from("delivery_options")
-          .insert([
-            {
-              name: deliveryForm.name,
-              cost,
-              estimated_time: deliveryForm.time,
-              status: "Active",
-            },
-          ]);
+      const headers = await getAuthHeaders();
+      const targetOptionId = deliveryForm.id || targetId || "standard";
+
+      const res = await fetch(getApiUrl(`/api/admin/delivery-options/${targetOptionId}`), {
+        method: "PUT",
+        headers,
+        body: JSON.stringify({
+          price: cost,
+          estimated_days: deliveryForm.time,
+          is_active: true,
+        }),
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || "Failed to save delivery option");
       }
+
       if (window.showToast)
         window.showToast(
           deliveryForm.id
@@ -1186,7 +1163,7 @@ export default function AdminDashboard() {
       fetchData();
     } catch (err) {
       if (window.showToast)
-        window.showToast("Failed to save delivery option.", "error");
+        window.showToast(err.message || "Failed to save delivery option.", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -1195,17 +1172,25 @@ export default function AdminDashboard() {
   const handleDeliveryDelete = async () => {
     setIsSubmitting(true);
     try {
-      await window.supabase
-        .from("delivery_options")
-        .delete()
-        .eq("id", targetId);
+      const headers = await getAuthHeaders();
+      const res = await fetch(getApiUrl(`/api/admin/delivery-options/${targetId}`), {
+        method: "PUT",
+        headers,
+        body: JSON.stringify({ is_active: false }),
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || "Failed to disable option");
+      }
+
       if (window.showToast)
-        window.showToast("Delivery option deleted.", "success");
+        window.showToast("Delivery option deactivated.", "success");
       setActiveModal(null);
       fetchData();
     } catch (err) {
       if (window.showToast)
-        window.showToast("Failed to delete option.", "error");
+        window.showToast(err.message || "Failed to delete option.", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -1218,33 +1203,40 @@ export default function AdminDashboard() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      // Get the newly created offer ID (insert doesn't return data by default in some Supabase versions, using select() just in case)
-      const { data: newOffer } = await window.supabase.from("offers").insert([
-        {
-          type: offerForm.type,
-          target_product_id:
-            offerForm.type === "product" ? offerForm.targetId : null,
-          code: offerForm.code,
-          discount_percentage: parseFloat(offerForm.discount),
-          usage_limit: offerForm.limit ? parseInt(offerForm.limit) : null,
-          valid_until: offerForm.date,
-          status: "Active",
-        },
-      ]).select().single();
+      const headers = await getAuthHeaders();
+      const res = await fetch(getApiUrl("/api/admin/offers"), {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          offer: {
+            type: offerForm.type,
+            target_product_id:
+              offerForm.type === "product" ? offerForm.targetId : null,
+            code: offerForm.code,
+            discount_percentage: parseFloat(offerForm.discount),
+            usage_limit: offerForm.limit ? parseInt(offerForm.limit) : null,
+            valid_until: offerForm.date,
+            status: "Active",
+          },
+          notification: {
+            title: "New Coupon Created!",
+            message: `A new coupon (${offerForm.code}) has been created giving ${offerForm.discount}% OFF!`,
+          },
+        }),
+      });
 
-      await window.createNotification(
-        "offer_created",
-        "New Coupon Created!",
-        `A new coupon (${offerForm.code}) has been created giving ${offerForm.discount}% OFF!`,
-        newOffer ? newOffer.id : null
-      );
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || "Failed to create coupon");
+      }
+
       if (window.showToast)
         window.showToast("Coupon Created Successfully!", "success");
       setActiveModal(null);
       fetchData();
     } catch (err) {
       if (window.showToast)
-        window.showToast("Failed to create coupon.", "error");
+        window.showToast(err.message || "Failed to create coupon.", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -1255,31 +1247,39 @@ export default function AdminDashboard() {
     setIsSubmitting(true);
     try {
       const generatedCode = "SALE-" + Date.now();
-      const { data: flashOffer } = await window.supabase.from("offers").insert([
-        {
-          type: "flash_sale",
-          target_product_id: flashForm.targetId || null,
-          code: generatedCode,
-          discount_percentage: parseFloat(flashForm.discount),
-          usage_limit: null,
-          valid_until: flashForm.date,
-          status: "Active",
-        },
-      ]).select().single();
+      const headers = await getAuthHeaders();
+      const res = await fetch(getApiUrl("/api/admin/offers"), {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          offer: {
+            type: "flash_sale",
+            target_product_id: flashForm.targetId || null,
+            code: generatedCode,
+            discount_percentage: parseFloat(flashForm.discount),
+            usage_limit: null,
+            valid_until: flashForm.date,
+            status: "Active",
+          },
+          notification: {
+            title: "Flash Sale Activated!",
+            message: `A Flash Sale has been created giving ${flashForm.discount}% OFF for the next few days!`,
+          },
+        }),
+      });
 
-      await window.createNotification(
-        "offer_created",
-        "Flash Sale Activated!",
-        `A Flash Sale has been created giving ${flashForm.discount}% OFF for the next few days!`,
-        flashOffer ? flashOffer.id : null
-      );
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || "Failed to create Flash Sale");
+      }
+
       if (window.showToast)
         window.showToast("Flash Sale Activated Successfully!", "success");
       setActiveModal(null);
       fetchData();
     } catch (err) {
       if (window.showToast)
-        window.showToast("Failed to create Flash Sale.", "error");
+        window.showToast(err.message || "Failed to create Flash Sale.", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -1288,17 +1288,23 @@ export default function AdminDashboard() {
   const handleOfferDelete = async () => {
     setIsSubmitting(true);
     try {
-      await window.supabase.from("offers").delete().eq("id", targetId);
-      
-      // Auto-delete related notifications
-      await window.supabase.from("platform_notifications").delete().eq("related_id", targetId);
+      const headers = await getAuthHeaders();
+      const res = await fetch(getApiUrl(`/api/admin/offers/${targetId}`), {
+        method: "DELETE",
+        headers,
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || "Failed to delete offer");
+      }
 
       if (window.showToast) window.showToast("Offer deleted.", "success");
       setActiveModal(null);
       fetchData();
     } catch (err) {
       if (window.showToast)
-        window.showToast("Failed to delete offer.", "error");
+        window.showToast(err.message || "Failed to delete offer.", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -1340,30 +1346,34 @@ export default function AdminDashboard() {
     }
     setIsSubmitting(true);
     try {
-      for (let key of selectedInventory) {
+      const updates = selectedInventory.map((key) => {
         const [pid, size] = key.split("|");
-        await window.supabase
-          .from("product_sizes")
-          .update({ stock_quantity: amount })
-          .eq("product_id", pid)
-          .eq("size", size);
+        return { product_id: pid, size, stock_quantity: amount };
+      });
+
+      const headers = await getAuthHeaders();
+      const res = await fetch(getApiUrl("/api/admin/inventory/bulk-update"), {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ updates }),
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || "Failed to update bulk stock");
       }
+
       if (window.showToast)
         window.showToast(
           `Successfully updated stock for ${selectedInventory.length} items!`,
           "success",
         );
-      await window.createNotification(
-        "restock",
-        "Inventory Restocked",
-        `Multiple product variations have been restocked. Check them out!`,
-      );
       setBulkStock("");
       setSelectedInventory([]);
       fetchData();
     } catch (err) {
       if (window.showToast)
-        window.showToast("Failed to update stock.", "error");
+        window.showToast(err.message || "Failed to update stock.", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -1374,44 +1384,55 @@ export default function AdminDashboard() {
     const amount = parseInt(input.value, 10);
     if (isNaN(amount) || amount < 0) return;
     try {
-      await window.supabase
-        .from("product_sizes")
-        .update({ stock_quantity: amount })
-        .eq("product_id", pid)
-        .eq("size", size);
+      const headers = await getAuthHeaders();
+      const res = await fetch(getApiUrl("/api/admin/inventory/bulk-update"), {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          updates: [{ product_id: pid, size, stock_quantity: amount }],
+        }),
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || "Failed to update stock");
+      }
+
       if (window.showToast)
         window.showToast(
           `Stock updated to ${amount} for Size ${size}!`,
           "success",
         );
       input.value = "";
-      const prod = products.find((p) => p.id === pid);
-        await window.createNotification(
-          "restock",
-          "Product Restocked",
-          `${prod.name} has been restocked. Check it out!`,
-          pid
-        );
       fetchData();
     } catch (err) {
       if (window.showToast)
-        window.showToast("Failed to update stock.", "error");
+        window.showToast(err.message || "Failed to update stock.", "error");
     }
   };
 
   const handleMarkEmpty = async (pid, size) => {
     try {
-      await window.supabase
-        .from("product_sizes")
-        .update({ stock_quantity: 0 })
-        .eq("product_id", pid)
-        .eq("size", size);
+      const headers = await getAuthHeaders();
+      const res = await fetch(getApiUrl("/api/admin/inventory/bulk-update"), {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          updates: [{ product_id: pid, size, stock_quantity: 0 }],
+        }),
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || "Failed to update stock");
+      }
+
       if (window.showToast)
         window.showToast(`Marked Size ${size} as Out of Stock.`, "success");
       fetchData();
     } catch (err) {
       if (window.showToast)
-        window.showToast("Failed to mark out of stock.", "error");
+        window.showToast(err.message || "Failed to mark out of stock.", "error");
     }
   };
 
@@ -1420,31 +1441,49 @@ export default function AdminDashboard() {
   // ==========================================
   const handleOrderStatusUpdate = async (orderId, newStatus) => {
     try {
-      await window.supabase
-        .from("orders")
-        .update({ status: newStatus, is_manual_override: true })
-        .eq("id", orderId);
+      const headers = await getAuthHeaders();
+      const res = await fetch(getApiUrl(`/api/admin/orders/${orderId}/status`), {
+        method: "PUT",
+        headers,
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || "Failed to update order status");
+      }
+
       if (window.showToast)
         window.showToast(`Order manually updated to ${newStatus}.`, "success");
       setActiveModal(null);
       fetchData();
     } catch (err) {
       if (window.showToast)
-        window.showToast("Failed to update status.", "error");
+        window.showToast(err.message || "Failed to update status.", "error");
     }
   };
 
   const handleOrderDelete = async () => {
     setIsSubmitting(true);
     try {
-      await window.supabase.from("orders").delete().eq("id", targetId);
+      const headers = await getAuthHeaders();
+      const res = await fetch(getApiUrl(`/api/admin/orders/${targetId}`), {
+        method: "DELETE",
+        headers,
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || "Failed to delete order");
+      }
+
       if (window.showToast)
         window.showToast("Order permanently deleted.", "success");
       setActiveModal(null);
       fetchData();
     } catch (err) {
       if (window.showToast)
-        window.showToast("Failed to delete order.", "error");
+        window.showToast(err.message || "Failed to delete order.", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -1496,18 +1535,21 @@ export default function AdminDashboard() {
   // ==========================================
 
   const deleteNotification = async (id) => {
-    if (!window.supabase) return;
     try {
-      const { error } = await window.supabase
-        .from("platform_notifications")
-        .delete()
-        .eq("id", id);
-      if (error) throw error;
+      const headers = await getAuthHeaders();
+      const res = await fetch(getApiUrl(`/api/admin/notifications/${id}`), {
+        method: "DELETE",
+        headers,
+      });
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || "Failed to delete notification");
+      }
       setNotifications(notifications.filter((n) => n.id !== id));
-      window.showToast("Notification deleted", "success");
+      if (window.showToast) window.showToast("Notification deleted", "success");
     } catch (err) {
       console.error("Delete Notification Error:", err);
-      window.showToast("Failed to delete notification", "error");
+      if (window.showToast) window.showToast("Failed to delete notification", "error");
     }
   };
 

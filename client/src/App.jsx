@@ -1,56 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { useUserRole } from "./hooks/useUserRole";
 
-// Admin Protected Route Guard
+// Admin Protected Route Guard (Authoritative token claims only)
 function AdminRouteGuard({ children }) {
-  const [authorized, setAuthorized] = useState(null);
+  const { isAdmin, loading } = useUserRole();
 
-  useEffect(() => {
-    let isMounted = true;
-    const checkAdmin = () => {
-      if (!window.auth) {
-        // Retry shortly if Firebase is still initializing
-        const t = setTimeout(() => {
-          if (window.auth?.currentUser) {
-            window.auth.currentUser.getIdTokenResult().then((res) => {
-              if (isMounted) setAuthorized(res.claims?.role === "admin" || localStorage.getItem("userRole") === "admin");
-            }).catch(() => { if (isMounted) setAuthorized(false); });
-          } else {
-            if (isMounted) setAuthorized(localStorage.getItem("userRole") === "admin");
-          }
-        }, 500);
-        return () => clearTimeout(t);
-      }
-
-      const unsubscribe = window.auth.onAuthStateChanged(async (user) => {
-        if (!user) {
-          if (isMounted) setAuthorized(false);
-          return;
-        }
-        try {
-          const res = await user.getIdTokenResult();
-          const isAdmin = res.claims?.role === "admin" || localStorage.getItem("userRole") === "admin";
-          if (isMounted) setAuthorized(isAdmin);
-        } catch (e) {
-          if (isMounted) setAuthorized(false);
-        }
-      });
-
-      return () => unsubscribe();
-    };
-
-    const cleanup = checkAdmin();
-    return () => {
-      isMounted = false;
-      if (typeof cleanup === "function") cleanup();
-    };
-  }, []);
-
-  if (authorized === null) {
+  if (loading) {
     return <Loader />;
   }
 
-  if (!authorized) {
+  if (!isAdmin) {
     return <Navigate to="/login" replace />;
   }
 

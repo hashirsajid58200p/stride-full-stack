@@ -117,8 +117,8 @@ export default function Header() {
       }
     }
 
-    // 2. Listen for actual auth state
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    // 2. Listen for actual auth state with authoritative token claim check
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
       setupHeaderAvatar(user);
       if (!user) {
@@ -126,6 +126,15 @@ export default function Header() {
         localStorage.removeItem("userRole");
         localStorage.removeItem("stride_admin_test_config");
         window.dispatchEvent(new Event("stride_config_updated"));
+      } else {
+        try {
+          const res = await user.getIdTokenResult();
+          const role = res.claims?.role === "admin" ? "admin" : "client";
+          setUserRole(role);
+          localStorage.setItem("userRole", role);
+        } catch (e) {
+          setUserRole("client");
+        }
       }
     });
 
