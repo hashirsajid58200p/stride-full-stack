@@ -28,8 +28,44 @@ export const CurrencyProvider = ({ children }) => {
     return () => window.removeEventListener("currencyUpdated", handleUpdate);
   }, []);
 
+  const formatPrice = (amount) => {
+    if (amount === undefined || amount === null || isNaN(Number(amount))) {
+      return `${symbol} 0`;
+    }
+    const num = Number(amount);
+    const converted = Math.round(num * (rate || 1));
+
+    if (currency === "PKR") {
+      return `Rs ${converted.toLocaleString()}`;
+    }
+
+    try {
+      const formatter = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: currency || "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+      return formatter.format(converted);
+    } catch (e) {
+      return `${symbol}${converted.toLocaleString()}`;
+    }
+  };
+
+  useEffect(() => {
+    window.formatPrice = formatPrice;
+  }, [currency, rate, symbol]);
+
   return (
-    <CurrencyContext.Provider value={{ currency, rate, symbol, updateCurrencyState }}>
+    <CurrencyContext.Provider
+      value={{
+        currency,
+        rate,
+        symbol,
+        updateCurrencyState,
+        formatPrice,
+      }}
+    >
       {children}
     </CurrencyContext.Provider>
   );

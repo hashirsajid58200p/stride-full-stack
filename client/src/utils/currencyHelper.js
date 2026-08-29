@@ -11,24 +11,29 @@ let cachedRate = parseFloat(localStorage.getItem("strideExchangeRate")) || 1;
 let cachedSymbol = localStorage.getItem("strideCurrencySymbol") || "$";
 let cachedFormatter = null;
 
-// 1. Global Format Function (Optimized)
+// 1. Global Format Function (Optimized & Live Sync)
 window.formatPrice = (amount) => {
-  const converted = Math.round(amount * cachedRate);
+  const currentRate = parseFloat(localStorage.getItem("strideExchangeRate")) || cachedRate || 1;
+  const currentCurrency = localStorage.getItem("strideCurrency") || cachedCurrency || "USD";
+  const currentSymbol = localStorage.getItem("strideCurrencySymbol") || cachedSymbol || "$";
+
+  const num = Number(amount) || 0;
+  const converted = Math.round(num * currentRate);
   
-  if (cachedCurrency === "PKR") {
+  if (currentCurrency === "PKR") {
     return `Rs ${converted.toLocaleString()}`;
   }
   
   try {
     const formatter = new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: cachedCurrency,
+      currency: currentCurrency,
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     });
     return formatter.format(converted);
   } catch (e) {
-    return `${cachedSymbol}${converted}`;
+    return `${currentSymbol}${converted.toLocaleString()}`;
   }
 };
 
