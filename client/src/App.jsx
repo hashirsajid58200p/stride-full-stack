@@ -9,33 +9,61 @@ import Footer from "./components/Layout/Footer";
 import Support from "./components/Layout/Support";
 import Cart from "./components/ECommerce/Cart";
 import Loader from "./components/UI/Loader";
+import RouteLoader from "./components/UI/RouteLoader/RouteLoader";
+import ErrorBoundary from "./components/UI/ErrorBoundary/ErrorBoundary";
 import Notification from "./components/UI/Notification";
 
-// Lazy-Loaded Page Components for Code Splitting & Performance
-const Home = lazy(() => import("./pages/Home"));
-const Products = lazy(() => import("./pages/Products"));
-const ProductDetail = lazy(() => import("./pages/ProductDetail"));
-const ShoppingCart = lazy(() => import("./pages/ShoppingCart"));
-const Checkout = lazy(() => import("./pages/Checkout"));
-const Login = lazy(() => import("./pages/Login"));
-const Signup = lazy(() => import("./pages/Signup"));
-const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
-const UserDashboard = lazy(() => import("./pages/UserDashboard"));
-const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
-const OrderConfirmation = lazy(() => import("./pages/OrderConfirmation"));
-const About = lazy(() => import("./pages/About"));
-const Contact = lazy(() => import("./pages/Contact"));
-const FAQ = lazy(() => import("./pages/FAQ"));
-const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
-const ReturnExchange = lazy(() => import("./pages/ReturnExchange"));
-const NotFound = lazy(() => import("./pages/NotFound/NotFound"));
+// Resilient Lazy Loader with auto-recovery from chunk load failures
+function lazyWithRetry(importFn) {
+  return lazy(async () => {
+    try {
+      return await importFn();
+    } catch (error) {
+      console.warn("[LazyLoader] Chunk load error, attempting auto-recovery:", error.message);
+      const hasReloaded = sessionStorage.getItem("stride_lazy_reload");
+      if (!hasReloaded) {
+        sessionStorage.setItem("stride_lazy_reload", "true");
+        window.location.reload();
+      }
+      throw error;
+    }
+  });
+}
+
+// Lazy-Loaded Page Components
+const Home = lazyWithRetry(() => import("./pages/Home"));
+const Products = lazyWithRetry(() => import("./pages/Products"));
+const ProductDetail = lazyWithRetry(() => import("./pages/ProductDetail"));
+const ShoppingCart = lazyWithRetry(() => import("./pages/ShoppingCart"));
+const Checkout = lazyWithRetry(() => import("./pages/Checkout"));
+const Login = lazyWithRetry(() => import("./pages/Login"));
+const Signup = lazyWithRetry(() => import("./pages/Signup"));
+const ForgotPassword = lazyWithRetry(() => import("./pages/ForgotPassword"));
+const UserDashboard = lazyWithRetry(() => import("./pages/UserDashboard"));
+const AdminDashboard = lazyWithRetry(() => import("./pages/AdminDashboard"));
+const OrderConfirmation = lazyWithRetry(() => import("./pages/OrderConfirmation"));
+const About = lazyWithRetry(() => import("./pages/About"));
+const Contact = lazyWithRetry(() => import("./pages/Contact"));
+const FAQ = lazyWithRetry(() => import("./pages/FAQ"));
+const PrivacyPolicy = lazyWithRetry(() => import("./pages/PrivacyPolicy"));
+const ReturnExchange = lazyWithRetry(() => import("./pages/ReturnExchange"));
+const NotFound = lazyWithRetry(() => import("./pages/NotFound/NotFound"));
+
+// Scroll To Top on route change
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
 
 // Admin Protected Route Guard (Authoritative token claims only)
 function AdminRouteGuard({ children }) {
   const { isAdmin, loading } = useUserRole();
 
   if (loading) {
-    return <Loader />;
+    return <RouteLoader />;
   }
 
   if (!isAdmin) {
@@ -189,41 +217,44 @@ function App() {
         return showChat && location.pathname !== "/order-confirmation" ? <Support /> : null;
       })()}
 
+      <ScrollToTop />
       <main>
-        <Suspense fallback={<Loader />}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/products/:slug" element={<ProductDetail />} />
-            <Route path="/product-detail" element={<ProductDetail />} />
-            <Route path="/cart" element={<ShoppingCart />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/order-confirmation" element={<OrderConfirmation />} />
+        <ErrorBoundary>
+          <Suspense fallback={<RouteLoader />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/products/:slug" element={<ProductDetail />} />
+              <Route path="/product-detail" element={<ProductDetail />} />
+              <Route path="/cart" element={<ShoppingCart />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/order-confirmation" element={<OrderConfirmation />} />
 
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
 
-            <Route path="/user-dashboard" element={<UserDashboard />} />
-            <Route
-              path="/admin-dashboard"
-              element={
-                <AdminRouteGuard>
-                  <AdminDashboard />
-                </AdminRouteGuard>
-              }
-            />
+              <Route path="/user-dashboard" element={<UserDashboard />} />
+              <Route
+                path="/admin-dashboard"
+                element={
+                  <AdminRouteGuard>
+                    <AdminDashboard />
+                  </AdminRouteGuard>
+                }
+              />
 
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/returns-exchanges" element={<ReturnExchange />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/returns-exchanges" element={<ReturnExchange />} />
 
-            {/* Custom 404 Fallback */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
+              {/* Custom 404 Fallback */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </main>
 
       {/* 2. Footer is rendered on allowed pages */}

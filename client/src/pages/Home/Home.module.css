@@ -638,7 +638,10 @@
   }
   .products-grid {
     grid-template-columns: repeat(3, 1fr);
-    max-width: 1100px;
+    max-width: 1240px;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 2.2rem;
   }
   .testimonial-card {
     flex: 0 0 calc(33.333% - 1rem);
@@ -652,12 +655,22 @@
   .hero-title {
     font-size: clamp(5rem, 5vw, 6.5rem);
   }
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 2.5rem;
+  }
 }
 
 @media (min-width: 1536px) {
   .products-grid {
-    grid-template-columns: repeat(4, 1fr);
-    max-width: 1440px;
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 1320px;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 2.5rem;
   }
 }
 
@@ -666,9 +679,11 @@
     font-size: clamp(5.5rem, 5.5vw, 7.5rem);
   }
   .products-grid {
-    grid-template-columns: repeat(4, 1fr);
-    max-width: 1600px;
-    gap: 2.5rem;
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 3rem;
   }
   .features-grid {
     max-width: 1600px;
@@ -681,9 +696,11 @@
     font-size: clamp(7rem, 6vw, 9rem);
   }
   .products-grid {
-    grid-template-columns: repeat(5, 1fr);
-    max-width: 2100px;
-    gap: 3rem;
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 1500px;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 3.5rem;
   }
 }
 
@@ -692,9 +709,11 @@
     font-size: clamp(9rem, 7vw, 12rem);
   }
   .products-grid {
-    grid-template-columns: repeat(6, 1fr);
-    max-width: 2800px;
-    gap: 3.5rem;
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 1700px;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 4rem;
   }
 }
 

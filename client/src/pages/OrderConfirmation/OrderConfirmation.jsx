@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
+import { useCurrency } from "../../context/CurrencyContext";
 import { getApiUrl } from "../../utils/apiConfig";
 import SEO from "../../components/SEO/SEO";
 import styles from "./OrderConfirmation.module.css";
@@ -9,6 +10,7 @@ export default function OrderConfirmation() {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const { setCartItems, setDiscount } = useCart();
+  const { formatPrice } = useCurrency();
 
   const [orderState, setOrderState] = useState({
     id: "Unknown",
@@ -40,7 +42,7 @@ export default function OrderConfirmation() {
     const shortId = "ORD-" + sessionId.substring(8, 16).toUpperCase();
     let isMounted = true;
     let pollCount = 0;
-    const maxPolls = 6;
+    const maxPolls = 8;
 
     const fetchServerOrder = async () => {
       try {
@@ -71,13 +73,12 @@ export default function OrderConfirmation() {
           return true; // Successfully resolved
         }
 
-        // If order is still being written by webhook, poll briefly
+        // If order is still being finalized, poll briefly
         if (pollCount < maxPolls) {
           pollCount++;
-          setTimeout(fetchServerOrder, 1500);
+          setTimeout(fetchServerOrder, 1200);
         } else {
           if (isMounted) {
-            // Fallback display if webhook takes longer but session exists
             setOrderState((prev) => ({
               ...prev,
               id: shortId,
@@ -143,7 +144,7 @@ export default function OrderConfirmation() {
                   className={styles["detail-value"]}
                   style={{ fontSize: "0.95rem" }}
                 >
-                  {orderState.name}
+                  {orderState.loading ? "Loading..." : orderState.name}
                 </span>
               </div>
               <div className={styles["detail-row"]}>
@@ -152,7 +153,7 @@ export default function OrderConfirmation() {
                   className={styles["detail-value"]}
                   style={{ fontSize: "0.85rem" }}
                 >
-                  {orderState.email}
+                  {orderState.loading ? "Loading..." : orderState.email}
                 </span>
               </div>
               <div className={styles["detail-row"]}>
@@ -195,7 +196,12 @@ export default function OrderConfirmation() {
               <h3 className={styles["items-title"]}>Order Summary</h3>
 
               <div className={styles["items-list"]}>
-                {orderState.items.length > 0 ? (
+                {orderState.loading ? (
+                  <div style={{ padding: "1.5rem 0", color: "var(--color-muted-fg)", textAlign: "center" }}>
+                    <i className="bi bi-arrow-repeat spin" style={{ display: "inline-block", marginRight: "0.5rem" }}></i>
+                    Verifying payment details with Stripe...
+                  </div>
+                ) : orderState.items.length > 0 ? (
                   orderState.items.map((item, idx) => {
                     const itemTotal = (Number(item.price) || 0) * (item.quantity || 1);
                     return (
@@ -218,18 +224,14 @@ export default function OrderConfirmation() {
                           </div>
                         </div>
                         <span className={styles["item-price"]}>
-                          {window.formatPrice
-                            ? window.formatPrice(itemTotal)
-                            : `$${itemTotal.toFixed(2)}`}
+                          {formatPrice ? formatPrice(itemTotal) : `$${itemTotal.toFixed(2)}`}
                         </span>
                       </div>
                     );
                   })
                 ) : (
                   <p style={{ color: "var(--color-muted-fg)" }}>
-                    {orderState.loading
-                      ? "Verifying payment with Stripe..."
-                      : "Order confirmed."}
+                    Order confirmed.
                   </p>
                 )}
               </div>
@@ -238,9 +240,7 @@ export default function OrderConfirmation() {
                 <div className={styles["total-row"]}>
                   <span className={styles["total-label"]}>Subtotal</span>
                   <span className={styles["total-value"]}>
-                    {window.formatPrice
-                      ? window.formatPrice(orderState.subtotal)
-                      : `$${orderState.subtotal.toFixed(2)}`}
+                    {orderState.loading ? "..." : formatPrice ? formatPrice(orderState.subtotal) : `$${orderState.subtotal.toFixed(2)}`}
                   </span>
                 </div>
                 {orderState.discount > 0 && (
@@ -250,9 +250,7 @@ export default function OrderConfirmation() {
                     <span className={styles["total-label"]}>Discount</span>
                     <span className={styles["total-value"]}>
                       -
-                      {window.formatPrice
-                        ? window.formatPrice(orderState.discount)
-                        : `$${orderState.discount.toFixed(2)}`}
+                      {formatPrice ? formatPrice(orderState.discount) : `$${orderState.discount.toFixed(2)}`}
                     </span>
                   </div>
                 )}
@@ -261,9 +259,7 @@ export default function OrderConfirmation() {
                 >
                   <span className={styles["total-label"]}>Total Paid</span>
                   <span className={styles["total-value"]}>
-                    {window.formatPrice
-                      ? window.formatPrice(orderState.total)
-                      : `$${orderState.total.toFixed(2)}`}
+                    {orderState.loading ? "..." : formatPrice ? formatPrice(orderState.total) : `$${orderState.total.toFixed(2)}`}
                   </span>
                 </div>
               </div>

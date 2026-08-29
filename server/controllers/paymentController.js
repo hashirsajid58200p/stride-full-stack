@@ -309,16 +309,126 @@ exports.getSessionStatus = async (req, res) => {
       });
     }
 
-    // 2. If not yet in DB, check Stripe directly (Self-healing if webhook is delayed)
+    // 2. If not yet in DB, check Stripe directly (Self-healing order creation if webhook is delayed)
     try {
-      const session = await stripe.checkout.sessions.retrieve(sessionId);
+      const session = await stripe.checkout.sessions.retrieve(cleanId, {
+        expand: ["line_items", "customer_details"],
+      });
       
       if (session && session.payment_status === "paid") {
-        return res.status(200).json({
-          paid: true,
-          status: "processing",
-          message: "Payment verified. Finalizing order record...",
-        });
+        console.log(`[SessionStatus Self-Heal] Finalizing paid order directly for session: ${cleanId}`);
+
+        // Try to retrieve authoritative cart from Redis
+        let cartData = null;
+        try {
+          cartData = await redisService.get(`checkout:session:${cleanId}`);
+        } catch (e) {}
+
+        // Fallback: Reconstruct items from Stripe session
+        if (!cartData || !cartData.items || cartData.items.length === 0) {
+          const rawLineItems = session.line_items?.data || [];
+          const reconstructedItems = rawLineItems.map((li) => {
+            const unitPrice = (li.amount_total || 0) / 100 / (li.quantity || 1);
+            let size = "Standard";
+            let color = "Default";
+            let brand = "Stride";
+
+            if (li.description) {
+              const sizeMatch = li.description.match(/Size:\s*([^|]+)/i);
+              const colorMatch = li.description.match(/Color:\s*([^|]+)/i);
+              const brandMatch = li.description.match(/Brand:\s*([^|]+)/i);
+              if (sizeMatch) size = sizeMatch[1].trim();
+              if (colorMatch) color = colorMatch[1].trim();
+              if (brandMatch) brand = brandMatch[1].trim();
+            }
+
+            return {
+              name: li.description || "Stride Footwear",
+              brand,
+              price: unitPrice,
+              quantity: li.quantity || 1,
+              size,
+              color,
+            };
+          });
+
+          const totalPaid = Number(session.metadata?.total) || (session.amount_total || 0) / 100;
+          const discountAmt = Number(session.metadata?.discount || 0);
+
+          cartData = {
+            sessionId: cleanId,
+            userId: session.metadata?.userId || session.client_reference_id || null,
+            customerName:
+              session.metadata?.customerName ||
+              session.customer_details?.name ||
+              "Customer",
+            customerEmail:
+              session.metadata?.customerEmail ||
+              session.customer_details?.email ||
+              session.customer_email ||
+              "customer@stride.com",
+            items: reconstructedItems,
+            total: totalPaid,
+            subtotal: totalPaid + discountAmt,
+            discount: discountAmt,
+          };
+        }
+
+        const itemsCount = cartData.items.reduce(
+          (sum, item) => sum + (item.quantity || 1),
+          0
+        );
+
+        // Insert into Supabase Orders table idempotently
+        const { data: insertedOrder, error: insertError } = await supabaseAdmin
+          .from("orders")
+          .insert([
+            {
+              stripe_session_id: cleanId,
+              user_id: cartData.userId || null,
+              full_name: cartData.customerName,
+              email: cartData.customerEmail,
+              total_amount: cartData.total,
+              items_count: itemsCount,
+              items: cartData.items,
+              status: "Confirmed",
+              payment_method: "Stripe",
+              is_manual_override: false,
+            },
+          ])
+          .select()
+          .single();
+
+        if (!insertError && insertedOrder) {
+          // Decrement stock atomically
+          for (const item of cartData.items) {
+            if (item.id && item.size) {
+              const numericSize = parseFloat(item.size);
+              if (!isNaN(numericSize)) {
+                try {
+                  await supabaseAdmin.rpc("decrement_stock", {
+                    p_product_id: String(item.id),
+                    p_size: numericSize,
+                    p_qty: parseInt(item.quantity, 10) || 1,
+                  });
+                } catch (stockErr) {
+                  console.warn("[SessionStatus] Stock decrement warning:", stockErr.message);
+                }
+              }
+            }
+          }
+
+          // Clean up Redis key
+          try {
+            await redisService.del(`checkout:session:${cleanId}`);
+          } catch (e) {}
+
+          return res.status(200).json({
+            paid: true,
+            status: "confirmed",
+            order: insertedOrder,
+          });
+        }
       }
 
       return res.status(200).json({
