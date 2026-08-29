@@ -710,7 +710,16 @@
 }
 
 /* Responsive Constraints */
-@media (max-width: 992px) {
+@media (min-width: 1920px) {
+  .checkout-layout {
+    grid-template-columns: 1fr 480px;
+    gap: 4rem;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 1024px) {
   .checkout-layout {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto;
@@ -741,7 +750,7 @@
   }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 480px) {
   .checkout-page {
     padding-top: 6rem;
   }

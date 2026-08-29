@@ -132,7 +132,30 @@ a {
   }
 }
 
-/* Responsive Container Padding */
+/* ==========================================================================
+   Standard Breakpoints Scale (Reference for all @media queries):
+   xs: 360px  — small phones
+   sm: 480px  — large phones
+   md: 768px  — tablets (portrait)
+   lg: 1024px — tablets (landscape) / small laptops
+   xl: 1280px — default desktop container cap
+   2xl: 1536px — laptops / large desktop monitors
+   3xl: 1920px — Full HD desktop
+   4k: 2560px — 1440p / 2K monitors & ultrawides
+   5xl: 3840px — 4K monitors
+   6xl: 7680px — 8K monitors
+   ========================================================================== */
+
+:root {
+  /* Fluid Responsive Typography */
+  --fluid-h1: clamp(2rem, 4.5vw + 0.8rem, 4.5rem);
+  --fluid-h2: clamp(1.5rem, 3vw + 0.6rem, 3rem);
+  --fluid-h3: clamp(1.2rem, 2vw + 0.5rem, 2.25rem);
+  --fluid-body: clamp(0.95rem, 0.35vw + 0.85rem, 1.15rem);
+  --fluid-lead: clamp(1.05rem, 0.6vw + 0.9rem, 1.35rem);
+}
+
+/* Responsive Container Padding & Large Screen Scaling */
 @media (min-width: 768px) {
   :root {
     --container-padding: 2rem;
@@ -140,7 +163,45 @@ a {
 }
 @media (min-width: 1280px) {
   :root {
+    --container-padding: 3rem;
+  }
+}
+@media (min-width: 1920px) {
+  :root {
     --container-padding: 4rem;
+  }
+  .container {
+    max-width: 1560px;
+  }
+}
+@media (min-width: 2560px) {
+  :root {
+    --container-padding: 5rem;
+  }
+  .container {
+    max-width: 2100px;
+  }
+}
+@media (min-width: 3840px) {
+  :root {
+    --container-padding: 6rem;
+  }
+  .container {
+    max-width: 2800px;
+  }
+}
+
+/* Touch Device Sizing & Tap Targets */
+@media (max-width: 768px) {
+  button, 
+  [role="button"], 
+  .btn, 
+  nav a {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
