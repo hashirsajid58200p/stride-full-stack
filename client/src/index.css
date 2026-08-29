@@ -145,7 +145,24 @@ a {
 }
 
 
-/* Custom scrollbar utility removed in favor of CustomScrollbar.jsx */
+/* ==========================================================================
+   Global Scrollbar Removal (Site remains fully scrollable across all browsers)
+   ========================================================================== */
+html,
+body,
+* {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+*::-webkit-scrollbar,
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera */
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
 
 /* Global Autofill overrides to preserve premium theme backgrounds and text colors */
 input:-webkit-autofill,
@@ -162,3 +179,4 @@ select:-webkit-autofill:focus {
   -webkit-text-fill-color: var(--color-fg) !important;
   transition: background-color 5000s ease-in-out 0s;
 }
+

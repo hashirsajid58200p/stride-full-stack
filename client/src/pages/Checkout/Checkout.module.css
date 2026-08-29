@@ -536,7 +536,7 @@
   max-height: 40vh;
   overflow-y: auto;
   overflow-x: hidden;
-  scrollbar-width: thin;
+  scrollbar-width: none;
   padding-top: 0.75rem;
   padding-right: 0.75rem;
 }
