@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
+
+const BRAND_COLORS = [
+  "#ff6b00", "#3b82f6", "#10b981", "#8b5cf6", "#f59e0b",
+  "#ec4899", "#06b6d4", "#84cc16", "#f43f5e", "#6366f1",
+  "#14b8a6", "#eab308"
+];
 
 const OverviewSection = ({
   styles,
   totalInventoryValue,
-  products,
+  products = [],
   lowStockCount,
-  offers,
-  totalIncome,
+  offers = [],
+  totalIncome = 0,
   orders = [],
   scrollRef,
   switchView,
@@ -15,6 +21,18 @@ const OverviewSection = ({
 }) => {
   const completedOrders = orders.filter(o => o.status !== "Cancelled");
   const aov = completedOrders.length > 0 ? (totalIncome / completedOrders.length) : 0;
+
+  const brandStats = useMemo(() => {
+    const counts = {};
+    products.forEach((p) => {
+      if (p.brand) counts[p.brand] = (counts[p.brand] || 0) + 1;
+    });
+    return Object.keys(counts).map((bName, idx) => ({
+      name: bName,
+      count: counts[bName],
+      color: BRAND_COLORS[idx % BRAND_COLORS.length]
+    }));
+  }, [products]);
 
   return (
     <>
@@ -30,7 +48,7 @@ const OverviewSection = ({
               <h3 className={styles["stat-value"]}>
                 {window.formatPrice
                   ? window.formatPrice(totalIncome)
-                  : `$${totalIncome.toFixed(2)}`}
+                  : `$${Number(totalIncome || 0).toFixed(2)}`}
               </h3>
             </div>
           </div>
@@ -72,7 +90,7 @@ const OverviewSection = ({
               <h3 className={styles["stat-value"]}>
                 {window.formatPrice
                   ? window.formatPrice(aov)
-                  : `$${aov.toFixed(2)}`}
+                  : `$${Number(aov || 0).toFixed(2)}`}
               </h3>
             </div>
           </div>
@@ -94,7 +112,7 @@ const OverviewSection = ({
               <h3 className={styles["stat-value"]}>
                 {window.formatPrice
                   ? window.formatPrice(totalInventoryValue)
-                  : `$${totalInventoryValue.toFixed(2)}`}
+                  : `$${Number(totalInventoryValue || 0).toFixed(2)}`}
               </h3>
             </div>
           </div>
@@ -155,7 +173,7 @@ const OverviewSection = ({
                 <span>
                   {window.formatPrice
                     ? window.formatPrice(totalIncome)
-                    : `$${totalIncome.toFixed(2)}`}
+                    : `$${Number(totalIncome || 0).toFixed(2)}`}
                 </span>
                 <span className={`${styles.trend} ${styles.positive}`}>
                   Live <i className="bi bi-graph-up-arrow"></i>
@@ -200,26 +218,38 @@ const OverviewSection = ({
         {/* Brand & Category Distribution Doughnut */}
         <div
           className={`${styles["chart-card"]} ${styles["target-chart"]}`}
+          style={{ display: "flex", flexDirection: "column" }}
         >
           <div className={styles["card-header"]}>
             <h3 className={styles["card-title"]}>
               Brand Distribution
             </h3>
             <p style={{ fontSize: "0.75rem", color: "var(--color-muted-fg)", margin: "2px 0 0" }}>
-              Catalog breakdown by brand
+              {products.length} Total Sneakers in Catalog
             </p>
           </div>
-          <div className={styles["target-content"]}>
+          <div className={styles["target-content"]} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem", flex: 1, overflow: "hidden" }}>
             <div
               style={{
                 position: "relative",
-                width: "100%",
-                maxWidth: "240px",
-                aspectRatio: 1,
-                margin: "0 auto"
+                width: "160px",
+                height: "160px",
+                margin: "0 auto",
+                flexShrink: 0
               }}
             >
               <canvas id="categoryPieChart"></canvas>
+            </div>
+
+            {/* Custom Clean Scrollable Brand Legend */}
+            <div className={styles["brand-legend-container"]}>
+              {brandStats.map((b) => (
+                <div key={b.name} className={styles["brand-legend-chip"]}>
+                  <span className={styles["brand-legend-dot"]} style={{ backgroundColor: b.color }}></span>
+                  <span className={styles["brand-legend-name"]}>{b.name}</span>
+                  <span className={styles["brand-legend-count"]}>{b.count}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -230,7 +260,7 @@ const OverviewSection = ({
         <div
           className={`${styles["bottom-card"]} ${styles["top-selling"]}`}
         >
-          <div className={styles["card-header"]}>
+          <div className={styles["card-header"]} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.75rem" }}>
             <div>
               <h3 className={styles["card-title"]}>
                 Featured Sneaker Inventory
@@ -239,13 +269,38 @@ const OverviewSection = ({
                 Active footwear in stock
               </p>
             </div>
-            <button
-              className={`${styles.btn} ${styles["btn-outline"]} ${styles["btn-sm"]}`}
-              onClick={() => switchView("products")}
-            >
-              View Catalog
-            </button>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+              <div style={{ display: "flex", gap: "0.35rem" }}>
+                <button
+                  type="button"
+                  className={styles["nav-arrow-btn"]}
+                  onClick={() => scrollRef.current && scrollRef.current.scrollBy({ left: -260, behavior: "smooth" })}
+                  title="Scroll Left"
+                  aria-label="Previous"
+                >
+                  <i className="bi bi-chevron-left"></i>
+                </button>
+                <button
+                  type="button"
+                  className={styles["nav-arrow-btn"]}
+                  onClick={() => scrollRef.current && scrollRef.current.scrollBy({ left: 260, behavior: "smooth" })}
+                  title="Scroll Right"
+                  aria-label="Next"
+                >
+                  <i className="bi bi-chevron-right"></i>
+                </button>
+              </div>
+
+              <button
+                className={`${styles.btn} ${styles["btn-outline"]} ${styles["btn-sm"]}`}
+                onClick={() => switchView("products")}
+              >
+                View Catalog
+              </button>
+            </div>
           </div>
+
           <div
             className={styles["product-cards-scroll"]}
             ref={scrollRef}
@@ -267,32 +322,6 @@ const OverviewSection = ({
                 </div>
               </div>
             ))}
-          </div>
-          <div
-            className={`${styles["header-nav"]} ${styles["move-arrows"]}`}
-          >
-            <div
-              className={styles["nav-arrow"]}
-              onClick={() =>
-                scrollRef.current.scrollBy({
-                  left: -250,
-                  behavior: "smooth",
-                })
-              }
-            >
-              <i className="bi bi-chevron-left"></i>
-            </div>
-            <div
-              className={styles["nav-arrow"]}
-              onClick={() =>
-                scrollRef.current.scrollBy({
-                  left: 250,
-                  behavior: "smooth",
-                })
-              }
-            >
-              <i className="bi bi-chevron-right"></i>
-            </div>
           </div>
         </div>
 

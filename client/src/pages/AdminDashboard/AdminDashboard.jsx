@@ -563,11 +563,9 @@ export default function AdminDashboard() {
         const labels = Object.keys(brandCounts);
         const vals = Object.values(brandCounts);
         const bgColors = [
-          "#ff6b00",
-          "#3b82f6",
-          "#10b981",
-          "#8b5cf6",
-          "#f59e0b",
+          "#ff6b00", "#3b82f6", "#10b981", "#8b5cf6", "#f59e0b",
+          "#ec4899", "#06b6d4", "#84cc16", "#f43f5e", "#6366f1",
+          "#14b8a6", "#eab308"
         ];
 
         pieChartRef.current = new window.Chart(ctxPie, {
@@ -577,27 +575,31 @@ export default function AdminDashboard() {
             datasets: [
               {
                 data: vals,
-                backgroundColor: bgColors,
+                backgroundColor: labels.map((_, i) => bgColors[i % bgColors.length]),
                 borderWidth: 0,
-                hoverOffset: 4,
+                hoverOffset: 6,
               },
             ],
           },
           options: {
             responsive: true,
-            maintainAspectRatio: true,
-            cutout: "75%",
+            maintainAspectRatio: false,
+            cutout: "70%",
             plugins: {
               legend: {
-                position: "bottom",
-                labels: {
-                  color: "#a3a3a3",
-                  font: { size: 11 },
-                  padding: 20,
-                  usePointStyle: true,
-                  pointStyle: "circle",
-                },
+                display: false,
               },
+              tooltip: {
+                backgroundColor: "#18181b",
+                titleColor: "#ffffff",
+                bodyColor: "#ff6b00",
+                borderColor: "#333333",
+                borderWidth: 1,
+                padding: 10,
+                callbacks: {
+                  label: (ctx) => ` ${ctx.label}: ${ctx.parsed} items (${Math.round((ctx.parsed / (products.length || 1)) * 100)}%)`
+                }
+              }
             },
           },
         });
