@@ -367,7 +367,7 @@ export default function Support() {
               <div className={styles["header-text"]}>
                 <h4>{chatMode === "live" ? "Live Support" : "Stride AI"}</h4>
                 <span className={styles["header-status"]}>
-                  {chatMode === "live" ? "Agent Connected" : "Typically replies instantly"}
+                  {chatMode === "live" ? "Agent Connected" : "Online • Instant Replies"}
                 </span>
               </div>
             </div>
@@ -378,7 +378,7 @@ export default function Support() {
                   className={styles["agent-toggle-btn"]}
                   onClick={handleConnectLive}
                 >
-                  <i className="bi bi-person-fill"></i>
+                  <i className="bi bi-headset"></i>
                   <span>Live Agent</span>
                 </button>
               ) : (
