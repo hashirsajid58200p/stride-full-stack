@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
+import { getApiUrl } from "../../utils/apiConfig";
 import styles from "./OrderConfirmation.module.css";
-
-const pendingOrders = {};
 
 export default function OrderConfirmation() {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
-  const { setCartItems, setDiscount } = useCart(); // Access to clear global cart
+  const { setCartItems, setDiscount } = useCart();
 
   const [orderState, setOrderState] = useState({
     id: "Unknown",
@@ -19,195 +18,95 @@ export default function OrderConfirmation() {
     discount: 0,
     total: 0,
     loading: true,
+    status: "Processing",
   });
 
   useEffect(() => {
+    // 1. Immediately clear client-side cart on reaching confirmation page
+    setCartItems([]);
+    setDiscount(0);
+    localStorage.removeItem("strideCart");
+    localStorage.removeItem("strideDiscount");
+    localStorage.removeItem("strideAppliedOffer");
+    localStorage.removeItem("strideCheckoutData");
+    localStorage.removeItem("strideGuestInfo");
+
     if (!sessionId) {
       setOrderState((prev) => ({ ...prev, loading: false }));
       return;
     }
 
     const shortId = "ORD-" + sessionId.substring(8, 16).toUpperCase();
+    let isMounted = true;
+    let pollCount = 0;
+    const maxPolls = 6;
 
-    const processOrder = async () => {
-      const isProcessedKey = `stride_order_processed_${sessionId}`;
-
-      // 1. Check if already processed (Prevents refresh duplication)
-      if (localStorage.getItem(isProcessedKey)) {
-        const savedOrder = JSON.parse(localStorage.getItem("strideLastOrder"));
-        if (savedOrder) {
-          let displayName = savedOrder.customerName;
-          if (
-            (!displayName || displayName === "Guest Customer") &&
-            window.auth &&
-            window.auth.currentUser
-          ) {
-            displayName = window.auth.currentUser.displayName || displayName;
-          }
-          setOrderState({
-            id: shortId,
-            name: displayName,
-            email: savedOrder.customerEmail,
-            items: savedOrder.items,
-            subtotal: savedOrder.subtotal,
-            discount: savedOrder.discount,
-            total: savedOrder.total,
-            loading: false,
-          });
-        } else {
-          setOrderState((prev) => ({ ...prev, id: shortId, loading: false }));
-        }
-        return;
-      }
-
-      // 2. Wrap async DB logic in a shared promise in-memory to prevent double-insertions in React 18 Strict Mode
-      if (!pendingOrders[sessionId]) {
-        pendingOrders[sessionId] = (async () => {
-          const currentCart = JSON.parse(localStorage.getItem("strideCart")) || [];
-          const currentDiscount = parseFloat(localStorage.getItem("strideDiscount")) || 0;
-          const checkoutData =
-            JSON.parse(localStorage.getItem("strideCheckoutData")) ||
-            JSON.parse(localStorage.getItem("strideGuestInfo")) ||
-            {};
-
-          let customerName = "Guest Customer";
-          let customerEmail = "guest@stride.com";
-
-          const first = checkoutData.fname || checkoutData.firstName || "";
-          const last = checkoutData.lname || checkoutData.lastName || "";
-          if (first || last) {
-            customerName = `${first} ${last}`.trim();
-          } else if (window.auth && window.auth.currentUser) {
-            customerName = window.auth.currentUser.displayName || "Registered User";
-          }
-
-          if (checkoutData.email) {
-            customerEmail = checkoutData.email;
-          } else if (window.auth && window.auth.currentUser) {
-            customerEmail = window.auth.currentUser.email;
-          }
-
-          if (currentCart.length > 0) {
-            let subtotal = 0;
-            let itemsCount = 0;
-            currentCart.forEach((item) => {
-              const qty = item.quantity || 1;
-              subtotal += item.price * qty;
-              itemsCount += qty;
-            });
-            const finalTotal = Math.max(0, subtotal - currentDiscount);
-
-            // A. Insert into Supabase Orders
-            if (window.supabase) {
-              const { error: orderError } = await window.supabase
-                .from("orders")
-                .insert([
-                  {
-                    full_name: customerName,
-                    email: customerEmail,
-                    total_amount: finalTotal,
-                    items_count: itemsCount,
-                    items: currentCart,
-                    status: "Pending",
-                    is_manual_override: false,
-                  },
-                ]);
-              if (orderError) {
-                console.error("Failed to insert order to DB:", orderError);
-              }
-
-              // B. Decrement Stock Quantity
-              for (const item of currentCart) {
-                const { data: sizeData, error: fetchError } = await window.supabase
-                  .from("product_sizes")
-                  .select("stock_quantity")
-                  .eq("product_id", item.id)
-                  .eq("size", item.size)
-                  .single();
-
-                if (!fetchError && sizeData) {
-                  const purchasedQty = item.quantity || 1;
-                  const newStock = Math.max(
-                    0,
-                    sizeData.stock_quantity - purchasedQty,
-                  );
-                  await window.supabase
-                    .from("product_sizes")
-                    .update({ stock_quantity: newStock })
-                    .eq("product_id", item.id)
-                    .eq("size", item.size);
-                }
-              }
-            }
-
-            // C. Save processing flag and receipt data
-            localStorage.setItem(isProcessedKey, "true");
-            const orderData = {
-              customerName,
-              customerEmail,
-              items: currentCart,
-              discount: currentDiscount,
-              total: finalTotal,
-              subtotal,
-            };
-            localStorage.setItem("strideLastOrder", JSON.stringify(orderData));
-
-            // D. Clear Storage
-            localStorage.removeItem("strideCart");
-            localStorage.removeItem("strideDiscount");
-            localStorage.removeItem("strideAppliedOffer");
-            localStorage.removeItem("strideCheckoutData");
-
-            return orderData;
-          }
-          return null;
-        })();
-      }
-
-      // 3. Await the single shared promise so all rendering instances receive the same data
+    const fetchServerOrder = async () => {
       try {
-        const orderData = await pendingOrders[sessionId];
-        if (orderData) {
-          let displayName = orderData.customerName;
-          if (
-            (!displayName || displayName === "Guest Customer") &&
-            window.auth &&
-            window.auth.currentUser
-          ) {
-            displayName = window.auth.currentUser.displayName || displayName;
+        const response = await fetch(getApiUrl(`/api/payments/session/${sessionId}`));
+        const data = await response.json();
+
+        if (response.ok && data.paid && data.order) {
+          const dbOrder = data.order;
+          if (isMounted) {
+            const rawItems = Array.isArray(dbOrder.items) ? dbOrder.items : [];
+            const subtotal = rawItems.reduce(
+              (acc, item) => acc + (Number(item.price) || 0) * (item.quantity || 1),
+              0
+            );
+
+            setOrderState({
+              id: dbOrder.id ? "ORD-" + String(dbOrder.id).substring(0, 8).toUpperCase() : shortId,
+              name: dbOrder.full_name || "Valued Customer",
+              email: dbOrder.email || "customer@stride.com",
+              items: rawItems,
+              subtotal: subtotal || Number(dbOrder.total_amount) || 0,
+              discount: Math.max(0, subtotal - Number(dbOrder.total_amount || 0)),
+              total: Number(dbOrder.total_amount) || 0,
+              status: dbOrder.status || "Confirmed",
+              loading: false,
+            });
           }
+          return true; // Successfully resolved
+        }
 
-          // Clear global context state
-          setCartItems([]);
-          setDiscount(0);
-
-          setOrderState({
-            id: shortId,
-            name: displayName,
-            email: orderData.customerEmail,
-            items: orderData.items,
-            subtotal: orderData.subtotal,
-            discount: orderData.discount,
-            total: orderData.total,
-            loading: false,
-          });
+        // If order is still being written by webhook, poll briefly
+        if (pollCount < maxPolls) {
+          pollCount++;
+          setTimeout(fetchServerOrder, 1500);
         } else {
-          setOrderState((prev) => ({ ...prev, id: shortId, loading: false }));
+          if (isMounted) {
+            // Fallback display if webhook takes longer but session exists
+            setOrderState((prev) => ({
+              ...prev,
+              id: shortId,
+              name: (window.auth && window.auth.currentUser?.displayName) || "Valued Customer",
+              email: (window.auth && window.auth.currentUser?.email) || "customer@stride.com",
+              status: "Confirmed",
+              loading: false,
+            }));
+          }
         }
       } catch (err) {
-        console.error("Critical error completing order logic:", err);
-        setOrderState((prev) => ({ ...prev, loading: false }));
+        console.error("[OrderConfirmation] Error verifying order session:", err);
+        if (isMounted) {
+          setOrderState((prev) => ({ ...prev, id: shortId, loading: false }));
+        }
       }
     };
 
-    processOrder();
+    fetchServerOrder();
+
+    return () => {
+      isMounted = false;
+    };
   }, [sessionId, setCartItems, setDiscount]);
 
   return (
     <main className={styles["confirmation-page-wrapper"]}>
       <div className="container">
         <div className={styles["confirmation-card"]}>
-          {/* HEADER: Thank you + subtitle - always top on mobile */}
+          {/* HEADER: Thank you + subtitle */}
           <div className={styles["confirmation-header"]}>
             <div className={styles["success-animation"]}>
               <i className="bi bi-check-circle-fill"></i>
@@ -217,11 +116,11 @@ export default function OrderConfirmation() {
               Thank you for your purchase!
             </h1>
             <p className={styles["confirmation-subtitle"]}>
-              Your order has been received and is currently being processed.
+              Your order has been verified and is currently being processed.
             </p>
           </div>
 
-          {/* LEFT: Person / Order Details */}
+          {/* LEFT: Customer & Order Details */}
           <div className={styles["confirmation-left"]}>
             <div className={styles["order-details-box"]}>
               <div className={styles["detail-row"]}>
@@ -251,12 +150,12 @@ export default function OrderConfirmation() {
                 </span>
               </div>
               <div className={styles["detail-row"]}>
-                <span className={styles["detail-label"]}>Status:</span>
+                <span className={styles["detail-label"]}>Payment & Status:</span>
                 <span className={styles["detail-value"]}>
                   <span
                     className={`${styles.badge} ${styles["badge-success"]}`}
                   >
-                    Confirmed
+                    {orderState.status}
                   </span>
                 </span>
               </div>
@@ -268,7 +167,7 @@ export default function OrderConfirmation() {
             </p>
           </div>
 
-          {/* ACTIONS: Buttons - always bottom on mobile */}
+          {/* ACTIONS: Navigation buttons */}
           <div className={styles["confirmation-actions"]}>
             <Link
               to="/user-dashboard?view=orders"
@@ -284,6 +183,7 @@ export default function OrderConfirmation() {
             </Link>
           </div>
 
+          {/* RIGHT: Purchased Items & Totals */}
           <div className={styles["confirmation-right"]}>
             <div className={styles["purchased-items-box"]}>
               <h3 className={styles["items-title"]}>Order Summary</h3>
@@ -291,12 +191,12 @@ export default function OrderConfirmation() {
               <div className={styles["items-list"]}>
                 {orderState.items.length > 0 ? (
                   orderState.items.map((item, idx) => {
-                    const itemTotal = item.price * (item.quantity || 1);
+                    const itemTotal = (Number(item.price) || 0) * (item.quantity || 1);
                     return (
                       <div key={idx} className={styles["purchased-item"]}>
                         <div className={styles["item-details"]}>
                           <div className={styles["item-img-wrapper"]}>
-                            <img src={item.img} alt={item.name} />
+                            <img src={item.img || "/images/placeholders/shoe_placeholder.png"} alt={item.name} />
                             <span className={styles["item-badge"]}>
                               {item.quantity || 1}
                             </span>
@@ -322,8 +222,8 @@ export default function OrderConfirmation() {
                 ) : (
                   <p style={{ color: "var(--color-muted-fg)" }}>
                     {orderState.loading
-                      ? "Processing..."
-                      : "No recent order found."}
+                      ? "Verifying payment with Stripe..."
+                      : "Order confirmed."}
                   </p>
                 )}
               </div>

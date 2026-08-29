@@ -368,6 +368,7 @@ export default function Checkout() {
     });
 
     try {
+      const customerFullName = `${formData.fname || ""} ${formData.lname || ""}`.trim() || (currentUser?.displayName) || "Customer";
       const response = await fetch(
         getApiUrl("/api/payments/create-checkout-session"),
         {
@@ -375,7 +376,18 @@ export default function Checkout() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             items: checkoutItems,
-            customerEmail: formData.email,
+            customerEmail: formData.email || currentUser?.email || "",
+            customerName: customerFullName,
+            userId: currentUser?.uid || null,
+            shippingInfo: {
+              address: formData.address,
+              apartment: formData.apartment,
+              city: formData.city,
+              country: formData.country,
+              postalCode: formData.postalCode,
+              phone: formData.phone,
+            },
+            appliedDiscount: discount || 0,
           }),
         },
       );

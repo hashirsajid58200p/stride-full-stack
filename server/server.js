@@ -18,6 +18,8 @@ const chatRoutes = require("./routes/chatRoutes");
 const aiRoutes = require("./routes/aiRoutes");
 const productRoutes = require("./routes/productRoutes");
 
+const paymentController = require("./controllers/paymentController");
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -26,6 +28,13 @@ const io = new Server(server, {
     methods: ["GET", "POST"]
   }
 });
+
+// Stripe webhook requires raw body for signature verification
+app.post(
+  "/api/payments/webhook",
+  express.raw({ type: "application/json" }),
+  paymentController.handleStripeWebhook
+);
 
 app.use(cors());
 app.use(express.json());
