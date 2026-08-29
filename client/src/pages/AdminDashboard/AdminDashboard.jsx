@@ -15,6 +15,7 @@ import DeliverySection from "./sections/DeliverySection";
 import TestingLabSection from "./sections/TestingLabSection";
 import CustomScrollbar from "../../components/UI/CustomScrollbar";
 import CustomCheckbox from "../../components/UI/CustomCheckbox";
+import { printOrderInvoice, exportOrdersToCSV } from "../../utils/orderExportUtils";
 
 
 // We rely on the globally loaded Chart.js script from index.html
@@ -154,6 +155,7 @@ export default function AdminDashboard() {
   const [totalInventoryValue, setTotalInventoryValue] = useState(0);
   const [lowStockCount, setLowStockCount] = useState(0);
   const [salesDataByDate, setSalesDataByDate] = useState({});
+  const [chartTimeframe, setChartTimeframe] = useState("30d");
   const [authLoading, setAuthLoading] = useState(true);
   
   // State: Testing Lab (Persistent)
@@ -480,9 +482,16 @@ export default function AdminDashboard() {
       const ctxLine = document.getElementById("salesLineChart");
       if (ctxLine) {
         if (lineChartRef.current) lineChartRef.current.destroy();
-        const sortedDates = Object.keys(salesDataByDate).sort(
+        let sortedDates = Object.keys(salesDataByDate).sort(
           (a, b) => new Date(a) - new Date(b),
         );
+
+        if (chartTimeframe === "7d") {
+          sortedDates = sortedDates.slice(-7);
+        } else if (chartTimeframe === "30d") {
+          sortedDates = sortedDates.slice(-30);
+        }
+
         const labels = sortedDates.length > 0 ? sortedDates : ["No Data Yet"];
         const vals =
           sortedDates.length > 0
@@ -495,25 +504,39 @@ export default function AdminDashboard() {
             labels: labels,
             datasets: [
               {
-                label: "Daily Revenue ($)",
+                label: "Revenue ($)",
                 data: vals,
                 borderColor: "#ff6b00",
-                backgroundColor: "rgba(255, 107, 0, 0.1)",
+                backgroundColor: "rgba(255, 107, 0, 0.12)",
                 borderWidth: 3,
                 fill: true,
-                tension: 0.4,
+                tension: 0.35,
                 pointBackgroundColor: "#ff6b00",
                 pointBorderColor: "#ffffff",
                 pointBorderWidth: 2,
                 pointRadius: 5,
-                pointHoverRadius: 7,
+                pointHoverRadius: 8,
               },
             ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: "#18181b",
+                titleColor: "#ffffff",
+                bodyColor: "#ff6b00",
+                borderColor: "#333333",
+                borderWidth: 1,
+                padding: 10,
+                displayColors: false,
+                callbacks: {
+                  label: (ctx) => `Revenue: $${Number(ctx.parsed.y || 0).toFixed(2)}`
+                }
+              }
+            },
             scales: {
               y: {
                 beginAtZero: true,
@@ -580,7 +603,7 @@ export default function AdminDashboard() {
         });
       }
     }
-  }, [activeView, salesDataByDate, products]);
+  }, [activeView, salesDataByDate, chartTimeframe, products]);
 
   // ==========================================
   // HANDLERS: UI & NAVIGATION
@@ -1855,8 +1878,11 @@ export default function AdminDashboard() {
                 lowStockCount={lowStockCount}
                 offers={offers}
                 totalIncome={totalIncome}
+                orders={orders}
                 scrollRef={scrollRef}
                 switchView={switchView}
+                chartTimeframe={chartTimeframe}
+                setChartTimeframe={setChartTimeframe}
               />
             )}
 
@@ -2927,22 +2953,40 @@ export default function AdminDashboard() {
         }}
       >
         <div className={styles["modal-content"]}>
-          <div className={styles["modal-header"]}>
-            <h3 className={styles["modal-title"]} style={{ margin: 0 }}>
-              Order Details
-            </h3>
-            <button
-              className={styles["close-modal"]}
-              onClick={() => setActiveModal(null)}
-            >
-              <i className="bi bi-x-lg"></i>
-            </button>
-          </div>
           {(() => {
             const order = orders.find((o) => o.id === targetId);
             if (!order) return null;
             return (
-              <div className={styles["modal-form"]}>
+              <>
+                <div className={styles["modal-header"]} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                    <h3 className={styles["modal-title"]} style={{ margin: 0 }}>
+                      Order Details
+                    </h3>
+                    <span style={{ fontSize: "0.78rem", color: "var(--color-muted-fg)" }}>
+                      #{order.id ? order.id.substring(0, 8).toUpperCase() : ""}
+                    </span>
+                  </div>
+
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                    <button
+                      type="button"
+                      className={`${styles["btn"]} ${styles["btn-primary"]} ${styles["btn-sm"]}`}
+                      style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.4rem 0.8rem", fontSize: "0.78rem", borderRadius: "8px" }}
+                      onClick={() => printOrderInvoice(order)}
+                    >
+                      <i className="bi bi-printer-fill"></i>
+                      <span>Print / PDF</span>
+                    </button>
+                    <button
+                      className={styles["close-modal"]}
+                      onClick={() => setActiveModal(null)}
+                    >
+                      <i className="bi bi-x-lg"></i>
+                    </button>
+                  </div>
+                </div>
+                <div className={styles["modal-form"]}>
                 <CustomScrollbar>
                   <div style={{ padding: "2rem", display: "flex", flexDirection: "column", gap: "1.75rem" }}>
                     <div className={styles["order-details-grid"]}>
@@ -3076,9 +3120,10 @@ export default function AdminDashboard() {
                   </div>
                 </CustomScrollbar>
               </div>
-            );
-          })()}
-        </div>
+            </>
+          );
+        })()}
+      </div>
       </div>
 
       {/* Sidebar Filters Modal */}
