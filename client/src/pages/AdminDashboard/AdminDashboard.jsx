@@ -2049,7 +2049,10 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className={styles["form-group"]}>
-                  <label>Available Colors & Images</label>
+                  <label>Available Colors</label>
+                  <span className={styles["field-hint"]}>
+                    Select the available colorways for this product
+                  </span>
                   <div className={styles["color-checkbox-group"]}>
                     {colorOptions.map((color) => (
                       <div key={color} className={styles["color-swatch-item"]}>
@@ -2076,11 +2079,20 @@ export default function AdminDashboard() {
                       </div>
                     ))}
                   </div>
+                </div>
 
+                {/* Configured Variants & Imagery Section */}
+                <div className={styles["variants-section-container"]}>
                   <div className={styles["color-blocks-top-bar"]}>
-                    <label className={styles["field-label"]} style={{ margin: 0 }}>
-                      Color Variants & Images ({colorBlocks.length})
-                    </label>
+                    <div className={styles["variants-header-left"]}>
+                      <label className={styles["section-title-label"]}>
+                        Color Variants & Imagery
+                      </label>
+                      <span className={styles["variants-count-badge"]}>
+                        {colorBlocks.length} Selected
+                      </span>
+                    </div>
+
                     {colorBlocks.length > 0 && (
                       <button
                         type="button"
@@ -2092,21 +2104,27 @@ export default function AdminDashboard() {
                         {isGeneratingAllAi ? (
                           <>
                             <span className={styles["ai-spinner"]}></span>
-                            <span>Generating All...</span>
+                            <span>Generating All ({colorBlocks.length})...</span>
                           </>
                         ) : (
                           <>
                             <i className="bi bi-stars"></i>
-                            <span>Generate All AI Images</span>
+                            <span>Generate All with AI</span>
                           </>
                         )}
                       </button>
                     )}
                   </div>
 
-                  <div className={styles["dynamic-uploads"]}>
-                    {colorBlocks.map((block, bIdx) => (
-                      <div key={bIdx} className={styles["color-block"]}>
+                  {colorBlocks.length === 0 ? (
+                    <div className={styles["variants-empty-state"]}>
+                      <i className="bi bi-palette2"></i>
+                      <p>No color variants selected yet. Click the color swatches above to add variants and generate/upload images.</p>
+                    </div>
+                  ) : (
+                    <div className={styles["dynamic-uploads"]}>
+                      {colorBlocks.map((block, bIdx) => (
+                        <div key={bIdx} className={styles["color-block"]}>
                         <div className={styles["color-block-header"]}>
                           <div className={styles["color-block-title"]}>
                             <div
@@ -2317,7 +2335,9 @@ export default function AdminDashboard() {
                       </div>
                     ))}
                   </div>
+                  )}
                 </div>
+
 
                 <div className={styles["form-row"]}>
                   <div className={styles["form-group"]}>
