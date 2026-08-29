@@ -35,26 +35,40 @@ export default function LiveChat() {
     };
     fetchHistory();
 
-    // 2. Initialize Sockets
-    socket.current = io(API_BASE_URL);
+    // 2. Initialize Authenticated Sockets
+    const initSocket = async () => {
+      let token = "";
+      if (window.auth?.currentUser) {
+        try {
+          token = await window.auth.currentUser.getIdToken();
+        } catch (e) {}
+      }
 
-    socket.current.on("new-customer-message", (data) => {
-      setActiveUsers((prev) => {
-        const user = prev[data.userId] || { name: data.userName, messages: [] };
-        return {
-          ...prev,
-          [data.userId]: {
-            ...user,
-            name: data.userName || user.name, // Update name if provided
-            messages: [...user.messages, { text: data.message, sender: "user", timestamp: data.timestamp }],
-          },
-        };
+      socket.current = io(API_BASE_URL, {
+        auth: { token },
+        transports: ["websocket", "polling"],
       });
-    });
 
-    socket.current.on("admin-message", (data) => {
-      // This listener is mostly for the user side, but here we can use it to sync multiple admin tabs if needed.
-    });
+      socket.current.on("new-customer-message", (data) => {
+        setActiveUsers((prev) => {
+          const user = prev[data.userId] || { name: data.userName, messages: [] };
+          return {
+            ...prev,
+            [data.userId]: {
+              ...user,
+              name: data.userName || user.name,
+              messages: [...user.messages, { text: data.message, sender: "user", timestamp: data.timestamp }],
+            },
+          };
+        });
+      });
+
+      socket.current.on("admin-message", (data) => {
+        // Multi-tab admin sync
+      });
+    };
+
+    initSocket();
 
     return () => {
       if (socket.current) socket.current.disconnect();

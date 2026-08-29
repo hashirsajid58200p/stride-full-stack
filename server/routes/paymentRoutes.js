@@ -2,10 +2,12 @@
 const express = require("express");
 const router = express.Router();
 const paymentController = require("../controllers/paymentController");
+const { checkoutLimiter } = require("../middleware/rateLimiters");
 
-// Create checkout session with server-side price validation
+// Create checkout session with rate limiting and server-side price validation
 router.post(
   "/create-checkout-session",
+  checkoutLimiter,
   paymentController.createCheckoutSession
 );
 
@@ -15,7 +17,7 @@ router.get(
   paymentController.getSessionStatus
 );
 
-// Stripe webhook (also mounted with raw body in server.js)
+// Stripe webhook
 router.post(
   "/webhook",
   paymentController.handleStripeWebhook

@@ -1,5 +1,6 @@
 // server/controllers/currencyController.js
 const redisService = require("../services/redisService");
+const { sendError } = require("../utils/safeError");
 
 exports.getExchangeRate = async (req, res) => {
   const { target } = req.query;
@@ -8,7 +9,8 @@ exports.getExchangeRate = async (req, res) => {
     return res.status(200).json({ rate: 1 });
   }
 
-  const cacheKey = `currency:rate:${target.toUpperCase()}`;
+  const cleanTarget = String(target).trim().toUpperCase().slice(0, 5);
+  const cacheKey = `currency:rate:${cleanTarget}`;
 
   try {
     // 1. Try Redis cache first
@@ -17,30 +19,28 @@ exports.getExchangeRate = async (req, res) => {
       return res.status(200).json({ rate: cachedRate, cached: true });
     }
 
-    // 2. Fetch from external API
-    const url = `https://api.currencybeacon.com/v1/latest?api_key=${process.env.CURRENCY_BEACON_API_KEY}&base=USD&symbols=${target}`;
+    // 2. Fetch from external API with encoded param
+    const encodedSymbol = encodeURIComponent(cleanTarget);
+    const url = `https://api.currencybeacon.com/v1/latest?api_key=${process.env.CURRENCY_BEACON_API_KEY}&base=USD&symbols=${encodedSymbol}`;
     const response = await fetch(url);
     
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`CurrencyBeacon Error (${response.status}):`, errorText);
       return res.status(200).json({ rate: 1, note: "API fallback" });
     }
 
     const data = await response.json();
 
-    if (data && data.rates && data.rates[target]) {
-      const rate = data.rates[target];
+    if (data && data.rates && data.rates[cleanTarget]) {
+      const rate = data.rates[cleanTarget];
       // Cache rate for 1 hour
       await redisService.set(cacheKey, rate, 3600);
       res.status(200).json({ rate });
     } else {
-      console.warn(`Currency ${target} not found in rates, using fallback 1`);
       res.status(200).json({ rate: 1 });
     }
   } catch (error) {
-    console.error("Critical Currency API Error:", error.message);
-    res.status(200).json({ rate: 1, error: error.message });
+    console.warn("[Currency API Error]:", error.message);
+    res.status(200).json({ rate: 1, error: "Currency conversion fallback active" });
   }
 };
 
@@ -61,7 +61,8 @@ exports.detectIp = async (req, res) => {
     }
     
     try {
-      const url = isLocal ? "https://ipapi.co/json/" : `https://ipapi.co/${clientIp}/json/`;
+      const encodedIp = encodeURIComponent(clientIp);
+      const url = isLocal ? "https://ipapi.co/json/" : `https://ipapi.co/${encodedIp}/json/`;
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 3000);

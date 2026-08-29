@@ -1,5 +1,12 @@
 // server/controllers/aiController.js
+const cloudinary = require("cloudinary").v2;
+const supabaseAdmin = require("../config/supabaseAdmin");
+const { sendError } = require("../utils/safeError");
 
+/**
+ * Smart Tracking Update:
+ * Protected by requireAuth. Verified that the authenticated caller owns the order or is an admin.
+ */
 const getSmartTrackingUpdate = async (req, res) => {
   const { orderId, userCity } = req.body;
 
@@ -8,37 +15,53 @@ const getSmartTrackingUpdate = async (req, res) => {
   }
 
   try {
-    // 1. Fetch Weather Data
-    const weatherResponse = await fetch(
-      `http://api.weatherapi.com/v1/current.json?key=${process.env.WEATHER_API_KEY}&q=${userCity}`
-    );
-    const weatherData = await weatherResponse.json();
-    const weatherDesc = weatherData.current?.condition?.text || "Clear";
-    const temp = weatherData.current?.temp_c || "N/A";
+    // 1. Fetch Order from Supabase to verify ownership
+    const cleanOrderId = String(orderId).trim();
+    const { data: orderData, error: dbError } = await supabaseAdmin
+      .from("orders")
+      .select("id, status, email, user_id, full_name")
+      .eq("id", cleanOrderId)
+      .maybeSingle();
 
-    // 2. Fetch Order Status from Supabase
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_ANON_KEY;
-
-    const orderResponse = await fetch(
-      `${supabaseUrl}/rest/v1/orders?id=eq.${orderId}&select=status`,
-      {
-        headers: {
-          apikey: supabaseKey,
-          Authorization: `Bearer ${supabaseKey}`,
-        },
-      }
-    );
-    const orderData = await orderResponse.json();
-
-    if (!orderData || orderData.length === 0) {
+    if (dbError || !orderData) {
       return res.status(404).json({ error: "Order not found" });
     }
 
-    const orderStatus = orderData[0].status;
+    // 2. IDOR Ownership Verification
+    const requesterEmail = req.user?.email?.toLowerCase();
+    const requesterUid = req.user?.uid;
+    const isAdmin = req.user?.role === "admin";
+    const isOwner =
+      (orderData.email && orderData.email.toLowerCase() === requesterEmail) ||
+      (orderData.user_id && orderData.user_id === requesterUid);
 
-    // 3. Generate AI Response using Groq
-    const prompt = `You are the Stride Logistics Officer. Current weather in ${userCity} is ${weatherDesc} with a temperature of ${temp}°C. Order status for #${orderId} is ${orderStatus}. Give a realistic, human-like update in under 50 words.`;
+    if (!isAdmin && !isOwner) {
+      return res.status(403).json({ error: "Access denied. You do not have permission to view this order." });
+    }
+
+    const orderStatus = orderData.status || "Processing";
+
+    // 3. Fetch Weather Data safely with URL encoding
+    const encodedCity = encodeURIComponent(String(userCity).trim().slice(0, 50));
+    let weatherDesc = "Clear";
+    let temp = "N/A";
+
+    try {
+      const weatherResponse = await fetch(
+        `http://api.weatherapi.com/v1/current.json?key=${process.env.WEATHER_API_KEY}&q=${encodedCity}`
+      );
+      if (weatherResponse.ok) {
+        const weatherData = await weatherResponse.json();
+        weatherDesc = weatherData.current?.condition?.text || "Clear";
+        temp = weatherData.current?.temp_c || "N/A";
+      }
+    } catch (wErr) {
+      console.warn("[Smart Tracking] Weather API fetch failed:", wErr.message);
+    }
+
+    // 4. Generate AI Response using Groq with structured prompt
+    const systemPrompt = "You are the Stride Logistics Officer. Give a realistic, polite, reassuring order status delivery commentary under 45 words.";
+    const userPrompt = `Current weather in ${userCity} is ${weatherDesc} with a temperature of ${temp}°C. Order #${orderData.id.substring(0, 8)} status is ${orderStatus}. Provide a brief delivery update.`;
 
     const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -48,17 +71,20 @@ const getSmartTrackingUpdate = async (req, res) => {
       },
       body: JSON.stringify({
         model: process.env.GROQ_MODEL || "openai/gpt-oss-120b",
-        messages: [{ role: "user", content: prompt }],
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        max_tokens: 100,
       }),
     });
 
-    const aiData = await groqResponse.json();
-
     if (!groqResponse.ok) {
-      throw new Error(aiData.error?.message || "Groq API Error");
+      throw new Error("AI delivery assistant unavailable");
     }
 
-    const aiMessage = aiData.choices[0].message.content;
+    const aiData = await groqResponse.json();
+    const aiMessage = aiData.choices?.[0]?.message?.content || `Your order is currently ${orderStatus}.`;
 
     res.status(200).json({
       success: true,
@@ -67,11 +93,14 @@ const getSmartTrackingUpdate = async (req, res) => {
       status: orderStatus,
     });
   } catch (error) {
-    console.error("Smart Tracking Error:", error.message);
-    res.status(500).json({ error: "Failed to generate smart tracking update", details: error.message });
+    return sendError(res, 500, "Failed to generate smart tracking update", error);
   }
 };
 
+/**
+ * AI Product Image Generation:
+ * Protected by requireAuth, requireAdmin. Enforces length constraints and content safeguards.
+ */
 const generateProductImage = async (req, res) => {
   const { name, brand, color, category, gender, customPrompt } = req.body;
 
@@ -80,42 +109,52 @@ const generateProductImage = async (req, res) => {
   }
 
   try {
-    const shoeColor = color || "classic";
-    const shoeCategory = category || "sneakers";
-    const shoeGender = gender || "unisex";
+    const shoeName = String(name).trim().slice(0, 80);
+    const shoeBrand = String(brand).trim().slice(0, 60);
+    const shoeColor = color ? String(color).trim().slice(0, 40) : "classic";
+    const shoeCategory = category ? String(category).trim().slice(0, 40) : "sneakers";
+    const shoeGender = gender ? String(gender).trim().slice(0, 30) : "unisex";
 
-    const prompt =
-      customPrompt ||
-      `High-end commercial studio product photography of ${brand} ${name} ${shoeCategory} for ${shoeGender} in ${shoeColor} colorway, side angle profile view, ultra crisp footwear details, clean solid neutral studio backdrop, professional softbox footwear lighting, 8k resolution, photorealistic shoe`;
+    let prompt = "";
 
-    console.log(`[AI Image Gen] Generating image for "${brand} ${name} (${shoeColor})"...`);
+    if (customPrompt) {
+      // Enforce max 300 characters
+      const sanitizedCustom = String(customPrompt).trim().slice(0, 300);
+
+      // Check for disallowed patterns
+      const disallowed = /(nsfw|nude|hate|weapon|violence|illegal)/i;
+      if (disallowed.test(sanitizedCustom)) {
+        return res.status(400).json({ error: "Custom prompt contains disallowed content" });
+      }
+
+      prompt = sanitizedCustom;
+    } else {
+      prompt = `High-end commercial studio product photography of ${shoeBrand} ${shoeName} ${shoeCategory} for ${shoeGender} in ${shoeColor} colorway, side angle profile view, ultra crisp footwear details, clean solid neutral studio backdrop, professional softbox footwear lighting, 8k resolution, photorealistic shoe`;
+    }
+
+    // Audit Logging
+    console.log(
+      `[AI Image Gen Audit] Admin UID: ${req.user?.uid} (${req.user?.email}) generated image for "${shoeBrand} ${shoeName}"`
+    );
 
     const encodedPrompt = encodeURIComponent(prompt);
     const seed = Math.floor(Math.random() * 999999);
     const aiImageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=800&height=800&model=flux&nologo=true&seed=${seed}`;
 
-    const cloudinary = require("cloudinary").v2;
-    cloudinary.config({
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET,
-    });
-
-    const sanitizedSlug = `${brand}-${name}-${shoeColor}`
+    const sanitizedSlug = `${shoeBrand}-${shoeName}-${shoeColor}`
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
 
     const publicId = `${sanitizedSlug}-${Date.now()}`;
 
+    // Upload using shared configured Cloudinary client
     const uploadResult = await cloudinary.uploader.upload(aiImageUrl, {
       folder: "stride/products",
       asset_folder: "stride/products",
       public_id: publicId,
       overwrite: true,
     });
-
-    console.log(`[AI Image Gen] Uploaded to Cloudinary: ${uploadResult.secure_url}`);
 
     return res.status(200).json({
       success: true,
@@ -124,13 +163,8 @@ const generateProductImage = async (req, res) => {
       prompt: prompt,
     });
   } catch (error) {
-    console.error("AI Image Generation Error:", error);
-    return res.status(500).json({
-      error: "Failed to generate AI image",
-      details: error.message,
-    });
+    return sendError(res, 500, "Failed to generate AI image", error);
   }
 };
 
 module.exports = { getSmartTrackingUpdate, generateProductImage };
-

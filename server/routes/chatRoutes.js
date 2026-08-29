@@ -3,8 +3,9 @@ const express = require("express");
 const router = express.Router();
 const { handleChat } = require("../controllers/chatController");
 const { optionalAuth } = require("../middleware/auth");
+const { chatLimiter } = require("../middleware/rateLimiters");
 
-// Chat endpoint (attaches verified req.user if present, supports guest Q&A safely)
-router.post("/ask", optionalAuth, handleChat);
+// Rate-limited chat endpoint with optional authenticated user context
+router.post("/ask", chatLimiter, optionalAuth, handleChat);
 
 module.exports = router;

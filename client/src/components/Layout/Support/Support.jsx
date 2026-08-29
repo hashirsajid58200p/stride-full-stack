@@ -44,20 +44,35 @@ export default function Support() {
     }
 
     if (activeUserId && chatMode === "live") {
-      socket.current = io(API_BASE_URL);
-      socket.current.emit("join-room", activeUserId);
+      const initSocket = async () => {
+        let token = "";
+        if (currentUser) {
+          try {
+            token = await currentUser.getIdToken();
+          } catch (e) {}
+        }
+        if (!token) return;
 
-      socket.current.on("admin-message", (data) => {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            text: data.text,
-            sender: "admin",
-            timestamp: new Date().toISOString(),
-          },
-        ]);
-      });
+        socket.current = io(API_BASE_URL, {
+          auth: { token },
+          transports: ["websocket", "polling"],
+        });
+        socket.current.emit("join-room", activeUserId);
+
+        socket.current.on("admin-message", (data) => {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: Date.now(),
+              text: data.text,
+              sender: "admin",
+              timestamp: new Date().toISOString(),
+            },
+          ]);
+        });
+      };
+
+      initSocket();
 
       const fetchHistory = async () => {
         if (!window.supabase) return;
@@ -184,13 +199,16 @@ export default function Support() {
 
   const handleTrackOrder = async (orderId, city) => {
     try {
+      const token = currentUser ? await currentUser.getIdToken() : "";
       const response = await fetch(getApiUrl("/api/ai/track-order"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { "Authorization": `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({
           orderId,
           userCity: city,
-          userId: currentUser?.uid,
         }),
       });
 
@@ -214,7 +232,9 @@ export default function Support() {
         ...prev,
         {
           id: Date.now() + 1,
-          text: "I couldn't find that order. Please verify your Order ID and City.",
+          text: error.message && error.message.includes("permission")
+            ? "You do not have permission to view tracking for this order."
+            : "I couldn't find that order. Please verify your Order ID and City.",
           sender: "ai",
           timestamp: new Date().toISOString(),
         },
@@ -268,13 +288,15 @@ export default function Support() {
     }
 
     try {
+      const token = currentUser ? await currentUser.getIdToken() : "";
       const response = await fetch(getApiUrl("/api/chat/ask"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { "Authorization": `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({
           message: text,
-          userId: currentUser?.uid,
-          userEmail: currentUser?.email,
         }),
       });
 

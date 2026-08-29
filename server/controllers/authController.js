@@ -1,23 +1,22 @@
+// server/controllers/authController.js
 const admin = require("../config/firebaseAdmin");
+const { sendError } = require("../utils/safeError");
 
 exports.verifyToken = async (req, res) => {
   const { idToken } = req.body;
 
   if (!idToken) {
-    return res.status(400).json({ error: "No token provided" });
+    return res.status(400).json({ error: "Authentication token is required" });
   }
 
   try {
-    // Check if Firebase Admin was successfully initialized
     if (!admin || !admin.apps || admin.apps.length === 0) {
       const reason = admin && admin.initError ? ` Reason: ${admin.initError}` : "";
-      throw new Error(`Firebase Admin SDK is not initialized.${reason} Please verify your environment variables.`);
+      throw new Error(`Firebase Admin SDK is not initialized.${reason}`);
     }
 
     // Verify the ID token sent from the frontend
     const decodedToken = await admin.auth().verifyIdToken(idToken);
-
-    // If successful, we get the user's unique ID (UID) and email
     const { uid, email } = decodedToken;
 
     res.status(200).json({
@@ -25,12 +24,6 @@ exports.verifyToken = async (req, res) => {
       user: { uid, email },
     });
   } catch (error) {
-    console.error("Error verifying Firebase token:", error);
-    res.status(401).json({
-      error: error.message || "Invalid or expired token",
-      code: error.code,
-      stack: error.stack,
-      details: typeof error === "object" ? { ...error, message: error.message, stack: error.stack } : error
-    });
+    return sendError(res, 401, "Invalid or expired authentication token", error);
   }
 };
