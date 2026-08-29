@@ -344,13 +344,15 @@ export default function Support() {
   return (
     <div className={styles["support-container"]}>
       {/* Simple Floating Trigger Button */}
-      <button
-        className={styles["floating-btn"]}
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label="Support Chat"
-      >
-        <i className={`bi ${isOpen ? "bi-x-lg" : "bi-chat-dots-fill"}`}></i>
-      </button>
+      {!isOpen && (
+        <button
+          className={styles["floating-btn"]}
+          onClick={() => setIsOpen(true)}
+          aria-label="Open Support Chat"
+        >
+          <i className="bi bi-chat-dots-fill"></i>
+        </button>
+      )}
 
       {/* Simple Clean Chatbox */}
       {isOpen && (
@@ -375,7 +377,6 @@ export default function Support() {
                 <button
                   className={styles["agent-toggle-btn"]}
                   onClick={handleConnectLive}
-                  title="Connect with Human Specialist"
                 >
                   <i className="bi bi-person-fill"></i>
                   <span>Live Agent</span>
@@ -384,7 +385,6 @@ export default function Support() {
                 <button
                   className={styles["agent-toggle-btn"]}
                   onClick={handleExitLive}
-                  title="Switch back to AI"
                 >
                   <i className="bi bi-robot"></i>
                   <span>AI Mode</span>
@@ -394,7 +394,6 @@ export default function Support() {
                 className={styles["close-btn"]}
                 onClick={() => setIsOpen(false)}
                 aria-label="Close"
-                title="Close"
               >
                 <i className="bi bi-x-lg"></i>
               </button>
