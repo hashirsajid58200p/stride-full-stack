@@ -51,13 +51,21 @@ export default function Support() {
             token = await currentUser.getIdToken();
           } catch (e) {}
         }
-        if (!token) return;
 
         socket.current = io(API_BASE_URL, {
           auth: { token },
-          transports: ["websocket", "polling"],
+          transports: ["polling", "websocket"],
+          reconnectionAttempts: 2,
+          timeout: 5000,
         });
-        socket.current.emit("join-room", activeUserId);
+
+        socket.current.on("connect", () => {
+          socket.current.emit("join-room", activeUserId);
+        });
+
+        socket.current.on("connect_error", (err) => {
+          console.warn("[Live Chat] Socket server unavailable:", err.message);
+        });
 
         socket.current.on("admin-message", (data) => {
           setMessages((prev) => [
@@ -154,8 +162,28 @@ export default function Support() {
     }
 
     if (!socket.current) {
-      socket.current = io(API_BASE_URL);
-      socket.current.emit("join-room", activeUserId);
+      let token = "";
+      if (currentUser) {
+        try {
+          token = await currentUser.getIdToken();
+        } catch (e) {}
+      }
+
+      socket.current = io(API_BASE_URL, {
+        auth: { token },
+        transports: ["polling", "websocket"],
+        reconnectionAttempts: 2,
+        timeout: 5000,
+      });
+
+      socket.current.on("connect", () => {
+        socket.current.emit("join-room", activeUserId);
+      });
+
+      socket.current.on("connect_error", (err) => {
+        console.warn("[Live Chat] Socket server unavailable:", err.message);
+      });
+
       socket.current.on("admin-message", (data) => {
         setMessages((prev) => [
           ...prev,

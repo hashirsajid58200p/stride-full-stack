@@ -46,7 +46,13 @@ export default function LiveChat() {
 
       socket.current = io(API_BASE_URL, {
         auth: { token },
-        transports: ["websocket", "polling"],
+        transports: ["polling", "websocket"],
+        reconnectionAttempts: 2,
+        timeout: 5000,
+      });
+
+      socket.current.on("connect_error", (err) => {
+        console.warn("[Admin Live Chat] Socket server unavailable:", err.message);
       });
 
       socket.current.on("new-customer-message", (data) => {
