@@ -358,10 +358,15 @@ export default function Support() {
           {/* Header */}
           <div className={styles["chat-header"]}>
             <div className={styles["header-info"]}>
-              <div className={styles["status-dot"]}></div>
-              <div>
+              <div className={styles["header-avatar"]}>
+                <i className={`bi ${chatMode === "live" ? "bi-headset" : "bi-robot"}`}></i>
+                <span className={styles["status-dot"]}></span>
+              </div>
+              <div className={styles["header-text"]}>
                 <h4>{chatMode === "live" ? "Live Support" : "Stride AI"}</h4>
-                <span>{chatMode === "live" ? "Agent Connected" : "Online"}</span>
+                <span className={styles["header-status"]}>
+                  {chatMode === "live" ? "Agent Connected" : "Typically replies instantly"}
+                </span>
               </div>
             </div>
 
@@ -370,21 +375,26 @@ export default function Support() {
                 <button
                   className={styles["agent-toggle-btn"]}
                   onClick={handleConnectLive}
+                  title="Connect with Human Specialist"
                 >
-                  <i className="bi bi-person-fill"></i> Live Agent
+                  <i className="bi bi-person-fill"></i>
+                  <span>Live Agent</span>
                 </button>
               ) : (
                 <button
                   className={styles["agent-toggle-btn"]}
                   onClick={handleExitLive}
+                  title="Switch back to AI"
                 >
-                  <i className="bi bi-robot"></i> AI Mode
+                  <i className="bi bi-robot"></i>
+                  <span>AI Mode</span>
                 </button>
               )}
               <button
                 className={styles["close-btn"]}
                 onClick={() => setIsOpen(false)}
                 aria-label="Close"
+                title="Close"
               >
                 <i className="bi bi-x-lg"></i>
               </button>
