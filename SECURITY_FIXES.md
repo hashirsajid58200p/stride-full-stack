@@ -1,5 +1,7 @@
 # Stride Full-Stack — Security & Architecture Fixes Summary
 
+> **Round 2 Updates:** For the latest details on custom claims role enforcement, server-side admin endpoints, responsiveness across 360px–8K, SEO architecture, XML sitemap, and code splitting, refer to [`ROUND_2_CHANGES.md`](./ROUND_2_CHANGES.md).
+
 This document details all security hardening, authentication, authorization, IDOR protection, webhook processing, rate limiting, and reliability fixes implemented across the **Stride** e-commerce platform.
 
 ---
@@ -12,7 +14,9 @@ This document details all security hardening, authentication, authorization, IDO
 | `/api/payments/create-checkout-session` | `POST` | None (Public / Optional) | None | Creates Stripe Checkout Session with server-verified prices |
 | `/api/payments/webhook` | `POST` | Stripe Signature | None | Processes Stripe `checkout.session.completed` events |
 | `/api/payments/session/:sessionId` | `GET` | None (Public) | None | Authoritative order verification endpoint |
-| `/api/images/delete` | `POST` | **`requireAuth`** | **Admin** OR **Asset Owner** | Deletes Cloudinary media asset |
+| `/api/images/delete` | `POST` | **`requireAuth`** | **Admin** OR **Exact Avatar Owner** | Deletes Cloudinary media asset |
+| `/api/admin/*` | `ALL` | **`requireAuth`** | **`admin`** | Authenticated admin mutation API (products, inventory, offers, orders) |
+| `/sitemap.xml` | `GET` | None (Public) | None | Dynamic XML Sitemap with Redis caching |
 | `/api/ai/generate-product-image` | `POST` | **`requireAuth`** | **`admin`** | AI studio image generation & Cloudinary upload |
 | `/api/ai/track-order` | `POST` | **`requireAuth`** | **Order Owner** OR **`admin`** | Smart AI order tracking with weather context |
 | `/api/chat/ask` | `POST` | **`optionalAuth`** | Any / Guest | Stride AI Shopping Assistant (SSE Streaming) |
