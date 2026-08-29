@@ -11,6 +11,7 @@ import {
 import { getDatabase, ref, get } from "firebase/database";
 import styles from "./Login.module.css";
 import CustomCheckbox from "../../components/UI/CustomCheckbox";
+import SEO from "../../components/SEO/SEO";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -166,6 +167,11 @@ export default function Login() {
 
   return (
     <main className={styles["login-page-wrapper"]}>
+      <SEO
+        title="Sign In"
+        description="Sign in to your Stride customer or admin account."
+        noindex={true}
+      />
       <div className={styles["split-card"]}>
         <div className={styles["split-card-left"]}>
           <div className={styles["login-header"]}>

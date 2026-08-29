@@ -9,6 +9,7 @@ import { getDatabase, ref, set, get } from "firebase/database";
 import styles from "./Signup.module.css";
 import CustomCheckbox from "../../components/UI/CustomCheckbox";
 import CustomSelect from "../../components/UI/CustomSelect/CustomSelect";
+import SEO from "../../components/SEO/SEO";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -170,6 +171,11 @@ export default function Signup() {
 
   return (
     <main className={styles["signup-page-wrapper"]}>
+      <SEO
+        title="Create an Account"
+        description="Join Stride for exclusive sneaker drops, order tracking, and member discounts."
+        noindex={true}
+      />
       <div className={styles["split-card"]}>
         <div className={styles["split-card-left"]}>
           <div className={styles["signup-header"]}>

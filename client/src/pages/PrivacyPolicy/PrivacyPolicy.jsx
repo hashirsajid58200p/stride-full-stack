@@ -1,4 +1,5 @@
 import React from "react";
+import SEO from "../../components/SEO/SEO";
 import styles from "./PrivacyPolicy.module.css";
 
 export default function PrivacyPolicy() {
@@ -13,6 +14,11 @@ export default function PrivacyPolicy() {
 
   return (
     <main className={styles["privacy-page"]}>
+      <SEO
+        title="Privacy Policy"
+        description="Review Stride's privacy policy regarding data collection, cookies, account protection, and payment encryption."
+        canonicalUrl="/privacy-policy"
+      />
       <div className={`container ${styles.container}`}>
         <div className={styles["policy-wrapper"]}>
           <div className={styles["policy-header"]}>

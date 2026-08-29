@@ -4,6 +4,7 @@ import { useCart } from "../../context/CartContext";
 import Coupon from "../../components/ECommerce/Coupon";
 import ProductCards from "../../components/ECommerce/ProductCards";
 import SkeletonAnimation from "../../components/UI/SkeletonAnimation";
+import SEO from "../../components/SEO/SEO";
 import styles from "./ShoppingCart.module.css";
 import { useCurrency } from "../../context/CurrencyContext";
 
@@ -153,6 +154,11 @@ export default function ShoppingCart() {
 
   return (
     <main className={styles["shopping-cart-page"]}>
+      <SEO
+        title="Your Shopping Cart"
+        description="Review selected sneakers, calculate shipping, apply promo coupon codes, and proceed to secure Stripe checkout."
+        canonicalUrl="/cart"
+      />
       <div className={styles["page-banner"]}>
         <h2>SHOPPING CART</h2>
       </div>

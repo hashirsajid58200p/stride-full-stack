@@ -1,6 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, lazy, Suspense } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useUserRole } from "./hooks/useUserRole";
+import SEO from "./components/SEO/SEO";
+
+// Components
+import Header from "./components/Layout/Header";
+import Footer from "./components/Layout/Footer";
+import Support from "./components/Layout/Support";
+import Cart from "./components/ECommerce/Cart";
+import Loader from "./components/UI/Loader";
+import Notification from "./components/UI/Notification";
+
+// Lazy-Loaded Page Components for Code Splitting & Performance
+const Home = lazy(() => import("./pages/Home"));
+const Products = lazy(() => import("./pages/Products"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const ShoppingCart = lazy(() => import("./pages/ShoppingCart"));
+const Checkout = lazy(() => import("./pages/Checkout"));
+const Login = lazy(() => import("./pages/Login"));
+const Signup = lazy(() => import("./pages/Signup"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const UserDashboard = lazy(() => import("./pages/UserDashboard"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const OrderConfirmation = lazy(() => import("./pages/OrderConfirmation"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const ReturnExchange = lazy(() => import("./pages/ReturnExchange"));
+const NotFound = lazy(() => import("./pages/NotFound/NotFound"));
 
 // Admin Protected Route Guard (Authoritative token claims only)
 function AdminRouteGuard({ children }) {
@@ -17,37 +45,42 @@ function AdminRouteGuard({ children }) {
   return children;
 }
 
-// Components
-import Header from "./components/Layout/Header";
-import Footer from "./components/Layout/Footer";
-import Support from "./components/Layout/Support";
-import Cart from "./components/ECommerce/Cart";
-import Loader from "./components/UI/Loader";
-import Notification from "./components/UI/Notification";
-
-// Pages... (saare imports wahi purane wale)
-import Home from "./pages/Home";
-import Products from "./pages/Products";
-import ProductDetail from "./pages/ProductDetail";
-import ShoppingCart from "./pages/ShoppingCart";
-import Checkout from "./pages/Checkout";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import ForgotPassword from "./pages/ForgotPassword";
-import UserDashboard from "./pages/UserDashboard";
-import AdminDashboard from "./pages/AdminDashboard";
-import OrderConfirmation from "./pages/OrderConfirmation";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import FAQ from "./pages/FAQ";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import ReturnExchange from "./pages/ReturnExchange";
+const GLOBAL_SCHEMA = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://stride-full-stack.vercel.app/#organization",
+      "name": "Stride",
+      "url": "https://stride-full-stack.vercel.app",
+      "logo": "https://stride-full-stack.vercel.app/logo.png",
+      "description": "Stride - Premium Athletic & Lifestyle Footwear",
+      "sameAs": [
+        "https://twitter.com/stridefootwear",
+        "https://instagram.com/stridefootwear"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://stride-full-stack.vercel.app/#website",
+      "url": "https://stride-full-stack.vercel.app",
+      "name": "Stride Footwear",
+      "publisher": {
+        "@id": "https://stride-full-stack.vercel.app/#organization"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://stride-full-stack.vercel.app/products?search={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+  ]
+};
 
 function App() {
   const location = useLocation();
 
-  // List banayein jin pages par Header/Footer nahi dikhana
-  // Note: Path wahi likhein jo neeche <Route path="..."> mein hain
+  // Excluded paths from Header/Footer
   const excludePaths = [
     "/user-dashboard",
     "/admin-dashboard",
@@ -56,30 +89,6 @@ function App() {
   ];
 
   const shouldShowHeaderFooter = !excludePaths.includes(location.pathname);
-
-  // Dynamic Title Logic
-  useEffect(() => {
-    const titleMap = {
-      "/": "Home | Stride",
-      "/about": "About Us | Stride",
-      "/products": "Products | Stride",
-      "/product-detail": "Product Details | Stride",
-      "/cart": "Your Cart | Stride",
-      "/checkout": "Checkout | Stride",
-      "/order-confirmation": "Order Confirmed | Stride",
-      "/login": "Login | Stride",
-      "/signup": "Join Stride | Stride",
-      "/forgot-password": "Reset Password | Stride",
-      "/user-dashboard": "My Account | Stride",
-      "/admin-dashboard": "Admin Dashboard | Stride",
-      "/contact": "Contact Us | Stride",
-      "/faq": "FAQs | Stride",
-      "/privacy-policy": "Privacy Policy | Stride",
-      "/returns-exchanges": "Returns & Exchanges | Stride",
-    };
-
-    document.title = titleMap[location.pathname] || "Stride";
-  }, [location.pathname]);
 
   // Root Theme Synchronization (Loads theme for pages without header/footer)
   useEffect(() => {
@@ -116,7 +125,6 @@ function App() {
   useEffect(() => {
     const handleContextMenu = (e) => {
       const config = JSON.parse(localStorage.getItem("stride_admin_test_config") || "{}");
-      // If bypass is NOT enabled (allowContentDownload is false or missing)
       if (!config.allowContentDownload) {
         const isProtectedElement = 
           e.target.tagName === 'IMG' || 
@@ -151,10 +159,10 @@ function App() {
 
   return (
     <div className="App">
-      <Loader />
+      <SEO jsonLd={GLOBAL_SCHEMA} />
       <Notification />
 
-      {/* 1. Header sirf un pages par ayega jo excluded nahi hain */}
+      {/* 1. Header is rendered on allowed pages */}
       {shouldShowHeaderFooter && <Header />}
 
       {/* Global Elements - Always available */}
@@ -182,37 +190,43 @@ function App() {
       })()}
 
       <main>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/product-detail" element={<ProductDetail />} />
-          <Route path="/cart" element={<ShoppingCart />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/order-confirmation" element={<OrderConfirmation />} />
+        <Suspense fallback={<Loader />}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/products/:slug" element={<ProductDetail />} />
+            <Route path="/product-detail" element={<ProductDetail />} />
+            <Route path="/cart" element={<ShoppingCart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/order-confirmation" element={<OrderConfirmation />} />
 
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
 
-          <Route path="/user-dashboard" element={<UserDashboard />} />
-          <Route
-            path="/admin-dashboard"
-            element={
-              <AdminRouteGuard>
-                <AdminDashboard />
-              </AdminRouteGuard>
-            }
-          />
+            <Route path="/user-dashboard" element={<UserDashboard />} />
+            <Route
+              path="/admin-dashboard"
+              element={
+                <AdminRouteGuard>
+                  <AdminDashboard />
+                </AdminRouteGuard>
+              }
+            />
 
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/faq" element={<FAQ />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/returns-exchanges" element={<ReturnExchange />} />
-        </Routes>
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/returns-exchanges" element={<ReturnExchange />} />
+
+            {/* Custom 404 Fallback */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </main>
 
-      {/* 2. Footer bhi sirf un pages par ayega jo excluded nahi hain */}
+      {/* 2. Footer is rendered on allowed pages */}
       {shouldShowHeaderFooter && <Footer />}
     </div>
   );

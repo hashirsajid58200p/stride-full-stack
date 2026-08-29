@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { getApiUrl } from "../../utils/apiConfig";
+import SEO from "../../components/SEO/SEO";
 import styles from "./OrderConfirmation.module.css";
 
 export default function OrderConfirmation() {
@@ -104,6 +105,11 @@ export default function OrderConfirmation() {
 
   return (
     <main className={styles["confirmation-page-wrapper"]}>
+      <SEO
+        title="Order Confirmation"
+        description="Your Stride order confirmation and summary."
+        noindex={true}
+      />
       <div className="container">
         <div className={styles["confirmation-card"]}>
           {/* HEADER: Thank you + subtitle */}

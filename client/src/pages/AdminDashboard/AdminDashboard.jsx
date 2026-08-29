@@ -16,6 +16,7 @@ import TestingLabSection from "./sections/TestingLabSection";
 import CustomScrollbar from "../../components/UI/CustomScrollbar";
 import CustomCheckbox from "../../components/UI/CustomCheckbox";
 import { printOrderInvoice, exportOrdersToCSV } from "../../utils/orderExportUtils";
+import SEO from "../../components/SEO/SEO";
 
 
 // We rely on the globally loaded Chart.js script from index.html
@@ -1632,6 +1633,11 @@ export default function AdminDashboard() {
 
   return (
     <React.Fragment>
+      <SEO
+        title="Admin Dashboard"
+        description="Stride administrative control panel for managing products, inventory, orders, discounts, and real-time live chat."
+        noindex={true}
+      />
       <div className={`${styles["admin-layout"]} ${isSidebarCollapsed ? styles.collapsed : ""}`}>
         {/* SIDEBAR */}
         <aside className={`${styles.sidebar} ${isSidebarOpen ? styles.active : ""} ${isSidebarCollapsed ? styles["is-collapsed"] : ""}`} id="sidebar">

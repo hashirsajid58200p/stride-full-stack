@@ -23,6 +23,7 @@ const chatRoutes = require("./routes/chatRoutes");
 const aiRoutes = require("./routes/aiRoutes");
 const productRoutes = require("./routes/productRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const sitemapRoutes = require("./routes/sitemapRoutes");
 const paymentController = require("./controllers/paymentController");
 
 const app = express();
@@ -177,6 +178,7 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/sitemap.xml", sitemapRoutes);
 
 // HTML escaping helper for email / contact form
 const escapeHtml = (str) => {

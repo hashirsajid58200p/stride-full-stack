@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { sendPasswordResetEmail } from "firebase/auth";
+import SEO from "../../components/SEO/SEO";
 import styles from "./ForgotPassword.module.css";
 
 export default function ForgotPassword() {
@@ -41,6 +42,11 @@ export default function ForgotPassword() {
 
   return (
     <main className={styles["forgot-page-wrapper"]}>
+      <SEO
+        title="Reset Password"
+        description="Reset your Stride account password securely via email."
+        noindex={true}
+      />
       <div className={styles["centered-card"]}>
         <div className={styles["forgot-header"]}>
           <h1 className={styles.title}>Reset Password</h1>

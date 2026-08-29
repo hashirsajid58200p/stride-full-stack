@@ -12,6 +12,7 @@ import { getDatabase, ref, get } from "firebase/database";
 import Wishlist from "../../components/ECommerce/Wishlist";
 import ProfileLoader from "../../components/UI/ProfileLoader";
 import ProfileSettings from "../../components/ECommerce/ProfileSettings/ProfileSettings";
+import SEO from "../../components/SEO/SEO";
 import styles from "./UserDashboard.module.css";
 
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dwagwbklz/image/upload";
@@ -348,6 +349,11 @@ export default function UserDashboard() {
 
   return (
     <>
+      <SEO
+        title="My Account"
+        description="Manage your Stride orders, addresses, wishlist, and profile settings."
+        noindex={true}
+      />
       <div className={`${styles["user-layout"]} ${isSidebarCollapsed ? styles.collapsed : ""}`}>
         {/* SIDEBAR */}
         <aside

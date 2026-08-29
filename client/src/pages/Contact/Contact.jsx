@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styles from "./Contact.module.css";
 import { getApiUrl } from "../../utils/apiConfig";
+import SEO from "../../components/SEO/SEO";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -64,6 +65,11 @@ export default function Contact() {
 
   return (
     <main className={styles["contact-page-wrapper"]}>
+      <SEO
+        title="Contact Us"
+        description="Get in touch with the Stride team. Inquiries regarding customer support, orders, returns, and partnerships."
+        canonicalUrl="/contact"
+      />
       <section className={styles["contact-hero-section"]}>
         <div className="container">
           <div className={styles["contact-header-row"]}>

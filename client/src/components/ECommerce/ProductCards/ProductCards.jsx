@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import styles from "./ProductCards.module.css";
 import { useCurrency } from "../../../context/CurrencyContext";
 import { useOffers } from "../../../context/OfferContext";
+import { createProductSlug } from "../../../utils/slugify";
 
 export default function ProductCards({ product, index }) {
   const { currency, rate, symbol } = useCurrency();
@@ -269,7 +270,7 @@ export default function ProductCards({ product, index }) {
 
         <div className={styles["product-actions"]}>
           <Link
-            to={`/product-detail?id=${product.id}`}
+            to={`/products/${createProductSlug(product)}`}
             className={styles["action-btn-view"]}
             title="View Details"
           >

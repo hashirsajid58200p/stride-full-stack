@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { getApiUrl } from "../../utils/apiConfig";
 import ProductCards from "../../components/ECommerce/ProductCards";
 import SkeletonAnimation from "../../components/UI/SkeletonAnimation";
+import SEO from "../../components/SEO/SEO";
 import styles from "./Products.module.css";
 import { useCurrency } from "../../context/CurrencyContext";
 import Pagination from "../../components/UI/Pagination";
@@ -301,6 +302,15 @@ export default function Products() {
       ></div>
 
       <main className={styles["products-page"]}>
+        <SEO
+          title={
+            activeCategory !== "all"
+              ? `${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)} Sneakers & Footwear`
+              : "Shop All Sneakers & Footwear"
+          }
+          description="Browse the entire catalog of high-performance running shoes, classic lifestyle sneakers, and streetwear boots at Stride. Filter by brand, category, size, and color."
+          canonicalUrl="/products"
+        />
         <div
           className={`container ${styles.container} ${styles["products-layout"]}`}
         >

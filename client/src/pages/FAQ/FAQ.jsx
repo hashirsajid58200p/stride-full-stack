@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import SEO from "../../components/SEO/SEO";
 import styles from "./FAQ.module.css";
 
 const faqData = [
@@ -129,6 +130,11 @@ export default function FAQ() {
 
   return (
     <main className={styles["faq-page-wrapper"]}>
+      <SEO
+        title="Frequently Asked Questions (FAQ)"
+        description="Find answers to common questions about Stride orders, shipping rates, product authentication, sizing guides, and return policies."
+        canonicalUrl="/faq"
+      />
       <section className={styles["faq-hero-section"]}>
         <div className="container">
           <div className={styles["faq-hero-top-content"]}>

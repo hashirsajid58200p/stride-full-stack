@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { getApiUrl } from "../../utils/apiConfig";
 import { useCart } from "../../context/CartContext";
 import Coupon from "../../components/ECommerce/Coupon";
+import SEO from "../../components/SEO/SEO";
 import styles from "./Checkout.module.css";
 import { useCurrency } from "../../context/CurrencyContext";
 import { auth } from "../../firebaseConfig";
@@ -425,6 +426,11 @@ export default function Checkout() {
 
   return (
     <main className={styles["checkout-page"]}>
+      <SEO
+        title="Secure Checkout"
+        description="Complete your order securely with encrypted Stripe checkout."
+        noindex={true}
+      />
       <div className={`container ${styles.container}`}>
         <div className={styles["checkout-layout"]}>
           {/* PROGRESS TRACKER */}

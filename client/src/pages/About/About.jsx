@@ -2,11 +2,17 @@ import React from "react";
 import Header from "../../components/Layout/Header";
 import Footer from "../../components/Layout/Footer";
 import Newsletter from "../../components/UI/Newsletter";
+import SEO from "../../components/SEO/SEO";
 import styles from "./About.module.css";
 
 export default function About() {
   return (
     <>
+      <SEO
+        title="About Us"
+        description="Learn about Stride's heritage, authentic sneaker curation, global community, and our commitment to premium athletic footwear."
+        canonicalUrl="/about"
+      />
       <main className={styles["about-page-wrapper"]}>
         <section className={styles["about-hero"]}>
           <div className={styles["hero-overlay"]}></div>

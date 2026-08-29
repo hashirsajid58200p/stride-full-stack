@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import ProductCards from "../../components/ECommerce/ProductCards";
 import Reviews from "../../components/ECommerce/Reviews";
 import SkeletonAnimation from "../../components/UI/SkeletonAnimation";
+import SEO from "../../components/SEO/SEO";
+import { createProductSlug, extractIdFromSlug } from "../../utils/slugify";
 import styles from "./ProductDetail.module.css";
 import { useCurrency } from "../../context/CurrencyContext";
 import { useOffers } from "../../context/OfferContext";
@@ -65,12 +67,14 @@ const getColorHexFallback = (colorStr) => {
 export default function ProductDetail() {
   const { currency, rate, symbol } = useCurrency();
   const { getDiscountedPrice, getProductFlashSale } = useOffers();
+  const { slug } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { setCartItems, setIsCartOpen } = useCart();
 
   const rawId = searchParams.get("id");
-  const productId = rawId ? rawId.split("|")[0] : null;
+  const extractedId = slug ? extractIdFromSlug(slug) : null;
+  const productId = extractedId || (rawId ? rawId.split("|")[0] : null);
   const preselectedColor =
     rawId && rawId.includes("|") ? rawId.split("|")[1] : null;
 
@@ -126,6 +130,14 @@ export default function ProductDetail() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  // Canonical Slug Redirection for legacy ?id= URLs
+  useEffect(() => {
+    if (product && rawId && !slug) {
+      const canonicalSlug = createProductSlug(product);
+      navigate(`/products/${canonicalSlug}`, { replace: true });
+    }
+  }, [product, rawId, slug, navigate]);
 
   const handleCloseLightbox = () => {
     setIsLightboxOpen(false);
@@ -619,8 +631,40 @@ export default function ProductDetail() {
     );
   }
 
+  const jsonLd = product
+    ? {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        name: product.name,
+        image: mainImage || product.main_image_url,
+        description: product.description,
+        brand: {
+          "@type": "Brand",
+          name: product.brand,
+        },
+        offers: {
+          "@type": "Offer",
+          priceCurrency: "USD",
+          price: product.price,
+          availability: "https://schema.org/InStock",
+          url: typeof window !== "undefined" ? window.location.href : "",
+        },
+      }
+    : null;
+
   return (
     <main className={styles["product-page"]}>
+      <SEO
+        title={product ? `${product.name} - ${product.brand}` : "Product Details"}
+        description={
+          product?.description?.slice(0, 160) ||
+          "View authentic sneakers and sportswear at Stride."
+        }
+        image={mainImage || product?.main_image_url}
+        canonicalUrl={product ? `/products/${createProductSlug(product)}` : undefined}
+        type="product"
+        jsonLd={jsonLd}
+      />
       <div className="container">
         <div className={styles["product-layout"]}>
           {/* LEFT: GALLERY */}
@@ -633,7 +677,8 @@ export default function ProductDetail() {
               {!loading && (
                 <img
                   src={mainImage}
-                  alt="Product"
+                  alt={product?.name ? `${product.name} ${product.brand}` : "Stride Footwear"}
+                  loading="lazy"
                   style={{ opacity: imgOpacity }}
                 />
               )}

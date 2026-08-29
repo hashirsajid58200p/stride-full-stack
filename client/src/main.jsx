@@ -9,19 +9,23 @@ import "./index.css";
 import "./firebaseConfig"; // This ensures Firebase/Supabase are ready
 import { initCurrencyDetection } from "./utils/currencyHelper";
 
+import { HelmetProvider } from "react-helmet-async";
+
 // Initialize Global Pricing Logic
 initCurrencyDetection();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <CurrencyProvider>
-        <OfferProvider>
-          <CartProvider>
-            <App />
-          </CartProvider>
-        </OfferProvider>
-      </CurrencyProvider>
-    </BrowserRouter>
+    <HelmetProvider>
+      <BrowserRouter>
+        <CurrencyProvider>
+          <OfferProvider>
+            <CartProvider>
+              <App />
+            </CartProvider>
+          </OfferProvider>
+        </CurrencyProvider>
+      </BrowserRouter>
+    </HelmetProvider>
   </React.StrictMode>,
 );

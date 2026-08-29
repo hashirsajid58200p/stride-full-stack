@@ -1,4 +1,5 @@
 import React from "react";
+import SEO from "../../components/SEO/SEO";
 import styles from "./ReturnExchange.module.css";
 
 export default function ReturnExchange() {
@@ -13,6 +14,11 @@ export default function ReturnExchange() {
 
   return (
     <main className={styles["return-page"]}>
+      <SEO
+        title="Returns & Exchanges Policy"
+        description="Learn about Stride's 30-day return policy, exchange procedures, store drop-off, and refund timelines."
+        canonicalUrl="/returns-exchanges"
+      />
       <div className={`container ${styles.container}`}>
         <div className={styles["policy-wrapper"]}>
           <div className={styles["policy-header"]}>

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import ProductCards from "../../components/ECommerce/ProductCards";
 import SkeletonAnimation from "../../components/UI/SkeletonAnimation";
 import Newsletter from "../../components/UI/Newsletter";
+import SEO from "../../components/SEO/SEO";
 import styles from "./Home.module.css";
 
 // Brand Logo Data Arrays
@@ -402,6 +403,11 @@ export default function Home() {
 
   return (
     <main>
+      <SEO
+        title="Stride | Premium Athletic & Lifestyle Footwear"
+        description="Discover authentic performance sneakers, running shoes, and streetwear footwear from Nike, Adidas, Puma, and more. Fast shipping and easy returns."
+        canonicalUrl="/"
+      />
       {/* HERO SECTION */}
       <section className={styles.hero}>
         <video 

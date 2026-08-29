@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin-dashboard
+Disallow: /checkout
+Disallow: /user-dashboard
+Disallow: /order-confirmation
+Disallow: /login
+
+Sitemap: https://stride-full-stack.vercel.app/sitemap.xml
