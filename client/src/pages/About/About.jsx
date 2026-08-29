@@ -133,56 +133,6 @@ export default function About() {
             </div>
           </div>
         </section>
-
-        <section className={styles["team-section"]}>
-          <div className="container">
-            <div className={styles["team-header"]}>
-              <h2 className={styles["section-title"]}>Meet Our Team</h2>
-              <p className={styles["section-subtitle"]}>
-                The passionate people behind Stride
-              </p>
-            </div>
-
-            <div className={styles["team-grid"]}>
-              <div className={styles["team-member"]}>
-                <div className={styles["member-image"]}>
-                  <img src="/images/teammates/hashir.png" alt="Hashir Sajid" />
-                </div>
-                <h3 className={styles["member-name"]}>Hashir Sajid</h3>
-                <p className={styles["member-roll"]}>F22-BSIT-5061</p>
-                <p className={styles["member-role"]}>
-                  Project Manager & Full Stack Developer
-                </p>
-              </div>
-
-              <div className={styles["team-member"]}>
-                <div className={styles["member-image"]}>
-                  <img
-                    src="/images/teammates/ammara.png"
-                    alt="Ammara Maqsood"
-                  />
-                </div>
-                <h3 className={styles["member-name"]}>Ammara Maqsood</h3>
-                <p className={styles["member-roll"]}>F22-BSIT-5048</p>
-                <p className={styles["member-role"]}>
-                  Documentation & Analysis Specialist
-                </p>
-              </div>
-
-              <div className={styles["team-member"]}>
-                <div className={styles["member-image"]}>
-                  <img src="/images/teammates/shoaib.png" alt="Shoaib Akhtar" />
-                </div>
-                <h3 className={styles["member-name"]}>Shoaib Akhtar</h3>
-                <p className={styles["member-roll"]}>F22-BSIT-5084</p>
-                <p className={styles["member-role"]}>
-                  Presentation & Testing Specialist
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <Newsletter bgImage="/images/backgrounds/newsletter_about_background.jpg" />
       </main>
     </>

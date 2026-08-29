@@ -1,5 +1,6 @@
 // server/controllers/productController.js
 const embeddingService = require('../services/embeddingService');
+const redisService = require('../services/redisService');
 
 const getSupabaseConfig = () => ({
     supabaseUrl: process.env.SUPABASE_URL,
@@ -7,19 +8,28 @@ const getSupabaseConfig = () => ({
 });
 
 /**
- * Semantic Search using Gemini Embeddings + pgvector
+ * Semantic Search using Gemini Embeddings + pgvector + Redis Cache
  */
 const vectorSearch = async (req, res) => {
     try {
         const { query } = req.body;
         if (!query) return res.status(400).json({ error: "Search query required" });
 
-        // 1. Generate embedding for the search query using upgraded service
+        const normalizedQuery = query.trim().toLowerCase();
+        const cacheKey = `search:semantic:${Buffer.from(normalizedQuery).toString('base64')}`;
+
+        // 1. Try Redis cache first
+        const cachedResults = await redisService.get(cacheKey);
+        if (cachedResults !== null) {
+            return res.status(200).json(cachedResults);
+        }
+
+        // 2. Generate embedding for the search query using upgraded service
         const embedding = await embeddingService.generateEmbedding(query);
         
         if (!embedding) throw new Error("Failed to generate embedding for query");
 
-        // 2. Search Supabase using match_products RPC
+        // 3. Search Supabase using match_products RPC
         const { supabaseUrl, supabaseKey } = getSupabaseConfig();
 
         const response = await fetch(`${supabaseUrl}/rest/v1/rpc/match_products`, {
@@ -42,6 +52,10 @@ const vectorSearch = async (req, res) => {
         }
 
         const results = await response.json();
+
+        // Cache vector search results for 10 minutes
+        await redisService.set(cacheKey, results, 600);
+
         res.status(200).json(results);
     } catch (error) {
         console.error("Vector Search Error:", error.message);
@@ -87,6 +101,9 @@ const syncProductEmbedding = async (req, res) => {
         });
 
         if (!updateRes.ok) throw new Error("Failed to update embedding in DB");
+
+        // Clear semantic search cache when products change
+        await redisService.delPattern('search:semantic:*');
 
         res.status(200).json({ success: true, message: "Embedding synchronized" });
     } catch (error) {

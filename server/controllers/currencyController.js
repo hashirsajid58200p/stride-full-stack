@@ -1,4 +1,5 @@
 // server/controllers/currencyController.js
+const redisService = require("../services/redisService");
 
 exports.getExchangeRate = async (req, res) => {
   const { target } = req.query;
@@ -7,21 +8,32 @@ exports.getExchangeRate = async (req, res) => {
     return res.status(200).json({ rate: 1 });
   }
 
+  const cacheKey = `currency:rate:${target.toUpperCase()}`;
+
   try {
+    // 1. Try Redis cache first
+    const cachedRate = await redisService.get(cacheKey);
+    if (cachedRate !== null) {
+      return res.status(200).json({ rate: cachedRate, cached: true });
+    }
+
+    // 2. Fetch from external API
     const url = `https://api.currencybeacon.com/v1/latest?api_key=${process.env.CURRENCY_BEACON_API_KEY}&base=USD&symbols=${target}`;
     const response = await fetch(url);
     
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`CurrencyBeacon Error (${response.status}):`, errorText);
-      // Fallback to rate 1 instead of crashing with 500
       return res.status(200).json({ rate: 1, note: "API fallback" });
     }
 
     const data = await response.json();
 
     if (data && data.rates && data.rates[target]) {
-      res.status(200).json({ rate: data.rates[target] });
+      const rate = data.rates[target];
+      // Cache rate for 1 hour
+      await redisService.set(cacheKey, rate, 3600);
+      res.status(200).json({ rate });
     } else {
       console.warn(`Currency ${target} not found in rates, using fallback 1`);
       res.status(200).json({ rate: 1 });
@@ -31,6 +43,7 @@ exports.getExchangeRate = async (req, res) => {
     res.status(200).json({ rate: 1, error: error.message });
   }
 };
+
 exports.detectIp = async (req, res) => {
   try {
     const { ip: queryIp } = req.query;
@@ -39,6 +52,13 @@ exports.detectIp = async (req, res) => {
     
     // Normalize localhost
     const isLocal = !clientIp || clientIp === "::1" || clientIp === "127.0.0.1" || clientIp.includes("::ffff:127.0.0.1");
+    const cacheKey = `ip:geo:${isLocal ? "local" : clientIp}`;
+
+    // 1. Try Redis cache first
+    const cachedGeo = await redisService.get(cacheKey);
+    if (cachedGeo !== null) {
+      return res.status(200).json({ ...cachedGeo, cached: true });
+    }
     
     try {
       const url = isLocal ? "https://ipapi.co/json/" : `https://ipapi.co/${clientIp}/json/`;
@@ -56,16 +76,19 @@ exports.detectIp = async (req, res) => {
       if (response.ok) {
         const data = await response.json();
         if (data && data.currency) {
-          return res.status(200).json({
+          const result = {
             success: true,
             currency: data.currency,
             country: data.country_name
-          });
+          };
+          // Cache geolocation for 24 hours
+          await redisService.set(cacheKey, result, 86400);
+          return res.status(200).json(result);
         }
       }
     } catch (apiErr) {}
 
-    // If we reach here, detection failed but we return 200 with fallback to avoid frontend console errors
+    // Fallback response
     res.status(200).json({
       success: false,
       currency: "USD",
