@@ -312,7 +312,7 @@ exports.getSessionStatus = async (req, res) => {
     // 2. If not yet in DB, check Stripe directly (Self-healing order creation if webhook is delayed)
     try {
       const session = await stripe.checkout.sessions.retrieve(cleanId, {
-        expand: ["line_items", "customer_details"],
+        expand: ["line_items"],
       });
       
       if (session && session.payment_status === "paid") {

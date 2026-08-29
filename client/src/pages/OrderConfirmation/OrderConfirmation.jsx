@@ -12,26 +12,46 @@ export default function OrderConfirmation() {
   const { setCartItems, setDiscount } = useCart();
   const { formatPrice } = useCurrency();
 
-  const [orderState, setOrderState] = useState({
-    id: "Unknown",
-    name: "...",
-    email: "...",
-    items: [],
-    subtotal: 0,
-    discount: 0,
-    total: 0,
-    loading: true,
-    status: "Processing",
-  });
+  // 1. Retrieve any freshly cached checkout data from client storage
+  const cachedData = (() => {
+    try {
+      const raw = localStorage.getItem("strideCheckoutData");
+      if (raw) return JSON.parse(raw);
+    } catch (e) {
+      console.warn("[OrderConfirmation] Error reading cached checkout data:", e);
+    }
+    return null;
+  })();
+
+  const shortId = sessionId
+    ? "ORD-" + sessionId.substring(8, 16).toUpperCase()
+    : "ORD-CONFIRMED";
+
+  const [orderState, setOrderState] = useState(() => ({
+    id: shortId,
+    name:
+      cachedData?.customerName ||
+      (window.auth && window.auth.currentUser?.displayName) ||
+      "Customer",
+    email:
+      cachedData?.customerEmail ||
+      (window.auth && window.auth.currentUser?.email) ||
+      "customer@stride.com",
+    items: cachedData?.items || [],
+    subtotal: Number(cachedData?.subtotal) || 0,
+    discount: Number(cachedData?.discount) || 0,
+    total: Number(cachedData?.total) || 0,
+    loading: !cachedData,
+    status: "Confirmed",
+  }));
 
   useEffect(() => {
-    // 1. Immediately clear client-side cart on reaching confirmation page
+    // Immediately clear active shopping cart on confirmation
     setCartItems([]);
     setDiscount(0);
     localStorage.removeItem("strideCart");
     localStorage.removeItem("strideDiscount");
     localStorage.removeItem("strideAppliedOffer");
-    localStorage.removeItem("strideCheckoutData");
     localStorage.removeItem("strideGuestInfo");
 
     if (!sessionId) {
@@ -39,7 +59,6 @@ export default function OrderConfirmation() {
       return;
     }
 
-    const shortId = "ORD-" + sessionId.substring(8, 16).toUpperCase();
     let isMounted = true;
     let pollCount = 0;
     const maxPolls = 8;
@@ -52,7 +71,10 @@ export default function OrderConfirmation() {
         if (response.ok && data.paid && data.order) {
           const dbOrder = data.order;
           if (isMounted) {
-            const rawItems = Array.isArray(dbOrder.items) ? dbOrder.items : [];
+            const rawItems = Array.isArray(dbOrder.items) && dbOrder.items.length > 0
+              ? dbOrder.items
+              : (cachedData?.items || []);
+            
             const subtotal = rawItems.reduce(
               (acc, item) => acc + (Number(item.price) || 0) * (item.quantity || 1),
               0
@@ -60,17 +82,20 @@ export default function OrderConfirmation() {
 
             setOrderState({
               id: dbOrder.id ? "ORD-" + String(dbOrder.id).substring(0, 8).toUpperCase() : shortId,
-              name: dbOrder.full_name || "Valued Customer",
-              email: dbOrder.email || "customer@stride.com",
+              name: dbOrder.full_name || cachedData?.customerName || "Customer",
+              email: dbOrder.email || cachedData?.customerEmail || "customer@stride.com",
               items: rawItems,
-              subtotal: subtotal || Number(dbOrder.total_amount) || 0,
-              discount: Math.max(0, subtotal - Number(dbOrder.total_amount || 0)),
-              total: Number(dbOrder.total_amount) || 0,
+              subtotal: subtotal || Number(dbOrder.total_amount) || Number(cachedData?.subtotal) || 0,
+              discount: Math.max(0, subtotal - Number(dbOrder.total_amount || cachedData?.total || 0)),
+              total: Number(dbOrder.total_amount) || Number(cachedData?.total) || 0,
               status: dbOrder.status || "Confirmed",
               loading: false,
             });
+
+            // Clean up temporary checkout cache once database order is verified
+            localStorage.removeItem("strideCheckoutData");
           }
-          return true; // Successfully resolved
+          return true;
         }
 
         // If order is still being finalized, poll briefly
@@ -82,8 +107,17 @@ export default function OrderConfirmation() {
             setOrderState((prev) => ({
               ...prev,
               id: shortId,
-              name: (window.auth && window.auth.currentUser?.displayName) || "Valued Customer",
-              email: (window.auth && window.auth.currentUser?.email) || "customer@stride.com",
+              name:
+                cachedData?.customerName ||
+                (window.auth && window.auth.currentUser?.displayName) ||
+                "Customer",
+              email:
+                cachedData?.customerEmail ||
+                (window.auth && window.auth.currentUser?.email) ||
+                "customer@stride.com",
+              items: cachedData?.items || prev.items || [],
+              subtotal: Number(cachedData?.subtotal) || prev.subtotal || 0,
+              total: Number(cachedData?.total) || prev.total || 0,
               status: "Confirmed",
               loading: false,
             }));

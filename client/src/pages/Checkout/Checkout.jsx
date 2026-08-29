@@ -397,6 +397,24 @@ export default function Checkout() {
       if (!response.ok)
         throw new Error(session.error || "Failed to create payment session");
 
+      // Cache checkout details so OrderConfirmation can render immediately
+      try {
+        localStorage.setItem(
+          "strideCheckoutData",
+          JSON.stringify({
+            customerName: customerFullName,
+            customerEmail: formData.email || currentUser?.email || "",
+            items: checkoutItems,
+            subtotal: subtotal,
+            discount: discount || 0,
+            total: total,
+            createdAt: Date.now(),
+          })
+        );
+      } catch (storageErr) {
+        console.warn("[Checkout] Failed to cache checkout data locally:", storageErr);
+      }
+
       if (!window.Stripe) {
         throw new Error("Stripe script not loaded yet. Please try again in a moment.");
       }
