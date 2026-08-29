@@ -722,6 +722,19 @@ export default function AdminDashboard() {
     return data.secure_url;
   };
 
+  const getAuthHeaders = async () => {
+    try {
+      if (window.auth?.currentUser) {
+        const token = await window.auth.currentUser.getIdToken();
+        return {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        };
+      }
+    } catch (e) {}
+    return { "Content-Type": "application/json" };
+  };
+
   const deleteOldImageFromCloudinary = async (url) => {
     if (!url || !url.includes("cloudinary")) return;
     try {
@@ -733,9 +746,10 @@ export default function AdminDashboard() {
         path.lastIndexOf(".") !== -1
           ? path.substring(0, path.lastIndexOf("."))
           : path;
+      const headers = await getAuthHeaders();
       await fetch(getApiUrl("/api/images/delete"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({ public_id: publicId }),
       });
     } catch (e) {}
@@ -1028,9 +1042,10 @@ export default function AdminDashboard() {
     }
 
     try {
+      const headers = await getAuthHeaders();
       const res = await fetch(getApiUrl("/api/ai/generate-product-image"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           brand: productForm.brand,
           name: productForm.name,
@@ -1092,9 +1107,10 @@ export default function AdminDashboard() {
       setGeneratingAiIndex(i);
       try {
         const block = colorBlocks[i];
+        const headers = await getAuthHeaders();
         const res = await fetch(getApiUrl("/api/ai/generate-product-image"), {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify({
             brand: productForm.brand,
             name: productForm.name,

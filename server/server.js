@@ -201,13 +201,28 @@ app.get("/api/health", async (req, res) => {
 });
 
 
-app.post("/api/images/delete", async (req, res) => {
+const { requireAuth } = require("./middleware/auth");
+
+app.post("/api/images/delete", requireAuth, async (req, res) => {
   const { public_id } = req.body;
+  if (!public_id) {
+    return res.status(400).json({ error: "public_id is required" });
+  }
+
+  // Non-admins can only delete their own avatars
+  const isAdmin = req.user && req.user.role === "admin";
+  const isOwnAvatar = req.user && public_id.includes(req.user.uid);
+
+  if (!isAdmin && !isOwnAvatar) {
+    return res.status(403).json({ error: "Unauthorized to delete this media asset" });
+  }
+
   try {
     const result = await cloudinary.uploader.destroy(public_id);
     res.status(200).json({ message: "Deleted", result });
   } catch (error) {
-    res.status(500).json({ error: "Failed to delete" });
+    console.error("[Cloudinary Delete Error]:", error.message);
+    res.status(500).json({ error: "Failed to delete image" });
   }
 });
 

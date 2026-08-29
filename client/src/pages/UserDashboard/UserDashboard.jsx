@@ -250,9 +250,13 @@ export default function UserDashboard() {
       let path = url.substring(uploadIndex + 7);
       if (path.match(/^v\d+\//)) path = path.replace(/^v\d+\//, "");
       const publicId = path.lastIndexOf(".") !== -1 ? path.substring(0, path.lastIndexOf(".")) : path;
+      const token = auth?.currentUser ? await auth.currentUser.getIdToken() : "";
       await fetch(getApiUrl("/api/images/delete"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { "Authorization": `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({ public_id: publicId }),
       });
     } catch (error) { console.error("Delete old image error:", error); }

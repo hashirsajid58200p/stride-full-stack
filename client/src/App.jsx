@@ -1,5 +1,61 @@
-import React from "react";
-import { Routes, Route, useLocation } from "react-router-dom"; // useLocation add kiya
+import React, { useEffect, useState } from "react";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+
+// Admin Protected Route Guard
+function AdminRouteGuard({ children }) {
+  const [authorized, setAuthorized] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    const checkAdmin = () => {
+      if (!window.auth) {
+        // Retry shortly if Firebase is still initializing
+        const t = setTimeout(() => {
+          if (window.auth?.currentUser) {
+            window.auth.currentUser.getIdTokenResult().then((res) => {
+              if (isMounted) setAuthorized(res.claims?.role === "admin" || localStorage.getItem("userRole") === "admin");
+            }).catch(() => { if (isMounted) setAuthorized(false); });
+          } else {
+            if (isMounted) setAuthorized(localStorage.getItem("userRole") === "admin");
+          }
+        }, 500);
+        return () => clearTimeout(t);
+      }
+
+      const unsubscribe = window.auth.onAuthStateChanged(async (user) => {
+        if (!user) {
+          if (isMounted) setAuthorized(false);
+          return;
+        }
+        try {
+          const res = await user.getIdTokenResult();
+          const isAdmin = res.claims?.role === "admin" || localStorage.getItem("userRole") === "admin";
+          if (isMounted) setAuthorized(isAdmin);
+        } catch (e) {
+          if (isMounted) setAuthorized(false);
+        }
+      });
+
+      return () => unsubscribe();
+    };
+
+    const cleanup = checkAdmin();
+    return () => {
+      isMounted = false;
+      if (typeof cleanup === "function") cleanup();
+    };
+  }, []);
+
+  if (authorized === null) {
+    return <Loader />;
+  }
+
+  if (!authorized) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+}
 
 // Components
 import Header from "./components/Layout/Header";
@@ -26,7 +82,6 @@ import Contact from "./pages/Contact";
 import FAQ from "./pages/FAQ";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ReturnExchange from "./pages/ReturnExchange";
-import { useEffect } from "react";
 
 function App() {
   const location = useLocation();
@@ -181,7 +236,14 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
 
           <Route path="/user-dashboard" element={<UserDashboard />} />
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route
+            path="/admin-dashboard"
+            element={
+              <AdminRouteGuard>
+                <AdminDashboard />
+              </AdminRouteGuard>
+            }
+          />
 
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<FAQ />} />

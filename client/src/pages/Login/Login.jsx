@@ -50,14 +50,9 @@ export default function Login() {
         throw new Error(result.error || "Server verification failed");
       }
 
-      const db = getDatabase();
-      const roleRef = ref(db, `users/${user.uid}/role`);
-      const snapshot = await get(roleRef);
-
-      let userRole = "client";
-      if (snapshot.exists()) {
-        userRole = snapshot.val();
-      }
+      // Authoritative Firebase Custom Claims verification
+      const idTokenResult = await user.getIdTokenResult(true);
+      const userRole = idTokenResult.claims?.role === "admin" ? "admin" : "client";
 
       if (userRole === "admin") {
         localStorage.setItem("userRole", "admin");
