@@ -999,7 +999,7 @@ export default function AdminDashboard() {
 
     setGeneratingAiIndex(bIdx);
     if (window.showToast) {
-      window.showToast(`✨ Generating AI shoe image for ${block.color}...`, "info");
+      window.showToast(`Generating AI shoe image for ${block.color}...`, "info");
     }
 
     try {
@@ -1031,7 +1031,7 @@ export default function AdminDashboard() {
       });
 
       if (window.showToast) {
-        window.showToast(`✨ AI image ready for ${block.color}!`, "success");
+        window.showToast(`AI image ready for ${block.color}`, "success");
       }
     } catch (err) {
       console.error("AI Image Generation Error:", err);
@@ -1046,21 +1046,21 @@ export default function AdminDashboard() {
   const handleGenerateAllAiImages = async () => {
     if (!productForm.name || !productForm.brand) {
       if (window.showToast) {
-        window.showToast("Please enter Brand and Product Name first!", "error");
+        window.showToast("Please enter Brand and Product Name first", "error");
       }
       return;
     }
 
     if (colorBlocks.length === 0) {
       if (window.showToast) {
-        window.showToast("Please select at least one color variant!", "error");
+        window.showToast("Please select at least one color variant", "error");
       }
       return;
     }
 
     setIsGeneratingAllAi(true);
     if (window.showToast) {
-      window.showToast(`✨ Generating AI images for ${colorBlocks.length} variants...`, "info");
+      window.showToast(`Generating AI images for ${colorBlocks.length} variants...`, "info");
     }
 
     for (let i = 0; i < colorBlocks.length; i++) {
@@ -1099,9 +1099,10 @@ export default function AdminDashboard() {
     setGeneratingAiIndex(null);
     setIsGeneratingAllAi(false);
     if (window.showToast) {
-      window.showToast("✨ All AI product images generated!", "success");
+      window.showToast("All AI product images generated successfully", "success");
     }
   };
+
 
 
   // ==========================================
@@ -2108,7 +2109,7 @@ export default function AdminDashboard() {
                           </>
                         ) : (
                           <>
-                            <i className="bi bi-stars"></i>
+                            <i className="bi bi-cpu"></i>
                             <span>Generate All with AI</span>
                           </>
                         )}
@@ -2192,7 +2193,7 @@ export default function AdminDashboard() {
                                 <div className={styles["media-source-tag"]}>
                                   {block.existingUrl && !block.file ? (
                                     <span className={styles["badge-ai"]}>
-                                      <i className="bi bi-stars"></i> AI Generated
+                                      <i className="bi bi-cpu"></i> AI Generated
                                     </span>
                                   ) : (
                                     <span className={styles["badge-file"]}>
@@ -2214,7 +2215,7 @@ export default function AdminDashboard() {
                                     }
                                     title="Generate a new variation with AI"
                                   >
-                                    <i className="bi bi-arrow-clockwise"></i>
+                                    <i className="bi bi-arrow-repeat"></i>
                                     <span>Re-generate AI</span>
                                   </button>
 
@@ -2264,7 +2265,7 @@ export default function AdminDashboard() {
                                   }
                                 >
                                   <div className={styles["dropzone-ai-icon"]}>
-                                    <i className="bi bi-stars"></i>
+                                    <i className="bi bi-cpu"></i>
                                   </div>
                                   <div className={styles["dropzone-ai-content"]}>
                                     <strong>Generate with AI</strong>
