@@ -6,7 +6,6 @@ import { onAuthStateChanged } from "firebase/auth";
 import { API_BASE_URL, getApiUrl } from "../../../utils/apiConfig";
 
 export default function Support() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -62,7 +61,6 @@ export default function Support() {
             sender: m.sender,
             timestamp: m.created_at
           }));
-          // Merge with initial message
           setMessages((prev) => [prev[0], ...history]);
         }
       };
@@ -80,7 +78,7 @@ export default function Support() {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Hi there! Welcome to Stride. How can I help you find the perfect sneakers or track an order today?",
+      text: "Hello! Welcome to Stride Concierge. How can I assist you with sneakers, sizes, or orders today?",
       sender: "ai",
       timestamp: new Date().toISOString()
     },
@@ -121,7 +119,7 @@ export default function Support() {
 
     const systemConnectingMsg = {
       id: Date.now() + 1,
-      text: "Support ticket opened. Connecting you to a live Stride specialist...",
+      text: "Live support ticket opened. Connecting with a Stride specialist...",
       sender: "system",
       timestamp: new Date().toISOString()
     };
@@ -170,7 +168,7 @@ export default function Support() {
 
     const systemExitMsg = {
       id: Date.now(),
-      text: "You have returned to Stride AI Assistant.",
+      text: "You are now chatting with Stride AI Concierge.",
       sender: "system",
       timestamp: new Date().toISOString()
     };
@@ -184,7 +182,6 @@ export default function Support() {
   };
 
   const chatBodyRef = useRef(null);
-  const wrapperRef = useRef(null);
 
   // Scroll to bottom whenever messages change
   useEffect(() => {
@@ -192,39 +189,6 @@ export default function Support() {
       chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
     }
   }, [messages, isTyping]);
-
-  // Click outside to close menu
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (
-        isMenuOpen &&
-        wrapperRef.current &&
-        !wrapperRef.current.contains(e.target)
-      ) {
-        setIsMenuOpen(false);
-      }
-    };
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, [isMenuOpen]);
-
-  const handleToggle = () => {
-    if (isChatOpen) {
-      setIsChatOpen(false);
-      return;
-    }
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleOpenChat = (e) => {
-    if (e) e.stopPropagation();
-    setIsMenuOpen(false);
-    setIsChatOpen(true);
-  };
-
-  const handleCloseChat = () => {
-    setIsChatOpen(false);
-  };
 
   const handleTrackOrder = async (orderId, city) => {
     try {
@@ -279,7 +243,6 @@ export default function Support() {
     setInputValue("");
 
     if (chatMode === "live") {
-      // Send to Socket (for Live Admin)
       if (socket.current) {
         socket.current.emit("send-to-admin", {
           userId: activeUserId,
@@ -288,7 +251,7 @@ export default function Support() {
           timestamp: new Date()
         });
       }
-      return; // Do not call AI
+      return;
     }
 
     // 2. Show thinking state
@@ -306,7 +269,6 @@ export default function Support() {
     }
 
     try {
-      // 3. API Call (Streaming)
       const response = await fetch(getApiUrl("/api/chat/ask"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -319,13 +281,12 @@ export default function Support() {
 
       if (!response.ok) throw new Error("Connection failed");
 
-      // 4. Create an empty AI message to fill
       const aiMsgId = Date.now() + 1;
       setMessages((prev) => [
         ...prev,
         { id: aiMsgId, text: "", sender: "ai", timestamp: new Date().toISOString() },
       ]);
-      setIsTyping(false); // Hide "thinking" once streaming starts
+      setIsTyping(false);
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
@@ -347,7 +308,6 @@ export default function Support() {
               const json = JSON.parse(dataStr);
               if (json.content) {
                 fullText += json.content;
-                // Update the specific message by its ID
                 setMessages((prev) => 
                   prev.map((msg) => 
                     msg.id === aiMsgId ? { ...msg, text: fullText } : msg
@@ -383,93 +343,73 @@ export default function Support() {
   };
 
   const quickPrompts = [
-    { label: "Best Running Shoes", prompt: "Recommend the best running sneakers currently available." },
-    { label: "Track My Order", prompt: "How can I track my order status?" },
-    { label: "Latest Drops", prompt: "What are the latest shoe releases and trending drops?" },
+    { icon: "bi-lightning-charge", label: "Best Running Shoes", prompt: "Recommend the best running sneakers currently available in store." },
+    { icon: "bi-box-seam", label: "Track My Order", prompt: "How can I track my order status?" },
+    { icon: "bi-fire", label: "Trending Drops", prompt: "What are the latest shoe releases and trending sneakers?" },
+    { icon: "bi-rulers", label: "Sizing Guide", prompt: "How do shoe sizes fit for Nike, Adidas and Puma at Stride?" },
   ];
 
   return (
     <>
-      {/* Floating Support Launcher (Hidden when chat is active to avoid double buttons) */}
+      {/* Floating Modern Launcher Pill */}
       {!isChatOpen && (
-        <div
-          ref={wrapperRef}
-          className={`${styles["support-widget-wrapper"]} ${isMenuOpen ? styles.open : ""}`}
-          id="supportWidgetWrapper"
+        <button
+          className={styles["support-pill-launcher"]}
+          onClick={() => setIsChatOpen(true)}
+          aria-label="Open Stride Assistant"
         >
-          <button
-            className={styles["support-toggle-btn"]}
-            onClick={handleToggle}
-            aria-label="Support Options"
-            title="Need help?"
-          >
-            <i className={`bi ${isMenuOpen ? "bi-x-lg" : "bi-chat-dots-fill"}`}></i>
-            <span className={styles["pulse-ring"]}></span>
-          </button>
+          <div className={styles["launcher-icon-box"]}>
+            <i className="bi bi-chat-heart-fill"></i>
+            <span className={styles["launcher-status-dot"]}></span>
+          </div>
+          <div className={styles["launcher-label"]}>
+            <strong>Stride Concierge</strong>
+            <span>Online</span>
+          </div>
+        </button>
+      )}
 
-          <div className={styles["support-menu"]}>
-            <button
-              className={styles["support-option-btn"]}
-              aria-label="Stride AI Chat"
-              onClick={handleOpenChat}
-            >
-              <i className={`bi bi-robot ${styles["icon-ai"]}`}></i>
-            </button>
+      {/* Modern Streetwear Concierge Chat Window */}
+      <div
+        className={`${styles["concierge-window"]} ${isChatOpen ? styles.active : ""}`}
+      >
+        {/* Top Luxury Header */}
+        <div className={styles["concierge-header"]}>
+          <div className={styles["header-brand-info"]}>
+            <div className={styles["concierge-avatar"]}>
+              <span>S</span>
+              <span className={styles["avatar-online-ring"]}></span>
+            </div>
+            <div className={styles["concierge-titles"]}>
+              <div className={styles["concierge-name-row"]}>
+                <h3>Stride Concierge</h3>
+                <span className={styles["badge-mode"]}>
+                  {chatMode === "live" ? "Live Agent" : "AI"}
+                </span>
+              </div>
+              <p>
+                {chatMode === "live"
+                  ? "Connected with human specialist"
+                  : "24/7 Footwear & Order Assistant"}
+              </p>
+            </div>
+          </div>
+
+          <div className={styles["header-nav-actions"]}>
             <a
               href="https://wa.me/1234567890"
               target="_blank"
               rel="noreferrer"
-              className={styles["support-option-btn"]}
-              aria-label="WhatsApp Support"
+              className={styles["header-icon-link"]}
+              title="Chat on WhatsApp"
             >
-              <i className={`bi bi-whatsapp ${styles["icon-whatsapp"]}`}></i>
+              <i className="bi bi-whatsapp"></i>
             </a>
-          </div>
-        </div>
-      )}
 
-      {/* Modern AI / Live Chat Widget */}
-      <div
-        className={`${styles["ai-chatbox"]} ${isChatOpen ? styles.active : ""}`}
-      >
-        {/* Header */}
-        <div className={styles["chatbox-header"]}>
-          <div className={styles["chatbox-title-container"]}>
-            <div className={styles["chatbox-avatar-wrapper"]}>
-              <i className={`bi ${chatMode === "live" ? "bi-headset" : "bi-robot"}`}></i>
-              <span className={styles["online-indicator"]}></span>
-            </div>
-            <div className={styles["chatbox-title"]}>
-              <strong>{chatMode === "live" ? "Live Specialist" : "Stride AI"}</strong>
-              <span>
-                {chatMode === "live" ? "Connected to Support" : "Instant 24/7 Footwear Help"}
-              </span>
-            </div>
-          </div>
-
-          <div className={styles["header-actions"]}>
-            {chatMode === "ai" ? (
-              <button
-                className={styles["connect-agent-btn"]}
-                onClick={handleConnectLive}
-                title="Connect to Human Support Specialist"
-              >
-                <i className="bi bi-headset"></i>
-                <span>Human Agent</span>
-              </button>
-            ) : (
-              <button
-                className={styles["exit-live-btn"]}
-                onClick={handleExitLive}
-                title="Return to AI Assistant"
-              >
-                <i className="bi bi-robot"></i>
-                <span>AI Mode</span>
-              </button>
-            )}
             <button
-              className={styles["chatbox-close-btn"]}
-              onClick={handleCloseChat}
+              type="button"
+              className={styles["header-close-btn"]}
+              onClick={() => setIsChatOpen(false)}
               title="Close chat"
               aria-label="Close"
             >
@@ -478,13 +418,47 @@ export default function Support() {
           </div>
         </div>
 
-        {/* Message Body */}
-        <div className={styles["chatbox-body"]} ref={chatBodyRef}>
+        {/* Mode Switcher Tab Bar */}
+        <div className={styles["mode-tab-bar"]}>
+          <button
+            type="button"
+            className={`${styles["mode-tab-item"]} ${chatMode === "ai" ? styles["tab-active"] : ""}`}
+            onClick={chatMode === "live" ? handleExitLive : undefined}
+          >
+            <i className="bi bi-cpu"></i>
+            <span>AI Concierge</span>
+          </button>
+
+          <button
+            type="button"
+            className={`${styles["mode-tab-item"]} ${chatMode === "live" ? styles["tab-active"] : ""}`}
+            onClick={chatMode === "ai" ? handleConnectLive : undefined}
+          >
+            <i className="bi bi-headset"></i>
+            <span>Human Specialist</span>
+          </button>
+        </div>
+
+        {/* Messages Body */}
+        <div className={styles["concierge-body"]} ref={chatBodyRef}>
+          {/* Welcome Card */}
+          {messages.length <= 1 && (
+            <div className={styles["welcome-card"]}>
+              <div className={styles["welcome-badge"]}>
+                <i className="bi bi-stars"></i> Instant Sneaker Help
+              </div>
+              <h4>Welcome to Stride Concierge</h4>
+              <p>
+                Ask about shoe recommendations, sizing, materials, or track an existing order.
+              </p>
+            </div>
+          )}
+
           {messages.map((msg, idx, arr) => {
             if (msg.sender === "system") {
               return (
-                <div key={msg.id || idx} className={styles["msg-system"]}>
-                  <i className="bi bi-info-circle"></i>
+                <div key={msg.id || idx} className={styles["msg-system-pill"]}>
+                  <i className="bi bi-info-circle-fill"></i>
                   <span>{msg.text}</span>
                 </div>
               );
@@ -497,43 +471,42 @@ export default function Support() {
               new Date(msg.timestamp).toDateString() !== new Date(prevMsg.timestamp).toDateString()
             );
 
-            const isAi = msg.sender === "ai";
-            const isAdmin = msg.sender === "admin";
             const isUser = msg.sender === "user";
+            const isAdmin = msg.sender === "admin";
 
             return (
               <React.Fragment key={msg.id || idx}>
                 {showDateDivider && (
-                  <div className={styles["dateDivider"]}>
+                  <div className={styles["date-divider"]}>
                     <span>{formatDividerDate(msg.timestamp)}</span>
                   </div>
                 )}
 
                 <div
-                  className={`${styles["chat-msg-row"]} ${
-                    isUser ? styles["row-user"] : styles["row-bot"]
+                  className={`${styles["msg-row"]} ${
+                    isUser ? styles["msg-row-user"] : styles["msg-row-bot"]
                   }`}
                 >
                   {!isUser && (
-                    <div className={styles["msg-avatar"]}>
-                      <i className={`bi ${isAdmin ? "bi-person-badge-fill" : "bi-robot"}`}></i>
+                    <div className={styles["bot-mini-avatar"]}>
+                      <i className={`bi ${isAdmin ? "bi-person-badge-fill" : "bi-cpu"}`}></i>
                     </div>
                   )}
 
-                  <div className={styles["msg-bubble-container"]}>
+                  <div className={styles["msg-content-wrapper"]}>
                     <div
-                      className={`${styles["chat-msg"]} ${
+                      className={`${styles["bubble"]} ${
                         isUser
-                          ? styles["msg-user"]
+                          ? styles["bubble-user"]
                           : isAdmin
-                          ? styles["msg-admin"]
-                          : styles["msg-ai"]
+                          ? styles["bubble-admin"]
+                          : styles["bubble-bot"]
                       }`}
                     >
                       {msg.text}
                     </div>
                     {msg.timestamp && (
-                      <span className={styles["msg-timestamp"]}>
+                      <span className={styles["bubble-time"]}>
                         {formatTime(msg.timestamp)}
                       </span>
                     )}
@@ -543,33 +516,34 @@ export default function Support() {
             );
           })}
 
-          {/* Typing Animation */}
+          {/* Typing Indicator */}
           {isTyping && (
-            <div className={`${styles["chat-msg-row"]} ${styles["row-bot"]}`}>
-              <div className={styles["msg-avatar"]}>
-                <i className="bi bi-robot"></i>
+            <div className={`${styles["msg-row"]} ${styles["msg-row-bot"]}`}>
+              <div className={styles["bot-mini-avatar"]}>
+                <i className="bi bi-cpu"></i>
               </div>
-              <div className={styles["typing-bubble"]}>
-                <span className={styles["typing-dot"]}></span>
-                <span className={styles["typing-dot"]}></span>
-                <span className={styles["typing-dot"]}></span>
+              <div className={styles["typing-indicator-box"]}>
+                <span></span>
+                <span></span>
+                <span></span>
               </div>
             </div>
           )}
 
-          {/* Quick Suggestion Chips (Shown on initial conversation) */}
+          {/* Suggested Quick Prompt Chips */}
           {messages.length <= 2 && !isTyping && chatMode === "ai" && (
-            <div className={styles["quick-chips-container"]}>
-              <span className={styles["quick-chips-label"]}>Suggested Questions</span>
-              <div className={styles["quick-chips-list"]}>
+            <div className={styles["prompts-section"]}>
+              <span className={styles["prompts-title"]}>Popular Questions</span>
+              <div className={styles["prompts-grid"]}>
                 {quickPrompts.map((chip, cIdx) => (
                   <button
                     key={cIdx}
                     type="button"
-                    className={styles["quick-chip-btn"]}
+                    className={styles["prompt-chip"]}
                     onClick={() => sendMessageWithText(chip.prompt)}
                   >
-                    {chip.label}
+                    <i className={`bi ${chip.icon}`}></i>
+                    <span>{chip.label}</span>
                   </button>
                 ))}
               </div>
@@ -577,26 +551,34 @@ export default function Support() {
           )}
         </div>
 
-        {/* Input Composer */}
-        <div className={styles["chatbox-input-area"]}>
-          <div className={styles["input-field-wrapper"]}>
+        {/* Bottom Composer */}
+        <div className={styles["concierge-composer"]}>
+          <div className={styles["composer-box"]}>
             <input
               type="text"
-              className={styles["chatbox-input"]}
-              placeholder={chatMode === "live" ? "Message support specialist..." : "Ask anything about shoes or orders..."}
-              autoComplete="off"
+              className={styles["composer-input"]}
+              placeholder={
+                chatMode === "live"
+                  ? "Message human support agent..."
+                  : "Ask anything about shoes, sizing, orders..."
+              }
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
+              autoComplete="off"
             />
             <button
-              className={styles["chatbox-send-btn"]}
+              type="button"
+              className={styles["composer-send-btn"]}
               onClick={handleSendMessage}
               disabled={!inputValue.trim()}
               title="Send Message"
             >
-              <i className="bi bi-arrow-up-short"></i>
+              <i className="bi bi-arrow-up"></i>
             </button>
+          </div>
+          <div className={styles["composer-footer-note"]}>
+            <span>⚡ Powered by Stride AI Engine</span>
           </div>
         </div>
       </div>
