@@ -2817,26 +2817,51 @@ input[placeholder="Stock Qty"]::placeholder {
 }
 
 /* Brand Distribution HTML Legend */
+.target-chart {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.target-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+  min-height: 0;
+}
+
 .brand-legend-container {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.45rem;
-  max-height: 190px;
+  gap: 0.35rem;
+  flex: 1;
+  max-height: 180px;
   overflow-y: auto;
-  padding: 0.35rem;
+  padding: 0.2rem 0.25rem 0.6rem 0.25rem;
   scrollbar-width: thin;
+}
+
+.brand-legend-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.brand-legend-container::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
 }
 
 .brand-legend-chip {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.35rem 0.6rem;
-  border-radius: 8px;
+  gap: 0.4rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 7px;
   background: var(--color-bg);
   border: 1px solid var(--color-border);
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   transition: all 0.15s ease;
 }
 
@@ -2846,8 +2871,8 @@ input[placeholder="Stock Qty"]::placeholder {
 }
 
 .brand-legend-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -2862,11 +2887,11 @@ input[placeholder="Stock Qty"]::placeholder {
 }
 
 .brand-legend-count {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
   color: var(--color-muted-fg);
   background: var(--color-secondary);
-  padding: 0.1rem 0.4rem;
+  padding: 0.05rem 0.35rem;
   border-radius: 4px;
 }
 

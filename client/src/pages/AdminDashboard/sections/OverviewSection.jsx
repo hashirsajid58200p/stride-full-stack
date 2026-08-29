@@ -228,12 +228,12 @@ const OverviewSection = ({
               {products.length} Total Sneakers in Catalog
             </p>
           </div>
-          <div className={styles["target-content"]} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.75rem", flex: 1 }}>
+          <div className={styles["target-content"]}>
             <div
               style={{
                 position: "relative",
-                width: "135px",
-                height: "135px",
+                width: "110px",
+                height: "110px",
                 margin: "0 auto",
                 flexShrink: 0
               }}
