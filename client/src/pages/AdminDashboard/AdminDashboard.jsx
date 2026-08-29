@@ -822,7 +822,7 @@ export default function AdminDashboard() {
           const customName = `${productForm.brand}-${productForm.name}-${block.color}`;
           finalUrl = await uploadImageToCloudinary(
             block.file,
-            "stride/stride_products",
+            "stride/products",
             customName,
           );
           if (block.existingUrl)
