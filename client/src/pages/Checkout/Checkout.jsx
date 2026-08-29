@@ -303,7 +303,7 @@ export default function Checkout() {
       return;
     }
     setCountryError(false);
-    localStorage.setItem("strideCheckoutData", JSON.stringify(formData));
+    localStorage.setItem("strideShippingFormData", JSON.stringify(formData));
     goToStep(2);
   };
 
@@ -359,17 +359,44 @@ export default function Checkout() {
     const checkoutItems = cartItems.map((item) => {
       let finalPrice = item.price;
       if (appliedOffer && item.id === discountTargetId) {
-        // If it's an overall coupon, only apply discount to ONE unit in the line item total
-        // But Stripe expects price per unit. To keep it simple, we'll apply the discount proportion
-        // or just subtract from the unit price. 
-        // User said "subtracts the percentage amount from that product".
         finalPrice = item.price - (item.price * (appliedOffer.discount_percentage / 100));
       }
       return { ...item, price: Math.max(0, finalPrice) };
     });
 
+    const customerFullName =
+      `${formData.fname || ""} ${formData.lname || ""}`.trim() ||
+      currentUser?.displayName ||
+      "Customer";
+    const customerEmail = formData.email || currentUser?.email || "";
+
+    // Cache checkout details immediately before API call
+    const checkoutPayload = {
+      customerName: customerFullName,
+      customerEmail: customerEmail,
+      items: checkoutItems,
+      subtotal: Number(subtotal) || 0,
+      discount: Number(discount) || 0,
+      total: Number(finalTotal) || 0,
+      shippingCost: Number(selectedShippingCost) || 0,
+      shippingInfo: {
+        address: formData.address,
+        apartment: formData.apartment,
+        city: formData.city,
+        country: formData.country,
+        postalCode: formData.postal || formData.postalCode || "",
+        phone: formData.phone || "",
+      },
+      createdAt: Date.now(),
+    };
+
     try {
-      const customerFullName = `${formData.fname || ""} ${formData.lname || ""}`.trim() || (currentUser?.displayName) || "Customer";
+      localStorage.setItem("strideCheckoutData", JSON.stringify(checkoutPayload));
+    } catch (storageErr) {
+      console.warn("[Checkout] Failed to cache checkout data locally:", storageErr);
+    }
+
+    try {
       const response = await fetch(
         getApiUrl("/api/payments/create-checkout-session"),
         {
@@ -377,17 +404,10 @@ export default function Checkout() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             items: checkoutItems,
-            customerEmail: formData.email || currentUser?.email || "",
+            customerEmail: customerEmail,
             customerName: customerFullName,
             userId: currentUser?.uid || null,
-            shippingInfo: {
-              address: formData.address,
-              apartment: formData.apartment,
-              city: formData.city,
-              country: formData.country,
-              postalCode: formData.postal || formData.postalCode || "",
-              phone: formData.phone || "",
-            },
+            shippingInfo: checkoutPayload.shippingInfo,
             appliedDiscount: discount || 0,
           }),
         },
@@ -396,24 +416,6 @@ export default function Checkout() {
       const session = await response.json();
       if (!response.ok)
         throw new Error(session.error || "Failed to create payment session");
-
-      // Cache checkout details so OrderConfirmation can render immediately
-      try {
-        localStorage.setItem(
-          "strideCheckoutData",
-          JSON.stringify({
-            customerName: customerFullName,
-            customerEmail: formData.email || currentUser?.email || "",
-            items: checkoutItems,
-            subtotal: subtotal,
-            discount: discount || 0,
-            total: total,
-            createdAt: Date.now(),
-          })
-        );
-      } catch (storageErr) {
-        console.warn("[Checkout] Failed to cache checkout data locally:", storageErr);
-      }
 
       if (!window.Stripe) {
         throw new Error("Stripe script not loaded yet. Please try again in a moment.");

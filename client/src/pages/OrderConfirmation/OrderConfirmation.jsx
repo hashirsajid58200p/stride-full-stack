@@ -16,7 +16,38 @@ export default function OrderConfirmation() {
   const cachedData = (() => {
     try {
       const raw = localStorage.getItem("strideCheckoutData");
-      if (raw) return JSON.parse(raw);
+      const shippingRaw = localStorage.getItem("strideShippingFormData");
+      const parsed = raw ? JSON.parse(raw) : null;
+      const parsedShipping = shippingRaw ? JSON.parse(shippingRaw) : null;
+
+      const name =
+        parsed?.customerName ||
+        `${parsed?.fname || parsedShipping?.fname || ""} ${parsed?.lname || parsedShipping?.lname || ""}`.trim() ||
+        (window.auth && window.auth.currentUser?.displayName) ||
+        "Customer";
+
+      const email =
+        parsed?.customerEmail ||
+        parsed?.email ||
+        parsedShipping?.email ||
+        (window.auth && window.auth.currentUser?.email) ||
+        "customer@stride.com";
+
+      const items = Array.isArray(parsed?.items) ? parsed.items : [];
+      const total = Number(parsed?.total || parsed?.finalTotal || parsed?.subtotal || 0);
+      const subtotal = Number(parsed?.subtotal) || total;
+      const discount = Number(parsed?.discount) || 0;
+
+      if (parsed || parsedShipping) {
+        return {
+          customerName: name,
+          customerEmail: email,
+          items,
+          subtotal,
+          discount,
+          total,
+        };
+      }
     } catch (e) {
       console.warn("[OrderConfirmation] Error reading cached checkout data:", e);
     }
@@ -29,19 +60,13 @@ export default function OrderConfirmation() {
 
   const [orderState, setOrderState] = useState(() => ({
     id: shortId,
-    name:
-      cachedData?.customerName ||
-      (window.auth && window.auth.currentUser?.displayName) ||
-      "Customer",
-    email:
-      cachedData?.customerEmail ||
-      (window.auth && window.auth.currentUser?.email) ||
-      "customer@stride.com",
+    name: cachedData?.customerName || "Customer",
+    email: cachedData?.customerEmail || "customer@stride.com",
     items: cachedData?.items || [],
     subtotal: Number(cachedData?.subtotal) || 0,
     discount: Number(cachedData?.discount) || 0,
     total: Number(cachedData?.total) || 0,
-    loading: !cachedData,
+    loading: !(cachedData && cachedData.items && cachedData.items.length > 0),
     status: "Confirmed",
   }));
 
