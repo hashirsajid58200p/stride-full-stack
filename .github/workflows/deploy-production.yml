@@ -1,0 +1,85 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-production:
+    name: Gated Zero-Downtime Deploy to Production ASG
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: actions/setup-buildx-action@v3
+
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_PRODUCTION_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+          audience: sts.amazonaws.com
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build & Push Client Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./client
+          push: true
+          tags: |
+            ${{ steps.login-ecr.outputs.registry }}/stride-client-production:${{ github.sha }}
+            ${{ steps.login-ecr.outputs.registry }}/stride-client-production:prod-latest
+
+      - name: Build & Push Server Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./server
+          push: true
+          tags: |
+            ${{ steps.login-ecr.outputs.registry }}/stride-server-production:${{ github.sha }}
+            ${{ steps.login-ecr.outputs.registry }}/stride-server-production:prod-latest
+
+      - name: Trigger Production Rolling ASG Refresh (100% Min Healthy)
+        id: refresh
+        run: |
+          ASG_NAME="stride-production-asg"
+          echo "Initiating zero-downtime instance refresh for $ASG_NAME..."
+          REFRESH_ID=$(aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name "$ASG_NAME" \
+            --preferences '{"MinHealthyPercentage": 100, "InstanceWarmup": 180, "CheckpointDelay": 60}' \
+            --query "InstanceRefreshId" --output text)
+          echo "refresh_id=$REFRESH_ID" >> $GITHUB_OUTPUT
+          echo "Started Production Instance Refresh: $REFRESH_ID"
+
+      - name: Verify Production Deployment & Health
+        run: |
+          ASG_NAME="stride-production-asg"
+          REFRESH_ID="${{ steps.refresh.outputs.refresh_id }}"
+          echo "Monitoring Production Instance Refresh $REFRESH_ID..."
+          while true; do
+            STATUS=$(aws autoscaling describe-instance-refreshes \
+              --auto-scaling-group-name "$ASG_NAME" \
+              --instance-refresh-ids "$REFRESH_ID" \
+              --query "InstanceRefreshes[0].Status" --output text)
+            echo "Current Status: $STATUS"
+            if [ "$STATUS" = "Successful" ]; then
+              echo "Production deployment finished successfully!"
+              break
+            elif [ "$STATUS" = "Failed" ] || [ "$STATUS" = "Cancelled" ]; then
+              echo "Production instance refresh failed! Triggering emergency rollback/cancellation..."
+              aws autoscaling cancel-instance-refresh --auto-scaling-group-name "$ASG_NAME" || true
+              exit 1
+            fi
+            sleep 20
+          done

@@ -1,0 +1,10 @@
+# Example Production Variables
+aws_region           = "us-east-1"
+project_name         = "stride"
+domain_name          = "stridestore.com"
+subdomain            = ""
+github_repo          = "hashirsajid58200p/stride-full-stack"
+instance_type        = "t3.medium"
+asg_min_size         = 2
+asg_max_size         = 8
+asg_desired_capacity = 2

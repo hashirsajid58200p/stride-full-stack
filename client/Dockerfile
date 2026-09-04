@@ -24,6 +24,10 @@ COPY --from=build /app/dist /usr/share/nginx/html
 # Copy custom Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# Container health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+  CMD wget -qO- http://127.0.0.1:80/healthz || exit 1
+
 EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]

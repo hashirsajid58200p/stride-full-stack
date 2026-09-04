@@ -1,0 +1,10 @@
+# Example Staging Variables
+aws_region           = "us-east-1"
+project_name         = "stride"
+domain_name          = "yourdomain.com"
+subdomain            = "staging"
+github_repo          = "hashirsajid58200p/stride-full-stack"
+instance_type        = "t3.small"
+asg_min_size         = 1
+asg_max_size         = 3
+asg_desired_capacity = 1

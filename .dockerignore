@@ -1,11 +1,29 @@
+# Git & Editor
 .git
 .gitignore
 .vscode
+.idea
 .github
+
+# Dependencies & Build
 node_modules
 client/node_modules
 client/dist
 server/node_modules
+
+# Secrets & Environment
+.env
+.env*
+*.env
 server/serviceAccountKey.json
+*.pem
+*.key
+
+# Media & Documentation
 previews
 *.log
+memory-bank
+ROUND_2_CHANGES.md
+SECURITY_FIXES.md
+README.md
+terraform

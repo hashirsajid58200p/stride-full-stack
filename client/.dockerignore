@@ -1,10 +1,27 @@
+# Dependencies & Build
 node_modules
 dist
-.git
-.gitignore
+.cache
+
+# Environment and Secrets
 .env
-.env.local
+.env*
+*.env
+*.env.local
+
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Git & Editor
+.git
+.gitignore
 .DS_Store
+.vscode
+.idea
+
+# Documentation & Config
+README.md
+Dockerfile*
+docker-compose*

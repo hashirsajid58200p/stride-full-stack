@@ -1,0 +1,84 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [ staging ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-staging:
+    name: Build, Push & Deploy to Staging ASG
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: actions/setup-buildx-action@v3
+
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_STAGING_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+          audience: sts.amazonaws.com
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build & Push Client Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./client
+          push: true
+          tags: |
+            ${{ steps.login-ecr.outputs.registry }}/stride-client-staging:${{ github.sha }}
+            ${{ steps.login-ecr.outputs.registry }}/stride-client-staging:staging-latest
+
+      - name: Build & Push Server Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./server
+          push: true
+          tags: |
+            ${{ steps.login-ecr.outputs.registry }}/stride-server-staging:${{ github.sha }}
+            ${{ steps.login-ecr.outputs.registry }}/stride-server-staging:staging-latest
+
+      - name: Trigger Rolling ASG Instance Refresh
+        id: refresh
+        run: |
+          ASG_NAME="stride-staging-asg"
+          echo "Triggering instance refresh for $ASG_NAME..."
+          REFRESH_ID=$(aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name "$ASG_NAME" \
+            --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 180}' \
+            --query "InstanceRefreshId" --output text)
+          echo "refresh_id=$REFRESH_ID" >> $GITHUB_OUTPUT
+          echo "Started Instance Refresh: $REFRESH_ID"
+
+      - name: Monitor Staging Instance Refresh
+        run: |
+          ASG_NAME="stride-staging-asg"
+          REFRESH_ID="${{ steps.refresh.outputs.refresh_id }}"
+          echo "Waiting for Instance Refresh $REFRESH_ID to succeed..."
+          while true; do
+            STATUS=$(aws autoscaling describe-instance-refreshes \
+              --auto-scaling-group-name "$ASG_NAME" \
+              --instance-refresh-ids "$REFRESH_ID" \
+              --query "InstanceRefreshes[0].Status" --output text)
+            echo "Current Refresh Status: $STATUS"
+            if [ "$STATUS" = "Successful" ]; then
+              echo "Deployment succeeded!"
+              break
+            elif [ "$STATUS" = "Failed" ] || [ "$STATUS" = "Cancelled" ]; then
+              echo "Instance refresh failed with status: $STATUS"
+              exit 1
+            fi
+            sleep 15
+          done

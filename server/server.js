@@ -276,7 +276,16 @@ app.get("/api/config", (req, res) => {
   });
 });
 
-// Server Health Check
+// Process Liveness Health Check (ALB & Container Orchestration)
+app.get(["/healthz", "/api/healthz"], (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Deep System Health Check (Database & Dependencies)
 app.get("/api/health", async (req, res) => {
   try {
     const { error } = await supabaseAdmin.from("products").select("id").limit(1);
