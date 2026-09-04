@@ -23,11 +23,24 @@ const firebaseConfig = {
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
-const googleProvider = new GoogleAuthProvider();
+// Initialize Firebase safely
+let app = null;
+let auth = null;
+let db = null;
+let googleProvider = null;
+
+try {
+  if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "undefined") {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getDatabase(app);
+    googleProvider = new GoogleAuthProvider();
+  } else {
+    console.warn("[Firebase] VITE_FIREBASE_API_KEY is not set in environment.");
+  }
+} catch (err) {
+  console.warn("[Firebase] Initialization error:", err.message);
+}
 
 // Initialize Supabase
 const supabase = createClient(supabaseUrl, supabaseKey);
