@@ -7,9 +7,13 @@ server/node_modules/
 .env
 server/.env
 
-# Firebase/Google Cloud admin keys (CRITICAL)
+# Firebase/Google Cloud admin keys & SSH Keys (CRITICAL)
 serviceAccountKey.json
 server/serviceAccountKey.json
+*.pem
+*.key
+.terraform/
+*.tfstate*
 
 # IDE / Editor folders
 .vscode/

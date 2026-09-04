@@ -1,12 +1,18 @@
 # Active Context: AWS Enterprise Cloud & DevOps Transformation
 
-## Current Focus
-- Completed Phase 1 (Local containerization, security hardening, multi-stage Dockerfiles, and full verification via docker-compose).
-- Completed Phase 3 (Modular Terraform infrastructure for VPC, ALB, ASG, Security Groups, IAM, ECR, Route 53, and separate Staging & Production environments).
-- Completed Phase 4 (Automated Zero-Downtime GitHub Actions CI/CD pipelines for PR checks, Staging continuous delivery, and Production gated rolling updates).
-- Next Step: Awaiting user input on AWS account configurations (Account IDs, Domain, IAM/OIDC credentials) to apply Terraform infrastructure.
+## Current Focus & Live Status
+- **LIVE Deployment (100% Free Tier)**:
+  - Instance ID: `i-02f9e8689d4038b27`
+  - Region: `eu-north-1` (Stockholm)
+  - Public IPv4: `16.170.250.11`
+  - Live Public URL: [http://16.170.250.11/](http://16.170.250.11/)
+  - Cost: **$0.00 / month (100% AWS Free Tier Eligible)**
+- **System Configuration**:
+  - 3.0 GiB Swap memory configured on 20 GiB gp3 SSD to guarantee stability for Node.js + Redis + Nginx on `t3.micro`.
+  - Docker & Docker Compose v2 active.
+  - All 3 containers (`stride-redis`, `stride-server`, `stride-client`) healthy.
+  - `systemd` auto-restart service enabled at `/etc/systemd/system/stride.service`.
 
-## Active Decisions & Architectural Highlights
-- **Container Architecture**: Frontend served via Nginx dual-stack with reverse proxy to backend `/api/` and `/socket.io/` paths. Backend runs Node.js 22 with dumb-init and non-root `node` user for least privilege and graceful signal termination.
-- **Network & Compute Topology**: AWS Multi-AZ architecture with public ALB subnets and private ASG subnets. Instances update/pull via NAT Gateway. No public IP assigned to EC2 instances. Systems Manager (SSM) enabled for keyless shell access.
-- **Zero-Downtime Deployment**: EC2 Auto Scaling Instance Refresh with rolling updates (`min_healthy_percentage = 100` in production) coupled with ALB target group health check validation before terminating old instances.
+## Multi-Account & Terraform Artifacts
+- Terraform modular infrastructure code saved under `terraform/` (VPC, Security, ALB, ASG, IAM, ECR, Route 53) for enterprise scale when needed.
+- CI/CD workflows authored under `.github/workflows/` (PR checks, staging deployment, production rolling release).
