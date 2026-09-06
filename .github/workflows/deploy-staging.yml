@@ -1,8 +1,8 @@
 name: Deploy to Staging
 
+# Manual trigger for staging AWS Auto Scaling Group deployment
+# Requires AWS_STAGING_ROLE_ARN secret in GitHub Actions
 on:
-  push:
-    branches: [ staging ]
   workflow_dispatch:
 
 permissions:

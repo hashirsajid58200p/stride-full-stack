@@ -231,3 +231,17 @@ The database uses PostgreSQL on Supabase with the `pgvector` extension enabled.
 - `sender` — text (Not Null) — Message author type ('user', 'admin', 'ai')
 - `created_at` — timestamp — Delivery timestamp
 
+## 🏗️ DevOps & Cloud Deployment Architecture
+
+Stride features a production-grade dual deployment and cloud architecture:
+
+### ⚡ Live Production (Vercel + Supabase)
+- **Live URL**: [https://stride-full-stack.vercel.app/](https://stride-full-stack.vercel.app/)
+- **Frontend & Serverless API**: Deployed on Vercel with global Edge CDN distribution and optimized asset caching.
+- **Database & Media**: PostgreSQL with Row-Level Security on Supabase, high-resolution media optimized via Cloudinary CDN.
+- **Health Endpoints**: Live process liveness (`/api/healthz`) and deep system connectivity (`/api/health`).
+
+### ☁️ Enterprise AWS Cloud Architecture (IaC)
+- **Terraform Modular Infrastructure (`terraform/`)**: Full Infrastructure as Code covering Multi-AZ VPC, strict Security Groups, Application Load Balancer (ALB), Auto Scaling Groups (ASG) with CPU target tracking, and Amazon Elastic Container Registry (ECR).
+- **Dockerization**: Multi-stage, non-root Node 22 Alpine backend container with dumb-init, Vite + Nginx dual-stack frontend container, and Redis container orchestration via `docker-compose.yml`.
+- **Automated CI/CD**: GitHub Actions pipeline (`.github/workflows/ci.yml`) validating client builds, server syntax, and container compilation on every commit, alongside an on-demand zero-downtime rolling ASG refresh workflow (`deploy-production.yml`).

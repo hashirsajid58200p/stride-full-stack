@@ -1,8 +1,8 @@
 name: Deploy to Production
 
+# Manual trigger for enterprise AWS Auto Scaling Group deployment
+# Requires AWS_PRODUCTION_ROLE_ARN secret in GitHub Actions
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
 
 permissions:

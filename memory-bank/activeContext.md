@@ -1,18 +1,20 @@
-# Active Context: AWS Enterprise Cloud & DevOps Transformation
+# Active Context: Production Deployment & Architecture Blueprint
 
-## Current Focus & Live Status
-- **LIVE Deployment (100% Free Tier)**:
-  - Instance ID: `i-02f9e8689d4038b27`
-  - Region: `eu-north-1` (Stockholm)
-  - Public IPv4: `16.170.250.11`
-  - Live Public URL: [http://16.170.250.11/](http://16.170.250.11/)
-  - Cost: **$0.00 / month (100% AWS Free Tier Eligible)**
-- **System Configuration**:
-  - 3.0 GiB Swap memory configured on 20 GiB gp3 SSD to guarantee stability for Node.js + Redis + Nginx on `t3.micro`.
-  - Docker & Docker Compose v2 active.
-  - All 3 containers (`stride-redis`, `stride-server`, `stride-client`) healthy.
-  - `systemd` auto-restart service enabled at `/etc/systemd/system/stride.service`.
+## Current Focus & Live Production Status
+- **LIVE Production Deployment (100% Free - Vercel Edge)**:
+  - Frontend & Serverless API: [https://stride-full-stack.vercel.app/](https://stride-full-stack.vercel.app/)
+  - Database: PostgreSQL with Row-Level Security on Supabase
+  - Media & Avatars: Cloudinary CDN (all assets verified 200 OK)
+  - Cost: **$0.00 / month (Zero Billing Overhead)**
+  - Health Verification:
+    - `/api/healthz` -> 200 OK (Process Liveness)
+    - `/api/health` -> 200 OK (Deep Database Connectivity)
 
-## Multi-Account & Terraform Artifacts
-- Terraform modular infrastructure code saved under `terraform/` (VPC, Security, ALB, ASG, IAM, ECR, Route 53) for enterprise scale when needed.
-- CI/CD workflows authored under `.github/workflows/` (PR checks, staging deployment, production rolling release).
+## Automated CI/CD & Enterprise Cloud Architecture
+- **Continuous Integration (`.github/workflows/ci.yml`)**:
+  - Automated client build & linting, server syntax check, and client/server Docker container build validation (`push: false`) on every commit to `main` and `staging`.
+  - Runs 100% free on GitHub runners with no external cloud secrets required, ensuring a green repository badge.
+- **Enterprise AWS Modular IaC (`terraform/`)**:
+  - Modular Terraform code for VPC (multi-AZ), Security Groups, ALB, Auto Scaling Groups (ASG) with CPU target tracking, ECR repositories, and IAM least-privilege roles.
+- **On-Demand Zero-Downtime AWS ASG Refresh (`deploy-production.yml`, `deploy-staging.yml`)**:
+  - Maintained as manual `workflow_dispatch` pipelines ready for enterprise AWS deployment whenever OIDC IAM role secrets are provisioned.
