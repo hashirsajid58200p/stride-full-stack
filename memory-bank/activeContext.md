@@ -18,3 +18,14 @@
   - Modular Terraform code for VPC (multi-AZ), Security Groups, ALB, Auto Scaling Groups (ASG) with CPU target tracking, ECR repositories, and IAM least-privilege roles.
 - **On-Demand Zero-Downtime AWS ASG Refresh (`deploy-production.yml`, `deploy-staging.yml`)**:
   - Maintained as manual `workflow_dispatch` pipelines ready for enterprise AWS deployment whenever OIDC IAM role secrets are provisioned.
+
+## Recent Updates & Cloud Asset Management
+- **Cloudinary Storage Optimization**:
+  - All avatars organized under canonical `stride/avatars/` (8 canonical avatars verified).
+  - Legacy root `stride_avatars/*` and obsolete profiles (`FSociety_rcy0vf`) removed.
+  - Reviews referencing old profile updated in Supabase.
+- **Deferred AI Product Image Uploads**:
+  - `/api/ai/generate-product-image` returns preview URLs directly without uploading to Cloudinary upon generation.
+  - Image assets are uploaded to Cloudinary (`stride/products`) strictly when the admin saves the product, eliminating orphaned assets.
+- **Multi-System Product Deletion**:
+  - Product deletion via admin controller automatically purges associated images from Cloudinary while simultaneously removing records from Supabase and cache from Redis.
