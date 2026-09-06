@@ -873,7 +873,27 @@ export default function AdminDashboard() {
           if (block.existingUrl)
             await deleteOldImageFromCloudinary(block.existingUrl);
         } else if (block.existingUrl) {
-          finalUrl = block.existingUrl;
+          // If it's an external AI preview image (not yet hosted on Cloudinary), upload it now
+          if (!block.existingUrl.includes("cloudinary.com")) {
+            const customName = `${productForm.brand}-${productForm.name}-${block.color}`;
+            const headers = await getAuthHeaders();
+            const uploadRes = await fetch(getApiUrl("/api/admin/upload-image-url"), {
+              method: "POST",
+              headers,
+              body: JSON.stringify({
+                url: block.existingUrl,
+                folder: "stride/products",
+                customName,
+              }),
+            });
+            const uploadData = await uploadRes.json();
+            if (!uploadRes.ok || !uploadData.secure_url) {
+              throw new Error(uploadData.error || "Failed to upload AI image to storage");
+            }
+            finalUrl = uploadData.secure_url;
+          } else {
+            finalUrl = block.existingUrl;
+          }
         } else {
           throw new Error(`Missing image for color: ${block.color}`);
         }

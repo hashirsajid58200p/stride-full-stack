@@ -1,4 +1,5 @@
 // server/controllers/adminController.js
+const cloudinary = require("cloudinary").v2;
 const supabaseAdmin = require("../config/supabaseAdmin");
 const embeddingService = require("../services/embeddingService");
 const redisService = require("../services/redisService");
@@ -7,6 +8,63 @@ const { sendError } = require("../utils/safeError");
 // ==========================================
 // PRODUCTS MUTATIONS
 // ==========================================
+/**
+ * Extract Cloudinary public_id from a Cloudinary URL
+ */
+function extractCloudinaryPublicId(url) {
+  if (!url || typeof url !== "string" || !url.includes("cloudinary.com")) return null;
+  try {
+    const uploadIndex = url.indexOf("/upload/");
+    if (uploadIndex === -1) return null;
+    let path = url.substring(uploadIndex + 8);
+    const versionMatch = path.match(/v\d+\/(.+)$/);
+    if (versionMatch) {
+      path = versionMatch[1];
+    } else {
+      const parts = path.split("/");
+      if (parts[0] && (parts[0].includes(",") || parts[0].startsWith("c_") || parts[0].startsWith("w_"))) {
+        parts.shift();
+        path = parts.join("/");
+      }
+    }
+    const queryIdx = path.indexOf("?");
+    if (queryIdx !== -1) path = path.substring(0, queryIdx);
+    const dotIdx = path.lastIndexOf(".");
+    if (dotIdx !== -1) path = path.substring(0, dotIdx);
+    return path;
+  } catch (err) {
+    return null;
+  }
+}
+
+/**
+ * Ensure an image is stored in Cloudinary. If it's an external URL (e.g. AI preview), upload it.
+ */
+async function ensureCloudinaryImage(imageUrl, fallbackSlug = "product") {
+  if (!imageUrl || typeof imageUrl !== "string") return imageUrl;
+  if (imageUrl.includes("res.cloudinary.com")) return imageUrl;
+
+  try {
+    const sanitizedSlug = (fallbackSlug || "product")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    const publicId = `${sanitizedSlug}-${Date.now()}`;
+
+    console.log(`[Admin Save Product] Persisting external/AI image to Cloudinary: ${publicId}`);
+    const uploadResult = await cloudinary.uploader.upload(imageUrl, {
+      folder: "stride/products",
+      asset_folder: "stride/products",
+      public_id: publicId,
+      overwrite: true,
+    });
+    return uploadResult.secure_url;
+  } catch (err) {
+    console.error(`[Admin Save Product] Cloudinary upload failed for ${imageUrl}:`, err.message);
+    return imageUrl;
+  }
+}
+
 
 exports.createProduct = async (req, res) => {
   try {
@@ -18,6 +76,13 @@ exports.createProduct = async (req, res) => {
 
     // 1. Prepare and insert product
     const productInsertData = { ...product };
+    const baseSlug = `${product.brand}-${product.name}`;
+    if (productInsertData.main_image_url) {
+      productInsertData.main_image_url = await ensureCloudinaryImage(
+        productInsertData.main_image_url,
+        `${baseSlug}-main`
+      );
+    }
 
     // Generate semantic embedding on server
     try {
@@ -42,14 +107,21 @@ exports.createProduct = async (req, res) => {
 
     const productId = newProd.id;
 
-    // 2. Insert colors
+    // 2. Insert colors (ensuring any external/AI images are stored in Cloudinary)
     if (Array.isArray(colors) && colors.length > 0) {
-      const colorInserts = colors.map((c) => ({
-        product_id: productId,
-        color_name: c.color_name,
-        color_code: c.color_code || "#000000",
-        image_url: c.image_url || "",
-      }));
+      const colorInserts = [];
+      for (const c of colors) {
+        const colorImageUrl = await ensureCloudinaryImage(
+          c.image_url,
+          `${baseSlug}-${c.color_name || "color"}`
+        );
+        colorInserts.push({
+          product_id: productId,
+          color_name: c.color_name,
+          color_code: c.color_code || "#000000",
+          image_url: colorImageUrl || "",
+        });
+      }
       const { error: colorErr } = await supabaseAdmin.from("product_colors").insert(colorInserts);
       if (colorErr) console.error("[Admin Create Product] Color insert error:", colorErr);
     }
@@ -97,6 +169,13 @@ exports.updateProduct = async (req, res) => {
 
     // 1. Update product details
     const productUpdateData = { ...product };
+    const baseSlug = `${productUpdateData.brand || "product"}-${productUpdateData.name || id}`;
+    if (productUpdateData.main_image_url) {
+      productUpdateData.main_image_url = await ensureCloudinaryImage(
+        productUpdateData.main_image_url,
+        `${baseSlug}-main`
+      );
+    }
 
     try {
       const text = embeddingService.prepareProductText(productUpdateData);
@@ -119,12 +198,19 @@ exports.updateProduct = async (req, res) => {
     if (Array.isArray(colors)) {
       await supabaseAdmin.from("product_colors").delete().eq("product_id", id);
       if (colors.length > 0) {
-        const colorInserts = colors.map((c) => ({
-          product_id: id,
-          color_name: c.color_name,
-          color_code: c.color_code || "#000000",
-          image_url: c.image_url || "",
-        }));
+        const colorInserts = [];
+        for (const c of colors) {
+          const colorImageUrl = await ensureCloudinaryImage(
+            c.image_url,
+            `${baseSlug}-${c.color_name || "color"}`
+          );
+          colorInserts.push({
+            product_id: id,
+            color_name: c.color_name,
+            color_code: c.color_code || "#000000",
+            image_url: colorImageUrl || "",
+          });
+        }
         await supabaseAdmin.from("product_colors").insert(colorInserts);
       }
     }
@@ -155,7 +241,45 @@ exports.deleteProduct = async (req, res) => {
     const { id } = req.params;
     if (!id) return res.status(400).json({ error: "Product ID is required" });
 
-    // Delete related sizes, colors, notifications, and product
+    // Step 1: Query image URLs from Supabase before deleting records
+    const { data: product } = await supabaseAdmin
+      .from("products")
+      .select("id, main_image_url")
+      .eq("id", id)
+      .maybeSingle();
+
+    const { data: colors } = await supabaseAdmin
+      .from("product_colors")
+      .select("image_url")
+      .eq("product_id", id);
+
+    // Step 2: Extract Cloudinary public IDs and destroy assets
+    const imageUrls = new Set();
+    if (product?.main_image_url) imageUrls.add(product.main_image_url);
+    if (Array.isArray(colors)) {
+      colors.forEach((c) => {
+        if (c.image_url) imageUrls.add(c.image_url);
+      });
+    }
+
+    const publicIds = [];
+    for (const url of imageUrls) {
+      const pid = extractCloudinaryPublicId(url);
+      if (pid) publicIds.push(pid);
+    }
+
+    if (publicIds.length > 0) {
+      console.log(`[Admin Delete Product] Removing ${publicIds.length} Cloudinary assets for product ${id}:`, publicIds);
+      for (const pid of publicIds) {
+        try {
+          await cloudinary.uploader.destroy(pid);
+        } catch (cErr) {
+          console.warn(`[Admin Delete Product] Cloudinary destroy failed for ${pid}:`, cErr.message);
+        }
+      }
+    }
+
+    // Step 3: Delete database records across all related tables
     await supabaseAdmin.from("product_sizes").delete().eq("product_id", id);
     await supabaseAdmin.from("product_colors").delete().eq("product_id", id);
     await supabaseAdmin.from("platform_notifications").delete().eq("related_id", id);
@@ -165,9 +289,46 @@ exports.deleteProduct = async (req, res) => {
 
     await redisService.delPattern("search:semantic:*");
 
-    return res.status(200).json({ success: true, message: "Product deleted successfully" });
+    return res.status(200).json({
+      success: true,
+      message: "Product and associated Cloudinary assets deleted successfully",
+      deletedAssetsCount: publicIds.length,
+    });
   } catch (error) {
     return sendError(res, 500, "Failed to delete product", error);
+  }
+};
+
+exports.uploadImageUrl = async (req, res) => {
+  try {
+    const { url, folder, customName } = req.body;
+    if (!url) return res.status(400).json({ error: "Image URL is required" });
+
+    const targetFolder = folder || "stride/products";
+    let publicId;
+    if (customName) {
+      const sanitized = customName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      publicId = `${sanitized}-${Date.now()}`;
+    }
+
+    const uploadOptions = {
+      folder: targetFolder,
+      asset_folder: targetFolder,
+      overwrite: true,
+    };
+    if (publicId) uploadOptions.public_id = publicId;
+
+    const result = await cloudinary.uploader.upload(url, uploadOptions);
+    return res.status(200).json({
+      success: true,
+      secure_url: result.secure_url,
+      public_id: result.public_id,
+    });
+  } catch (error) {
+    return sendError(res, 500, "Failed to upload image URL to Cloudinary", error);
   }
 };
 

@@ -141,25 +141,10 @@ const generateProductImage = async (req, res) => {
     const seed = Math.floor(Math.random() * 999999);
     const aiImageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=800&height=800&model=flux&nologo=true&seed=${seed}`;
 
-    const sanitizedSlug = `${shoeBrand}-${shoeName}-${shoeColor}`
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-
-    const publicId = `${sanitizedSlug}-${Date.now()}`;
-
-    // Upload using shared configured Cloudinary client
-    const uploadResult = await cloudinary.uploader.upload(aiImageUrl, {
-      folder: "stride/products",
-      asset_folder: "stride/products",
-      public_id: publicId,
-      overwrite: true,
-    });
-
+    // Return the preview URL directly. Cloudinary persistence is deferred until the product is saved.
     return res.status(200).json({
       success: true,
-      imageUrl: uploadResult.secure_url,
-      publicId: uploadResult.public_id,
+      imageUrl: aiImageUrl,
       prompt: prompt,
     });
   } catch (error) {

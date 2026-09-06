@@ -11,6 +11,7 @@ router.use(requireAuth, requireAdmin);
 router.post("/products", adminController.createProduct);
 router.put("/products/:id", adminController.updateProduct);
 router.delete("/products/:id", adminController.deleteProduct);
+router.post("/upload-image-url", adminController.uploadImageUrl);
 
 // Inventory
 router.post("/inventory/bulk-update", adminController.bulkUpdateStock);
