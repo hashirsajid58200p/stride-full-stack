@@ -492,7 +492,7 @@ export default function UserDashboard() {
                                     switchView("orders");
                                   }}
                                 >
-                                  <img src={firstItem.img} alt={firstItem.name} />
+                                  <img src={firstItem.img} alt={firstItem.name} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "/images/logos/stride_logo_dark.png"; }} />
                                   <div className={styles["search-item-info"]}>
                                     <span>{firstItem.name} {o.items?.length > 1 ? `+${o.items.length - 1} more` : ""}</span>
                                     <span>Order #{String(o.id).substring(0, 8).toUpperCase()}</span>
@@ -769,7 +769,7 @@ export default function UserDashboard() {
                               className={styles["dash-order-card"]}
                             >
                               <div className={styles["card-img-wrapper"]}>
-                                <img src={firstItem.img} alt={itemName} />
+                                <img src={firstItem.img} alt={itemName} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "/images/logos/stride_logo_dark.png"; }} />
                               </div>
                               <div className={styles["card-main-info"]}>
                                 <h4>{itemName}</h4>
@@ -887,7 +887,7 @@ export default function UserDashboard() {
                     return (
                       <div key={order.id} className={styles["dash-order-card"]}>
                         <div className={styles["card-img-wrapper"]}>
-                          <img src={firstItem.img} alt={itemName} />
+                          <img src={firstItem.img} alt={itemName} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "/images/logos/stride_logo_dark.png"; }} />
                         </div>
                         <div className={styles["card-main-info"]}>
                           <h4>{itemName}</h4>

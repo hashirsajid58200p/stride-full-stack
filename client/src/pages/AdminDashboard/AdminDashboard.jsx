@@ -3109,6 +3109,10 @@ export default function AdminDashboard() {
                                 src={item.img}
                                 className={styles["order-item-img"]}
                                 alt={item.name}
+                                onError={(e) => {
+                                  e.currentTarget.onerror = null;
+                                  e.currentTarget.src = "/images/logos/stride_logo_dark.png";
+                                }}
                               />
                               <div className={styles["order-item-details"]}>
                                 <h5>

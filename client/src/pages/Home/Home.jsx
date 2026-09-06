@@ -667,6 +667,10 @@ export default function Home() {
                         alt={t.user_name || t.name}
                         className={styles["avatar-image"]}
                         loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = "https://res.cloudinary.com/dwagwbklz/image/upload/v1779215289/stride/avatars/cnswpv2ucstlk58bz7id.png";
+                        }}
                       />
                     ) : (
                       <div className={styles["avatar-placeholder"]}>

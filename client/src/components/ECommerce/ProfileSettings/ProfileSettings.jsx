@@ -208,7 +208,14 @@ export default function ProfileSettings({ user, dbUser, setDbUser, onDeleteAccou
                   className={`${styles.avatarItem} ${dbUser.avatarUrl === avatar ? styles.activeAvatar : ""}`}
                   onClick={() => handleAvatarSelect(avatar)}
                 >
-                  <img src={avatar} alt={`Avatar ${idx + 1}`} />
+                  <img
+                    src={avatar}
+                    alt={`Avatar ${idx + 1}`}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = "https://res.cloudinary.com/dwagwbklz/image/upload/v1779215289/stride/avatars/cnswpv2ucstlk58bz7id.png";
+                    }}
+                  />
                 </div>
               ))}
             </div>
