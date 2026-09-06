@@ -6,13 +6,5 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true,
-    headers: {
-      'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
-    },
-  },
-  preview: {
-    headers: {
-      'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
-    },
   },
 })
