@@ -32,10 +32,31 @@ export default function Checkout() {
   }, []);
 
   useEffect(() => {
-    if (currentUser && currentUser.email) {
+    if (currentUser) {
+      // 1. Name parsing from displayName
+      let autoFname = "";
+      let autoLname = "";
+      if (currentUser.displayName) {
+        const parts = currentUser.displayName.trim().split(/\s+/);
+        autoFname = parts[0] || "";
+        autoLname = parts.slice(1).join(" ") || "";
+      }
+
+      // 2. Extra profile info from localStorage
+      let extraData = {};
+      try {
+        const stored = localStorage.getItem(`stride_profile_${currentUser.uid}`);
+        if (stored) extraData = JSON.parse(stored);
+      } catch (e) {}
+
       setFormData((prev) => ({
         ...prev,
-        email: prev.email || currentUser.email,
+        email: prev.email || currentUser.email || "",
+        fname: prev.fname || autoFname || "",
+        lname: prev.lname || autoLname || "",
+        address: prev.address || extraData.address || "",
+        city: prev.city || extraData.city || "",
+        postal: prev.postal || extraData.postalCode || "",
       }));
     }
   }, [currentUser]);

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   createUserWithEmailAndPassword,
   signInWithPopup,
@@ -13,10 +13,14 @@ import SEO from "../../components/SEO/SEO";
 
 export default function Signup() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectParam = searchParams.get("redirect");
+  const emailParam = searchParams.get("email");
+
   const [formData, setFormData] = useState({
     fullName: "",
     mobile: "",
-    email: "",
+    email: emailParam || "",
     address: "",
     postalCode: "",
     password: "",
@@ -113,8 +117,11 @@ export default function Signup() {
       if (window.showToast)
         window.showToast("Account created successfully!", "success");
 
-      // 5. Redirect
-      setTimeout(() => navigate("/login"), 2000);
+      // 5. Redirect preserving login query parameters
+      const targetLoginUrl = redirectParam
+        ? `/login?redirect=${encodeURIComponent(redirectParam)}&email=${encodeURIComponent(formData.email)}`
+        : "/login";
+      setTimeout(() => navigate(targetLoginUrl), 2000);
     } catch (error) {
       console.error("Signup Error:", error);
       let errorMessage = "Failed to create account.";
@@ -160,7 +167,10 @@ export default function Signup() {
 
       if (window.showToast)
         window.showToast("Google account linked successfully!", "success");
-      setTimeout(() => navigate("/login"), 2000);
+      const targetLoginUrl = redirectParam
+        ? `/login?redirect=${encodeURIComponent(redirectParam)}&email=${encodeURIComponent(formData.email)}`
+        : "/login";
+      setTimeout(() => navigate(targetLoginUrl), 2000);
     } catch (error) {
       console.error("Google Signup Error:", error);
       if (window.showToast) window.showToast("Google Sign-Up failed", "error");
@@ -309,7 +319,16 @@ export default function Signup() {
             </button>
 
             <p className={styles["login-link"]}>
-              Already have an account? <Link to="/login">Sign In</Link>
+              Already have an account?{" "}
+              <Link
+                to={
+                  redirectParam
+                    ? `/login?redirect=${encodeURIComponent(redirectParam)}${formData.email ? `&email=${encodeURIComponent(formData.email)}` : ""}`
+                    : "/login"
+                }
+              >
+                Sign In
+              </Link>
             </p>
 
             <div className={styles.divider}>

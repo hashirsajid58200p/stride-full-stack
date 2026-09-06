@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { auth, db } from "../../../firebaseConfig";
+import { ref, set, get } from "firebase/database";
 import styles from "./Wishlist.module.css";
 
 // ==========================================
@@ -8,15 +10,45 @@ import styles from "./Wishlist.module.css";
 if (typeof window !== "undefined" && !window.WishlistEngine) {
   window.WishlistEngine = {
     getKey: function () {
-      return window.auth && window.auth.currentUser
-        ? `strideWishlist_${window.auth.currentUser.uid}`
-        : "strideWishlist_guest";
+      const user = (window.auth && window.auth.currentUser) || auth?.currentUser;
+      if (user) {
+        return `strideWishlist_${user.uid}`;
+      }
+      return "strideWishlist_guest";
     },
     get: function () {
-      return JSON.parse(localStorage.getItem(this.getKey())) || [];
+      const user = (window.auth && window.auth.currentUser) || auth?.currentUser;
+      const key = this.getKey();
+      let localItems = JSON.parse(localStorage.getItem(key)) || [];
+
+      // If user is logged in and primary local list is empty, try email-based key
+      if (localItems.length === 0 && user?.email) {
+        const emailKey = `strideWishlist_${user.email.toLowerCase().replace(/[^a-z0-9]/g, "_")}`;
+        localItems = JSON.parse(localStorage.getItem(emailKey)) || [];
+        if (localItems.length > 0) {
+          localStorage.setItem(key, JSON.stringify(localItems));
+        }
+      }
+
+      return localItems;
     },
     save: function (list, triggerEvent = true) {
-      localStorage.setItem(this.getKey(), JSON.stringify(list));
+      const key = this.getKey();
+      localStorage.setItem(key, JSON.stringify(list));
+
+      const user = (window.auth && window.auth.currentUser) || auth?.currentUser;
+      if (user) {
+        if (user.email) {
+          const emailKey = `strideWishlist_${user.email.toLowerCase().replace(/[^a-z0-9]/g, "_")}`;
+          localStorage.setItem(emailKey, JSON.stringify(list));
+        }
+        if (db) {
+          try {
+            set(ref(db, `users/${user.uid}/wishlist`), list).catch(() => {});
+          } catch (e) {}
+        }
+      }
+
       if (triggerEvent) {
         window.dispatchEvent(new Event("wishlistUpdated"));
       }
@@ -45,9 +77,13 @@ if (typeof window !== "undefined" && !window.WishlistEngine) {
       );
     },
     toggleFromCard: function (product) {
-      const userRole = localStorage.getItem("userRole");
-      if (!userRole && (!window.auth || !window.auth.currentUser)) {
-        window.location.href = "/login"; // Redirect in React environment
+      const user = (window.auth && window.auth.currentUser) || auth?.currentUser;
+      if (!user) {
+        if (window.showToast) {
+          window.showToast("Please sign in to save items to your wishlist", "info");
+        }
+        const currentPath = window.location.pathname + window.location.search;
+        window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
         return false;
       }
       let list = this.get();
@@ -78,9 +114,13 @@ if (typeof window !== "undefined" && !window.WishlistEngine) {
       return isNowWished;
     },
     toggleSpecific: function (product, color, img) {
-      const userRole = localStorage.getItem("userRole");
-      if (!userRole && (!window.auth || !window.auth.currentUser)) {
-        window.location.href = "/login";
+      const user = (window.auth && window.auth.currentUser) || auth?.currentUser;
+      if (!user) {
+        if (window.showToast) {
+          window.showToast("Please sign in to save items to your wishlist", "info");
+        }
+        const currentPath = window.location.pathname + window.location.search;
+        window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
         return false;
       }
       let list = this.get();
@@ -144,10 +184,28 @@ export default function Wishlist() {
     const handleUpdate = () => loadWishlist();
     window.addEventListener("wishlistUpdated", handleUpdate);
 
-    // Listener for Auth changes
-    const authListener = () => loadWishlist();
+    // Listener for Auth changes and Cloud Wishlist Sync
+    const authListener = async (currentUser) => {
+      const activeUser = currentUser || (window.auth && window.auth.currentUser) || auth?.currentUser;
+      if (activeUser && db) {
+        try {
+          const snap = await get(ref(db, `users/${activeUser.uid}/wishlist`));
+          if (snap.exists()) {
+            const remoteList = snap.val();
+            if (Array.isArray(remoteList) && remoteList.length > 0) {
+              const localKey = `strideWishlist_${activeUser.uid}`;
+              localStorage.setItem(localKey, JSON.stringify(remoteList));
+            }
+          }
+        } catch (e) {}
+      }
+      loadWishlist();
+    };
+
     if (window.auth && typeof window.onAuthStateChanged === "function") {
       window.onAuthStateChanged(window.auth, authListener);
+    } else if (auth && typeof auth.onAuthStateChanged === "function") {
+      auth.onAuthStateChanged(authListener);
     }
     window.addEventListener("firebaseInitialized", authListener);
 

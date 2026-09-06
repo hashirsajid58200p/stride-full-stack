@@ -15,8 +15,12 @@ import SEO from "../../components/SEO/SEO";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectParam = searchParams.get("redirect");
+  const emailParam = searchParams.get("email");
+
   const [formData, setFormData] = useState({
-    email: "",
+    email: emailParam || "",
     password: "",
     rememberMe: false,
   });
@@ -78,7 +82,7 @@ export default function Login() {
         localStorage.setItem("userRole", "client");
         if (window.showToast)
           window.showToast("Welcome back to Stride!", "success");
-        setTimeout(() => navigate("/user-dashboard"), 1200);
+        setTimeout(() => navigate(redirectParam || "/user-dashboard"), 1200);
       }
     } catch (error) {
       console.error("Verification Error:", error);
@@ -283,7 +287,16 @@ export default function Login() {
             </div>
 
             <p className={styles["signup-link"]}>
-              Don't have an account? <Link to="/signup">Sign Up</Link>
+              Don't have an account?{" "}
+              <Link
+                to={
+                  redirectParam
+                    ? `/signup?redirect=${encodeURIComponent(redirectParam)}${formData.email ? `&email=${encodeURIComponent(formData.email)}` : ""}`
+                    : "/signup"
+                }
+              >
+                Sign Up
+              </Link>
             </p>
           </form>
         </div>

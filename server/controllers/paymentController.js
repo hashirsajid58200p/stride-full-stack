@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 // server/controllers/paymentController.js
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const supabaseAdmin = require("../config/supabaseAdmin");
@@ -88,30 +89,35 @@ exports.createCheckoutSession = async (req, res) => {
       clientUrl = req.headers.origin;
     }
 
-    // 5. Create Stripe Checkout Session
+    // 5. Generate stable order UUID and create Stripe Checkout Session
+    const orderId = crypto.randomUUID();
+    const cleanCustomerEmail = (customerEmail || "").toLowerCase().trim();
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
-      customer_email: customerEmail || undefined,
-      client_reference_id: userId || undefined,
+      customer_email: cleanCustomerEmail || undefined,
+      client_reference_id: orderId,
       metadata: {
+        orderId,
         userId: userId || "",
         customerName: customerName || "",
-        customerEmail: customerEmail || "",
+        customerEmail: cleanCustomerEmail,
         discount: verifiedDiscount.toString(),
         total: finalTotal.toString(),
       },
-      success_url: `${clientUrl}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${clientUrl}/order-confirmation?session_id={CHECKOUT_SESSION_ID}&order_id=${orderId}`,
       cancel_url: `${clientUrl}/checkout`,
     });
 
     // 6. Store validated cart in Redis keyed by session.id (24hr TTL)
     const cartData = {
+      orderId,
       sessionId: session.id,
       userId: userId || null,
       customerName: customerName || "Customer",
-      customerEmail: customerEmail || session.customer_email || "guest@stride.com",
+      customerEmail: cleanCustomerEmail || session.customer_email || "guest@stride.com",
       shippingInfo: shippingInfo || {},
       items: verifiedItems,
       subtotal: computedSubtotal,
@@ -122,6 +128,7 @@ exports.createCheckoutSession = async (req, res) => {
 
     try {
       await redisService.set(`checkout:session:${session.id}`, cartData, 86400);
+      await redisService.set(`checkout:order:${orderId}`, cartData, 86400);
     } catch (redisErr) {
       console.warn("[Checkout] Failed to cache checkout session in Redis:", redisErr.message);
     }
@@ -163,16 +170,26 @@ exports.handleStripeWebhook = async (req, res) => {
     console.log(`[Webhook] Processing verified payment for Stripe session: ${sessionId}`);
 
     try {
-      // 1. Idempotency Check: Don't process if already created
-      const { data: existingOrder } = await supabaseAdmin
-        .from("orders")
-        .select("id, status")
-        .eq("stripe_session_id", sessionId)
-        .maybeSingle();
+      // 1. Determine orderId and perform idempotency check
+      let orderId = session.client_reference_id || session.metadata?.orderId;
+      if (!orderId) {
+        try {
+          const cached = await redisService.get(`checkout:session:${sessionId}`);
+          if (cached?.orderId) orderId = cached.orderId;
+        } catch (e) {}
+      }
 
-      if (existingOrder) {
-        console.log(`[Webhook] Order already exists (ID: ${existingOrder.id}) for session ${sessionId}. Skipping duplicate.`);
-        return res.status(200).json({ received: true, orderId: existingOrder.id });
+      if (orderId) {
+        const { data: existingOrder } = await supabaseAdmin
+          .from("orders")
+          .select("id, status")
+          .eq("id", orderId)
+          .maybeSingle();
+
+        if (existingOrder) {
+          console.log(`[Webhook] Order already exists (ID: ${existingOrder.id}) for session ${sessionId}. Skipping duplicate.`);
+          return res.status(200).json({ received: true, orderId: existingOrder.id });
+        }
       }
 
       // 2. Retrieve authoritative cart data from Redis
@@ -209,19 +226,21 @@ exports.handleStripeWebhook = async (req, res) => {
       // 3. Insert into Supabase Orders table idempotently
       const itemsCount = cartData.items.reduce((sum, item) => sum + (item.quantity || 1), 0);
       
+      const finalOrderId = orderId || cartData.orderId || crypto.randomUUID();
+      const cleanEmail = (cartData.customerEmail || session.customer_details?.email || session.customer_email || "guest@stride.com").toLowerCase().trim();
+      const cleanName = (cartData.customerName || session.customer_details?.name || "Customer").trim();
+
       const { data: insertedOrder, error: insertError } = await supabaseAdmin
         .from("orders")
         .insert([
           {
-            stripe_session_id: sessionId,
-            user_id: cartData.userId || null,
-            full_name: cartData.customerName,
-            email: cartData.customerEmail,
-            total_amount: cartData.total,
+            id: finalOrderId,
+            full_name: cleanName,
+            email: cleanEmail,
+            total_amount: Number(cartData.total) || 0,
             items_count: itemsCount,
             items: cartData.items,
             status: "Processing",
-            payment_method: "Stripe",
             is_manual_override: false,
           },
         ])
@@ -280,6 +299,7 @@ exports.handleStripeWebhook = async (req, res) => {
  */
 exports.getSessionStatus = async (req, res) => {
   const { sessionId } = req.params;
+  const orderIdQuery = req.query.order_id;
 
   if (!sessionId) {
     return res.status(400).json({ error: "Session ID is required" });
@@ -294,19 +314,31 @@ exports.getSessionStatus = async (req, res) => {
   }
 
   try {
-    // 1. Look for completed order in Supabase
-    const { data: order, error } = await supabaseAdmin
-      .from("orders")
-      .select("*")
-      .or(`stripe_session_id.eq.${cleanId},id.eq.${cleanId}`)
-      .maybeSingle();
+    // 1. Determine target orderId
+    let orderId = (orderIdQuery && /^[0-9a-fA-F-]{10,64}$/.test(orderIdQuery)) ? orderIdQuery : (isUuid ? cleanId : null);
 
-    if (order) {
-      return res.status(200).json({
-        paid: true,
-        status: "confirmed",
-        order,
-      });
+    if (!orderId && isStripeSession) {
+      try {
+        const cached = await redisService.get(`checkout:session:${cleanId}`);
+        if (cached?.orderId) orderId = cached.orderId;
+      } catch (e) {}
+    }
+
+    // 2. Look for completed order in Supabase by ID
+    if (orderId) {
+      const { data: order } = await supabaseAdmin
+        .from("orders")
+        .select("*")
+        .eq("id", orderId)
+        .maybeSingle();
+
+      if (order) {
+        return res.status(200).json({
+          paid: true,
+          status: "confirmed",
+          order,
+        });
+      }
     }
 
     // 2. If not yet in DB, check Stripe directly (Self-healing order creation if webhook is delayed)
@@ -379,20 +411,40 @@ exports.getSessionStatus = async (req, res) => {
           0
         );
 
-        // Insert into Supabase Orders table idempotently
+        if (!orderId) {
+          orderId = session.client_reference_id || session.metadata?.orderId || cartData.orderId || crypto.randomUUID();
+        }
+
+        // Check if order was created concurrently
+        const { data: existingOrder } = await supabaseAdmin
+          .from("orders")
+          .select("*")
+          .eq("id", orderId)
+          .maybeSingle();
+
+        if (existingOrder) {
+          return res.status(200).json({
+            paid: true,
+            status: "confirmed",
+            order: existingOrder,
+          });
+        }
+
+        const cleanEmail = (cartData.customerEmail || session.customer_details?.email || session.customer_email || "customer@stride.com").toLowerCase().trim();
+        const cleanName = (cartData.customerName || session.customer_details?.name || "Customer").trim();
+
+        // Insert into Supabase Orders table idempotently using only valid columns
         const { data: insertedOrder, error: insertError } = await supabaseAdmin
           .from("orders")
           .insert([
             {
-              stripe_session_id: cleanId,
-              user_id: cartData.userId || null,
-              full_name: cartData.customerName,
-              email: cartData.customerEmail,
-              total_amount: cartData.total,
+              id: orderId,
+              full_name: cleanName,
+              email: cleanEmail,
+              total_amount: Number(cartData.total) || 0,
               items_count: itemsCount,
               items: cartData.items,
               status: "Confirmed",
-              payment_method: "Stripe",
               is_manual_override: false,
             },
           ])

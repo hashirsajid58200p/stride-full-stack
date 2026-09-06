@@ -74,7 +74,8 @@ export default function UserDashboard() {
           setAuthLoading(false);
         }
       } else {
-        navigate("/login", { replace: true });
+        const currentPath = window.location.pathname + window.location.search;
+        navigate(`/login?redirect=${encodeURIComponent(currentPath)}`, { replace: true });
         setAuthLoading(false);
       }
     });
@@ -111,11 +112,12 @@ export default function UserDashboard() {
 
     const fetchData = async () => {
       try {
-        // Orders
+        // Orders - Query by normalized customer email
+        const cleanUserEmail = (user.email || "").trim().toLowerCase();
         const { data: ordersData } = await window.supabase
           .from("orders")
           .select("*")
-          .ilike("email", user.email)
+          .ilike("email", cleanUserEmail)
           .order("created_at", { ascending: false });
 
         if (ordersData) {

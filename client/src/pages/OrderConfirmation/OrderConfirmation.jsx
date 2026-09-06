@@ -1,3 +1,5 @@
+import { auth } from "../../firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
 import React, { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
@@ -9,8 +11,18 @@ import styles from "./OrderConfirmation.module.css";
 export default function OrderConfirmation() {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
+  const orderId = searchParams.get("order_id");
   const { setCartItems, setDiscount } = useCart();
   const { formatPrice } = useCurrency();
+
+  const [currentUser, setCurrentUser] = useState(auth?.currentUser || null);
+
+  useEffect(() => {
+    if (auth) {
+      const unsub = onAuthStateChanged(auth, (u) => setCurrentUser(u));
+      return () => unsub();
+    }
+  }, []);
 
   // 1. Retrieve any freshly cached checkout data from client storage
   const cachedData = (() => {
@@ -90,7 +102,10 @@ export default function OrderConfirmation() {
 
     const fetchServerOrder = async () => {
       try {
-        const response = await fetch(getApiUrl(`/api/payments/session/${sessionId}`));
+        const statusEndpoint = orderId
+          ? `/api/payments/session/${sessionId}?order_id=${encodeURIComponent(orderId)}`
+          : `/api/payments/session/${sessionId}`;
+        const response = await fetch(getApiUrl(statusEndpoint));
         const data = await response.json();
 
         if (response.ok && data.paid && data.order) {
@@ -236,7 +251,11 @@ export default function OrderConfirmation() {
           {/* ACTIONS: Navigation buttons */}
           <div className={styles["confirmation-actions"]}>
             <Link
-              to="/user-dashboard?view=orders"
+              to={
+                currentUser
+                  ? "/user-dashboard?view=orders"
+                  : `/login?redirect=${encodeURIComponent("/user-dashboard?view=orders")}&email=${encodeURIComponent(orderState.email || "")}`
+              }
               className={`${styles.btn} ${styles["btn-primary"]}`}
             >
               View My Orders

@@ -110,6 +110,15 @@ export default function ProductCards({ product, index }) {
       }
     }
 
+    if (!window.auth?.currentUser) {
+      if (window.showToast) {
+        window.showToast("Please sign in to save items to your wishlist", "info");
+      }
+      const currentPath = window.location.pathname + window.location.search;
+      window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+      return;
+    }
+
     // Wait for engine to load if missing, replicating your vanilla fetch fallback
     if (!window.WishlistEngine) {
       if (window.showToast) {
