@@ -29,3 +29,5 @@
   - Image assets are uploaded to Cloudinary (`stride/products`) strictly when the admin saves the product, eliminating orphaned assets.
 - **Multi-System Product Deletion**:
   - Product deletion via admin controller automatically purges associated images from Cloudinary while simultaneously removing records from Supabase and cache from Redis.
+- **Notion Project Secrets Vault Backup**:
+  - Full environment files (`client/.env`, `server/.env`), Firebase Admin SDK key (`serviceAccountKey.json`), Supabase, Stripe, Groq, Redis credentials, and AWS EC2 SSH key (`stride-key.pem`) saved to Notion under `Project Secrets` -> `Stride` prior to local cleanup.

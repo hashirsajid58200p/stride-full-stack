@@ -22,3 +22,4 @@
   - [x] Removed obsolete profile image `FSociety_rcy0vf` from Cloudinary and updated DB reference.
   - [x] Deferred AI image generation storage to product save time to prevent orphaned Cloudinary assets.
   - [x] Implemented atomic multi-system product deletion across Supabase database and Cloudinary storage.
+  - [x] Archived all project secrets (`.env`, `serviceAccountKey.json`, `stride-key.pem`) to Notion `Project Secrets` vault.
